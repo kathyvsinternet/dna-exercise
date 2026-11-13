@@ -1,5 +1,4 @@
 {
-  "source": "data/model/fct_subscription.csv",
   "businesses": [
     {
       "id": "BIZ_1",
@@ -23,6 +22,98 @@
       "planet": "Wavanda"
     }
   ],
+  "dimensions": {
+    "business_id": [
+      "BIZ_1",
+      "BIZ_2",
+      "BIZ_3"
+    ],
+    "plan_tier": [
+      "Free",
+      "Basic",
+      "Premium",
+      "Premium_Plus_Deluxe_XL"
+    ],
+    "billing_cycle": [
+      "annual",
+      "lifetime_deal_fake",
+      "monthly",
+      "not_applicable"
+    ],
+    "start_date_month": [
+      "2021-07",
+      "2021-08",
+      "2021-09",
+      "2021-10",
+      "2021-11",
+      "2021-12",
+      "2022-01",
+      "2022-02",
+      "2022-03",
+      "2022-04",
+      "2022-05",
+      "2022-06",
+      "2022-07",
+      "2022-08",
+      "2022-09",
+      "2022-10",
+      "2022-11",
+      "2022-12",
+      "2023-01",
+      "2023-02",
+      "2023-03",
+      "2023-04",
+      "2023-05",
+      "2023-06",
+      "2023-07",
+      "2023-08",
+      "2023-09",
+      "2023-10",
+      "2023-11",
+      "2023-12",
+      "2024-01",
+      "2024-02",
+      "2024-03",
+      "2024-04",
+      "2024-05",
+      "2024-06",
+      "2024-07",
+      "2024-08",
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09"
+    ]
+  },
+  "default_month_range": {
+    "from": "2026-01",
+    "to": "2026-09"
+  },
+  "suppression": {
+    "min_people": 5,
+    "applies_to": "Metrics that count distinct user_id. A cell with fewer people is published as blank."
+  },
   "metrics": [
     {
       "name": "plans_active",
@@ -34,7 +125,22 @@
         "is_test_account = false",
         "status = active"
       ],
+      "conditions": [
+        {
+          "column": "is_test_account",
+          "equals": "false"
+        },
+        {
+          "column": "status",
+          "equals": "active"
+        }
+      ],
       "group_by": [
+        "business_id",
+        "plan_tier",
+        "billing_cycle"
+      ],
+      "dimensions": [
         "business_id",
         "plan_tier",
         "billing_cycle"
@@ -44,6 +150,7 @@
         "Use the governed status column. A status of unknown is not active.",
         "Take subscription counts from this table. subscription_start events are not plans."
       ],
+      "cube": "data/cubes/plans_active.json",
       "total": 444,
       "by_business": [
         {
@@ -61,42 +168,6 @@
           "short": "MakerHarbor",
           "value": 149
         }
-      ],
-      "by_plan_tier": [
-        {
-          "label": "Basic",
-          "value": 115
-        },
-        {
-          "label": "Free",
-          "value": 134
-        },
-        {
-          "label": "Premium",
-          "value": 85
-        },
-        {
-          "label": "Premium_Plus_Deluxe_XL",
-          "value": 110
-        }
-      ],
-      "by_billing_cycle": [
-        {
-          "label": "annual",
-          "value": 135
-        },
-        {
-          "label": "lifetime_deal_fake",
-          "value": 98
-        },
-        {
-          "label": "monthly",
-          "value": 77
-        },
-        {
-          "label": "not_applicable",
-          "value": 134
-        }
       ]
     },
     {
@@ -109,7 +180,20 @@
         "is_test_account = false",
         "status = active"
       ],
+      "conditions": [
+        {
+          "column": "is_test_account",
+          "equals": "false"
+        },
+        {
+          "column": "status",
+          "equals": "active"
+        }
+      ],
       "group_by": [
+        "business_id"
+      ],
+      "dimensions": [
         "business_id"
       ],
       "notes": [
@@ -117,6 +201,7 @@
         "Recompute the distinct count at every grain. Adding the business totals double-counts a person who is active in more than one business.",
         "Use the governed status column. A status of unknown is not active."
       ],
+      "cube": "data/cubes/subscribers_active.json",
       "total": 389,
       "by_business": [
         {
@@ -149,7 +234,26 @@
         "status = active",
         "plan_tier \u2260 Free"
       ],
+      "conditions": [
+        {
+          "column": "is_test_account",
+          "equals": "false"
+        },
+        {
+          "column": "status",
+          "equals": "active"
+        },
+        {
+          "column": "plan_tier",
+          "not_equals": "Free"
+        }
+      ],
       "group_by": [
+        "business_id",
+        "plan_tier",
+        "billing_cycle"
+      ],
+      "dimensions": [
         "business_id",
         "plan_tier",
         "billing_cycle"
@@ -159,6 +263,7 @@
         "A Free plan with a zero price stays in plans_active and stays out of this metric.",
         "Use the governed plan_tier column."
       ],
+      "cube": "data/cubes/plans_paid_active.json",
       "total": 310,
       "by_business": [
         {
@@ -176,34 +281,6 @@
           "short": "MakerHarbor",
           "value": 100
         }
-      ],
-      "by_plan_tier": [
-        {
-          "label": "Basic",
-          "value": 115
-        },
-        {
-          "label": "Premium",
-          "value": 85
-        },
-        {
-          "label": "Premium_Plus_Deluxe_XL",
-          "value": 110
-        }
-      ],
-      "by_billing_cycle": [
-        {
-          "label": "annual",
-          "value": 135
-        },
-        {
-          "label": "lifetime_deal_fake",
-          "value": 98
-        },
-        {
-          "label": "monthly",
-          "value": 77
-        }
       ]
     },
     {
@@ -217,16 +294,32 @@
         "start_date on or after 2026-01-01",
         "start_date on or before 2026-09-30"
       ],
+      "conditions": [
+        {
+          "column": "is_test_account",
+          "equals": "false"
+        }
+      ],
       "group_by": [
         "business_id",
         "plan_tier"
+      ],
+      "dimensions": [
+        "business_id",
+        "plan_tier",
+        "start_date_month"
       ],
       "notes": [
         "A start counts even when the subscription is later canceled, paused, or unknown.",
         "The period is required. There is no default window.",
         "Take starts from start_date on this table. subscription_start events are a different count."
       ],
+      "cube": "data/cubes/plan_starts.json",
       "total": 311,
+      "parameters": {
+        "period_start": "2026-01-01",
+        "period_end": "2026-09-30"
+      },
       "by_business": [
         {
           "id": "BIZ_1",
@@ -243,11 +336,7 @@
           "short": "MakerHarbor",
           "value": 104
         }
-      ],
-      "period": {
-        "start": "2026-01-01",
-        "end": "2026-09-30"
-      }
+      ]
     }
   ],
   "refusals": [
@@ -279,12 +368,12 @@
     {
       "id": "period",
       "title": "That period is not in the catalog",
-      "body": "plan_starts requires a period. The worked example on this site is 2026-01-01 through 2026-09-30."
+      "body": "plan_starts requires a period. The worked example on this page is 2026-01-01 through 2026-09-30. The dashboard lets you choose another range of start months."
     },
     {
       "id": "unknown",
       "title": "That question is not in the catalog",
-      "body": "The page can answer plans_active, subscribers_active, plans_paid_active, and plan_starts. It will not invent another metric."
+      "body": "The page can answer plans_active, subscribers_active, plans_paid_active, plan_starts. It will not invent another metric."
     }
   ]
 }
