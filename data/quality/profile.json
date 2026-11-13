@@ -1,0 +1,401 @@
+{
+  "source": "data/raw",
+  "note": "Census of the files as given. Treatments live in data/quality/issues. Empty means a blank cell.",
+  "tables": {
+    "Exercise_Businesses.csv": {
+      "rows": 3,
+      "columns": {
+        "business_id": {
+          "empty": 0,
+          "distinct": 3,
+          "values": {
+            "BIZ_1": 1,
+            "BIZ_2": 1,
+            "BIZ_3": 1
+          }
+        },
+        "business_name": {
+          "empty": 0,
+          "distinct": 3,
+          "values": {
+            "PageGarden Premium (SYNTHETIC)": 1,
+            "GatherSquare Community (SYNTHETIC)": 1,
+            "MakerHarbor (SYNTHETIC)": 1
+          }
+        },
+        "business_line": {
+          "empty": 0,
+          "distinct": 3,
+          "values": {
+            "premium_published_content": 1,
+            "consumer_community": 1,
+            "creator_content": 1
+          }
+        },
+        "launch_date": {
+          "empty": 0,
+          "distinct": 3,
+          "values": {
+            "2021-01-01": 1,
+            "2021-06-15": 1,
+            "2022-03-01": 1
+          }
+        },
+        "hq_planet": {
+          "empty": 0,
+          "distinct": 3,
+          "values": {
+            "Terra Prime": 1,
+            "Nearia": 1,
+            "Wavanda": 1
+          }
+        }
+      }
+    },
+    "Exercise_users.csv": {
+      "rows": 806,
+      "columns": {
+        "user_id": {
+          "empty": 0,
+          "distinct": 800
+        },
+        "user_name": {
+          "empty": 0,
+          "distinct": 298
+        },
+        "email": {
+          "empty": 0,
+          "distinct": 800
+        },
+        "signup_date": {
+          "empty": 0,
+          "distinct": 679
+        },
+        "country": {
+          "empty": 0,
+          "distinct": 18,
+          "values": {
+            "Australia": 38,
+            "Germany": 66,
+            "Japan": 43,
+            "Brazil": 40,
+            "Altara": 47,
+            "Latoria": 45,
+            "Hogglewick": 46,
+            "Genora": 39,
+            "United States": 41,
+            "Eloria": 43,
+            "Nearia": 52,
+            "Canada": 48,
+            "Zubria": 44,
+            "Wondervale": 36,
+            "Gondale": 55,
+            "Freelandia": 42,
+            "United Kingdom": 47,
+            "Wavanda": 34
+          }
+        },
+        "age_band": {
+          "empty": 20,
+          "distinct": 10,
+          "values": {
+            "18-24": 121,
+            "45-54": 107,
+            "13-17": 113,
+            "N/A": 20,
+            "35-44": 99,
+            "25-34": 118,
+            "55-64": 109,
+            "65+": 91,
+            "": 20,
+            "999": 8
+          }
+        },
+        "acquisition_channel": {
+          "empty": 20,
+          "distinct": 7,
+          "values": {
+            "influencer_TEST_CAMPAIGN": 20,
+            "organic_search": 191,
+            "referral": 164,
+            "paid_social": 189,
+            "carrier_pigeon": 20,
+            "email_campaign": 202,
+            "": 20
+          }
+        },
+        "primary_device": {
+          "empty": 0,
+          "distinct": 6,
+          "values": {
+            "iOS_app": 180,
+            "Android_app": 207,
+            "web_mobile": 195,
+            "web_desktop": 184,
+            "smart_toaster": 20,
+            "unknown_device": 20
+          }
+        },
+        "is_test_account_flag": {
+          "empty": 0,
+          "distinct": 2,
+          "values": {
+            "False": 766,
+            "True": 40
+          }
+        }
+      }
+    },
+    "Exercise_creators.csv": {
+      "rows": 40,
+      "columns": {
+        "creator_id": {
+          "empty": 0,
+          "distinct": 40
+        },
+        "creator_name": {
+          "empty": 0,
+          "distinct": 40
+        },
+        "business_id": {
+          "empty": 0,
+          "distinct": 2,
+          "values": {
+            "BIZ_3": 37,
+            "BIZ_1": 3
+          }
+        },
+        "join_date": {
+          "empty": 0,
+          "distinct": 40
+        },
+        "payout_tier": {
+          "empty": 0,
+          "distinct": 4,
+          "values": {
+            "Tier_1_Standard": 18,
+            "Tier_3_Partner": 6,
+            "Tier_2_Growth": 7,
+            "Tier_0_Starter": 9
+          }
+        },
+        "follower_count_fake": {
+          "empty": 0,
+          "distinct": 38
+        }
+      }
+    },
+    "Exercise_content_items.csv": {
+      "rows": 300,
+      "columns": {
+        "content_id": {
+          "empty": 0,
+          "distinct": 300
+        },
+        "business_id": {
+          "empty": 0,
+          "distinct": 3,
+          "values": {
+            "BIZ_1": 112,
+            "BIZ_2": 83,
+            "BIZ_3": 105
+          }
+        },
+        "creator_id": {
+          "empty": 195,
+          "distinct": 35
+        },
+        "title": {
+          "empty": 0,
+          "distinct": 300
+        },
+        "category": {
+          "empty": 0,
+          "distinct": 17,
+          "values": {
+            "Sci-Fi": 16,
+            "Book Club Chatter": 15,
+            "Cooking": 10,
+            "Poetry (Bad)": 16,
+            "Mystery": 15,
+            "Indie Fiction": 29,
+            "Ask the Community": 22,
+            "Romance": 10,
+            "Serialized Drama": 26,
+            "Definitely Not Fan Fiction": 13,
+            "Self-Help": 20,
+            "Fake History of Imaginary Countries": 22,
+            "Fantasy": 19,
+            "Memes About Reading": 17,
+            "How-To Guides": 21,
+            "General Nonsense": 17,
+            "Fan Theories": 12
+          }
+        },
+        "content_type": {
+          "empty": 0,
+          "distinct": 7,
+          "values": {
+            "TEST_TYPE": 8,
+            "ebook": 47,
+            "audiobook": 52,
+            "poll": 46,
+            "forum_post": 53,
+            "video": 42,
+            "serialized_chapter": 52
+          }
+        },
+        "publish_date": {
+          "empty": 0,
+          "distinct": 274
+        },
+        "runtime_minutes_fake": {
+          "empty": 0,
+          "distinct": 10,
+          "values": {
+            "5": 30,
+            "90": 31,
+            "45": 52,
+            "25": 53,
+            "2": 16,
+            "8": 48,
+            "-1": 5,
+            "180": 18,
+            "12": 42,
+            "99999": 5
+          }
+        }
+      }
+    },
+    "Exercise_subscriptions.csv": {
+      "rows": 843,
+      "columns": {
+        "subscription_id": {
+          "empty": 0,
+          "distinct": 843
+        },
+        "user_id": {
+          "empty": 0,
+          "distinct": 672
+        },
+        "business_id": {
+          "empty": 0,
+          "distinct": 3,
+          "values": {
+            "BIZ_3": 274,
+            "BIZ_1": 272,
+            "BIZ_2": 297
+          }
+        },
+        "plan_tier": {
+          "empty": 0,
+          "distinct": 4,
+          "values": {
+            "Basic": 215,
+            "Premium_Plus_Deluxe_XL": 225,
+            "Free": 215,
+            "Premium": 188
+          }
+        },
+        "billing_cycle": {
+          "empty": 215,
+          "distinct": 4,
+          "values": {
+            "annual": 259,
+            "monthly": 221,
+            "lifetime_deal_fake": 148,
+            "": 215
+          }
+        },
+        "monthly_price_usd": {
+          "empty": 0,
+          "distinct": 10,
+          "values": {
+            "7.99": 102,
+            "9.99": 111,
+            "14.99": 124,
+            "0.0": 215,
+            "19.99": 74,
+            "24.99": 84,
+            "11.99": 77,
+            "4.99": 40,
+            "-9.99": 8,
+            "999.99": 8
+          }
+        },
+        "start_date": {
+          "empty": 0,
+          "distinct": 594
+        },
+        "end_date": {
+          "empty": 619,
+          "distinct": 177
+        },
+        "status": {
+          "empty": 0,
+          "distinct": 5,
+          "values": {
+            "active": 465,
+            "canceled": 224,
+            "paused": 96,
+            "trialing": 38,
+            "TEST_STATUS_DO_NOT_USE": 20
+          }
+        }
+      }
+    },
+    "Exercise_engagement_events.csv": {
+      "rows": 6000,
+      "columns": {
+        "event_id": {
+          "empty": 0,
+          "distinct": 6000
+        },
+        "user_id": {
+          "empty": 0,
+          "distinct": 799
+        },
+        "content_id": {
+          "empty": 323,
+          "distinct": 301
+        },
+        "event_type": {
+          "empty": 0,
+          "distinct": 11,
+          "values": {
+            "content_open": 593,
+            "content_complete": 2838,
+            "like": 545,
+            "share": 556,
+            "search_query": 76,
+            "comment_post": 549,
+            "download": 558,
+            "page_view": 76,
+            "subscription_cancel": 85,
+            "subscription_start": 84,
+            "glitch_in_the_matrix": 40
+          }
+        },
+        "event_timestamp": {
+          "empty": 0,
+          "distinct": 6000
+        },
+        "device": {
+          "empty": 0,
+          "distinct": 5,
+          "values": {
+            "web_desktop": 1457,
+            "iOS_app": 1401,
+            "web_mobile": 1521,
+            "Android_app": 1571,
+            "smart_toaster": 50
+          }
+        },
+        "session_duration_sec": {
+          "empty": 0,
+          "distinct": 3054
+        }
+      }
+    }
+  }
+}

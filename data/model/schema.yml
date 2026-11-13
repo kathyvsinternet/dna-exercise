@@ -1,0 +1,183 @@
+# Model schema
+#
+# Grain, keys, and who each column is for. An empty cell in a CSV is null.
+# Governed columns are the ones a metric is allowed to use. Raw columns keep
+# the source value so a treatment can be audited.
+#
+# Marts exclude test accounts. Fact tables keep those rows and flag them
+# with is_test_account. The site should read marts/ only.
+# user_name, email, and age_band are restricted. They are not in any mart.
+
+tables:
+  - name: dim_business
+    grain: one row per business_id
+    primary_key: business_id
+    rows: 3
+    columns:
+      - {name: business_id, description: Business key.}
+      - {name: business_name, description: Display name, including the synthetic label from the source.}
+      - {name: business_line, description: premium_published_content, consumer_community, or creator_content.}
+      - {name: launch_date, description: Date the business launched.}
+      - {name: hq_planet, description: Headquarters in the synthetic world. Kept as given.}
+
+  - name: dim_user
+    grain: one row per user_id
+    primary_key: user_id
+    rows: 800
+    notes: Six identical duplicate user rows were dropped from the raw file of 806 rows.
+    columns:
+      - {name: user_id, description: User key.}
+      - {name: user_name, description: Display name., access: restricted}
+      - {name: email, description: Email address., access: restricted}
+      - {name: signup_date, description: Date the account was created.}
+      - {name: country, description: Country as given, including fictional countries that belong to this world.}
+      - {name: age_band, description: Governed age band. Blank, N/A, and 999 are unknown., access: restricted}
+      - {name: age_band_raw, description: Source age band, kept so the reason for unknown is visible., access: restricted}
+      - {name: acquisition_channel, description: Governed channel. Blank, carrier_pigeon, and influencer_TEST_CAMPAIGN are unknown.}
+      - {name: acquisition_channel_raw, description: Source channel.}
+      - {name: primary_device, description: Governed device. smart_toaster and unknown_device are unknown.}
+      - {name: primary_device_raw, description: Source device.}
+      - {name: is_test_account, description: true or false. Marts exclude true.}
+
+  - name: dim_creator
+    grain: one row per creator_id
+    primary_key: creator_id
+    foreign_keys:
+      - {column: business_id, references: dim_business.business_id}
+    rows: 40
+    notes: 37 creators are MakerHarbor. Three are PageGarden and have no content pointing at them. GatherSquare has none.
+    columns:
+      - {name: creator_id, description: Creator key.}
+      - {name: creator_name, description: Display name.}
+      - {name: business_id, description: Business the creator belongs to.}
+      - {name: join_date, description: Date the creator joined.}
+      - {name: payout_tier, description: Tier_0_Starter through Tier_3_Partner.}
+      - {name: follower_count, description: Governed follower count. Null when the source is negative or 999999.}
+      - {name: follower_count_raw, description: Source follower count.}
+      - {name: follower_count_is_invalid, description: true when follower_count was nulled.}
+
+  - name: dim_content
+    grain: one row per content_id
+    primary_key: content_id
+    foreign_keys:
+      - {column: business_id, references: dim_business.business_id}
+      - {column: creator_id, references: dim_creator.creator_id, nullable: true}
+    rows: 300
+    notes: creator_id is null for every PageGarden and GatherSquare item. It is populated for every MakerHarbor item.
+    columns:
+      - {name: content_id, description: Content key.}
+      - {name: business_id, description: Business that published the item.}
+      - {name: creator_id, description: Creator key, or null when the source was blank.}
+      - {name: title, description: Title.}
+      - {name: category, description: Category as given.}
+      - {name: content_type, description: Governed type. TEST_TYPE is unknown.}
+      - {name: content_type_raw, description: Source content type.}
+      - {name: publish_date, description: Date the item was published.}
+      - {name: runtime_minutes, description: Governed runtime. Null when the source is negative or 99999.}
+      - {name: runtime_minutes_raw, description: Source runtime.}
+      - {name: runtime_minutes_is_invalid, description: true when runtime_minutes was nulled.}
+
+  - name: fct_subscription
+    grain: one row per subscription_id
+    primary_key: subscription_id
+    foreign_keys:
+      - {column: user_id, references: dim_user.user_id}
+      - {column: business_id, references: dim_business.business_id}
+    rows: 843
+    notes: A user can hold more than one subscription, including across businesses. Status and price for metrics come from this table, not from engagement events.
+    columns:
+      - {name: subscription_id, description: Subscription key.}
+      - {name: user_id, description: Subscriber.}
+      - {name: business_id, description: Business being subscribed to.}
+      - {name: plan_tier, description: Free, Basic, Premium, or Premium_Plus_Deluxe_XL.}
+      - {name: billing_cycle, description: monthly, annual, lifetime_deal_fake, or not_applicable for Free.}
+      - {name: billing_cycle_raw, description: Source billing cycle. Blank on Free plans.}
+      - {name: monthly_price_usd, description: Governed monthly price. Null when the source is negative or 999.99. Zero on Free.}
+      - {name: monthly_price_usd_raw, description: Source price.}
+      - {name: monthly_price_is_invalid, description: true when monthly_price_usd was nulled.}
+      - {name: start_date, description: Subscription start date.}
+      - {name: end_date, description: End date, or null. Null is valid unless status_raw is canceled.}
+      - {name: status, description: Governed status. TEST_STATUS_DO_NOT_USE is unknown.}
+      - {name: status_raw, description: Source status.}
+      - {name: is_test_account, description: true when the subscriber is a test account.}
+
+  - name: fct_engagement_event
+    grain: one row per event_id
+    primary_key: event_id
+    foreign_keys:
+      - {column: user_id, references: dim_user.user_id}
+      - {column: content_id, references: dim_content.content_id, nullable: true}
+    rows: 6000
+    notes: content_id is null for every search, page view, and subscription event, plus two glitch events. This fact is not given a business_id. Business for content events comes from dim_content.
+    columns:
+      - {name: event_id, description: Event key.}
+      - {name: user_id, description: User who triggered the event.}
+      - {name: content_id, description: Content key, or null when the event is not about one title.}
+      - {name: event_type, description: Governed event type. glitch_in_the_matrix is unknown.}
+      - {name: event_type_raw, description: Source event type.}
+      - {name: event_timestamp, description: Timestamp of the event.}
+      - {name: device, description: Governed device. smart_toaster and unknown_device are unknown.}
+      - {name: device_raw, description: Source device.}
+      - {name: session_duration_sec, description: Governed duration in seconds. Null for -15, 86400, and 604800.}
+      - {name: session_duration_sec_raw, description: Source duration.}
+      - {name: session_duration_is_invalid, description: true when session_duration_sec was nulled.}
+      - {name: is_test_account, description: true when the user is a test account.}
+
+  - name: marts/business_snapshot
+    grain: one row per business_id
+    primary_key: business_id
+    rows: 3
+    notes: Subscription counts and the price total exclude test accounts. Engagement counts are events whose content belongs to the business, also excluding test accounts. Events with no content id are not included.
+    columns:
+      - {name: business_id, description: Business key.}
+      - {name: business_name, description: Display name.}
+      - {name: business_line, description: Business line.}
+      - {name: content_items, description: Content items on the business, including unknown type.}
+      - {name: unknown_type_content_items, description: Items whose governed content type is unknown.}
+      - {name: creators, description: Creators whose business_id is this business.}
+      - {name: subscriptions, description: Non-test subscriptions.}
+      - {name: active_subscriptions, description: Non-test subscriptions with governed status active.}
+      - {name: canceled_subscriptions, description: Non-test subscriptions with governed status canceled.}
+      - {name: paused_subscriptions, description: Non-test subscriptions with governed status paused.}
+      - {name: trialing_subscriptions, description: Non-test subscriptions with governed status trialing.}
+      - {name: unknown_status_subscriptions, description: Non-test subscriptions whose status was TEST_STATUS_DO_NOT_USE.}
+      - {name: subscribers, description: Distinct non-test users with a subscription to this business.}
+      - {name: active_monthly_price_usd, description: Sum of governed monthly price on active non-test subscriptions. Invalid prices are omitted. This is a monthly price total, not annualized revenue.}
+      - {name: engagement_events, description: Non-test events on this business's content.}
+      - {name: content_items_with_engagement, description: Content items that have at least one of those events.}
+
+  - name: marts/subscription_mix
+    grain: one row per business_id, plan_tier, billing_cycle, and status
+    rows: 118
+    notes: Test accounts are excluded. monthly_price_usd_sum uses governed prices only.
+    columns:
+      - {name: business_id, description: Business key.}
+      - {name: plan_tier, description: Plan tier.}
+      - {name: billing_cycle, description: Governed billing cycle, including not_applicable and lifetime_deal_fake.}
+      - {name: status, description: Governed status.}
+      - {name: subscriptions, description: Non-test subscriptions in this group, including rows with an invalid price.}
+      - {name: invalid_price_subscriptions, description: Subscriptions in this group whose price was nulled.}
+      - {name: monthly_price_usd_sum, description: Sum of governed monthly price for this group.}
+
+  - name: marts/content_performance
+    grain: one row per content_id
+    primary_key: content_id
+    rows: 300
+    notes: Event counts exclude test accounts. An item with no remaining events stays in the table with zeros.
+    columns:
+      - {name: content_id, description: Content key.}
+      - {name: business_id, description: Business that published the item.}
+      - {name: title, description: Title.}
+      - {name: category, description: Category.}
+      - {name: content_type, description: Governed content type.}
+      - {name: creator_id, description: Creator key, or blank when the content has no creator.}
+      - {name: events, description: Non-test events on this item.}
+      - {name: content_opens, description: content_open events.}
+      - {name: content_completes, description: content_complete events.}
+      - {name: likes, description: like events.}
+      - {name: shares, description: share events.}
+      - {name: comments, description: comment_post events.}
+      - {name: downloads, description: download events.}
+      - {name: other_events, description: Remaining events, including the unknown type that replaced glitch_in_the_matrix.}
+      - {name: events_with_valid_duration, description: Events whose governed duration is not null.}
+      - {name: session_duration_sec_sum, description: Sum of governed duration for those events.}
