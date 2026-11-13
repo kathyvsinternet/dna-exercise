@@ -1,0 +1,24 @@
+name: subscribers_active
+question: How many users hold an active subscription?
+source: data/model/fct_subscription.csv
+count_distinct: user_id
+filters:
+  - column: is_test_account
+    equals: "false"
+  - column: status
+    equals: active
+group_by:
+  - business_id
+notes:
+  - Count people, not subscription rows. plans_active counts the rows.
+  - Recompute the distinct count at every grain. Adding the business totals double-counts a person who is active in more than one business.
+  - Use the governed status column. A status of unknown is not active.
+known_result:
+  note: Result of the current fact table. Recompute after python pipeline/build.py.
+  total: 389
+  by_business_id:
+    BIZ_1: 125
+    BIZ_2: 147
+    BIZ_3: 145
+  business_totals_sum: 417
+  people_active_in_more_than_one_business: 28

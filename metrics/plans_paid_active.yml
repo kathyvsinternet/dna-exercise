@@ -1,0 +1,30 @@
+name: plans_paid_active
+question: How many active subscriptions are for a paid plan?
+source: data/model/fct_subscription.csv
+count: subscription_id
+filters:
+  - column: is_test_account
+    equals: "false"
+  - column: status
+    equals: active
+  - column: plan_tier
+    not_equals: Free
+group_by:
+  - business_id
+  - plan_tier
+  - billing_cycle
+notes:
+  - This is plans_active with Free removed.
+  - A Free plan with a zero price stays in plans_active and stays out of this metric.
+  - Use the governed plan_tier column.
+known_result:
+  note: Result of the current fact table. Recompute after python pipeline/build.py.
+  total: 310
+  by_business_id:
+    BIZ_1: 94
+    BIZ_2: 116
+    BIZ_3: 100
+  by_plan_tier:
+    Basic: 115
+    Premium: 85
+    Premium_Plus_Deluxe_XL: 110
