@@ -14,7 +14,7 @@
     <div class="header-inner">
       <a class="brand" href="index.html"><strong>Three Houses</strong><span>Governed subscription metrics</span></a>
       <nav class="nav" aria-label="Sections">
-        <a href="index.html">Overview</a>
+        <a href="index.html">Dashboard</a>
         <a href="quality.html">Quality</a>
         <a href="model.html">Model</a>
         <a href="ask.html">Ask</a>
@@ -38,6 +38,8 @@
           <tr><td><code>age_band</code> and <code>age_band_raw</code></td><td><code>dim_user</code></td><td>Restricted. The column includes a 13–17 band, so the whole column stays off the site.</td></tr>
           <tr><td><code>is_test_account</code></td><td>User dimension and both facts</td><td>Visible to the build. Metrics keep only <code>false</code>.</td></tr>
           <tr><td>Metric totals</td><td><code>metrics/*.yml</code> and this site</td><td>Anyone who can open the page. Counts and distinct people, never a person.</td></tr>
+          <tr><td>Dashboard aggregates</td><td><code>site/data/cubes/*.json</code></td><td>Anyone who can open the page. Each file holds a metric’s counts for every combination of the dimensions its file allows. There are no <code>user_id</code> values and no row-level data.</td></tr>
+          <tr><td>Small counts of people</td><td><code>subscribers_active</code> cube</td><td>A distinct-people cell with fewer than 5 people is published as blank and shown as “&lt;5”. Counts of subscriptions are not suppressed because they do not describe a person.</td></tr>
         </tbody>
       </table>
     </div>
@@ -45,7 +47,7 @@
     <article class="card issue">
       <h2>What a row-level role would add</h2>
       <p>A named analyst could open <code>fct_subscription</code> and <code>dim_user</code> to audit a duplicate or a sentinel. That role still cannot publish <code>email</code> or <code>age_band</code> through Ask. The interface has no metric whose grain is a person.</p>
-      <p>Test accounts remain in the fact tables with <code>is_test_account = true</code> so the exclusion can be checked. They are already gone from the numbers on Overview and Ask.</p>
+      <p>Test accounts remain in the fact tables with <code>is_test_account = true</code> so the exclusion can be checked. They are already gone from the numbers on the dashboard and Ask.</p>
     </article>
   </main>
   <footer class="wrap site-footer">Publishing this folder does not publish the raw files or <code>dim_user.csv</code>. Those stay outside <code>site/</code>.</footer>

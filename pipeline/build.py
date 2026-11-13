@@ -6,8 +6,8 @@ Run from the repository root:
 
 The command rewrites data/quality/profile.json from the raw files, applies the
 treatments in data/quality/issues/, replaces the CSVs in data/model/, and
-refreshes site/data/catalog.json. If a check fails, the model CSVs and the
-site catalog are left unchanged.
+refreshes site/data/ from the metric files. If a check fails, the model CSVs
+and the site data are left unchanged.
 """
 
 import csv
@@ -20,7 +20,7 @@ PIPELINE_DIR = Path(__file__).resolve().parent
 if str(PIPELINE_DIR) not in sys.path:
     sys.path.insert(0, str(PIPELINE_DIR))
 
-from build_site import write_catalog
+from build_site import write_site_data
 from checks import check
 from transform import BuildError, transform
 
@@ -179,10 +179,11 @@ def main():
         print("data/model was not changed.", file=sys.stderr)
         return 1
     _write_model(model)
-    catalog = write_catalog(ROOT)
+    site_files = write_site_data(ROOT)
     print("Checks passed.")
     print(f"Wrote {QUALITY_DIR.relative_to(ROOT) / 'profile.json'}")
-    print(f"Wrote {catalog.relative_to(ROOT)}")
+    for path in site_files:
+        print(f"Wrote {path.relative_to(ROOT)}")
     for name, rows in model.items():
         folder = "data/model/marts" if name in MART_FILES else "data/model"
         print(f"Wrote {folder}/{name}.csv ({len(rows)} rows)")

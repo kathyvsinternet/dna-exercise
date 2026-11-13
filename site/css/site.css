@@ -105,16 +105,7 @@ main { padding: 2.2rem 0 3rem; }
   text-transform: uppercase;
 }
 
-.grid-3, .grid-2 {
-  display: grid;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.grid-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-2 { grid-template-columns: repeat(2, 1fr); }
-
-.card, .answer, .refuse {
+.card, .answer, .refuse, .tile, .chart, .filter-bar {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -122,70 +113,127 @@ main { padding: 2.2rem 0 3rem; }
   padding: 1.1rem 1.15rem 1.2rem;
 }
 
-.card header h2 {
-  margin: 0;
-}
-
-.card header .fine {
-  display: block;
-  margin-top: 0.2rem;
-}
-
-.house {
-  border-top: 4px solid var(--accent);
-}
-
-.house[data-house="PageGarden"] { border-top-color: var(--pagegarden); }
-.house[data-house="GatherSquare"] { border-top-color: var(--gathersquare); }
-.house[data-house="MakerHarbor"] { border-top-color: var(--makerharbor); }
-
-.stat {
-  margin: 0.9rem 0 0;
-}
-
-.stat b {
-  display: block;
-  font-family: Fraunces, Georgia, serif;
-  font-size: 1.8rem;
-  font-weight: 560;
-  line-height: 1;
-}
-
-.stat span, .fine {
+.fine {
   color: var(--muted);
   font-size: 0.88rem;
 }
 
-.band {
-  margin-top: 1rem;
-  padding: 1.1rem 1.2rem;
-  background: #1b1914;
-  color: #f3efe6;
-  border-radius: 14px;
+.issue, .table-wrap { margin-top: 1rem; }
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  gap: 0.75rem;
+  align-items: end;
+  margin-top: 1.4rem;
+  padding: 0.9rem 1rem;
 }
 
-.band a { color: #e6c7a1; }
+.filter-bar label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 
-.chapters {
+.filter-bar select, .button {
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 9px;
+  padding: 0.55rem 0.6rem;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.button {
+  cursor: pointer;
+  background: var(--card);
+  font-weight: 500;
+}
+
+.button:hover { border-color: var(--ink); }
+
+.scope { margin: 0.6rem 0 0; }
+
+.kpis {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.8rem;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  border-top: 4px solid var(--accent);
+}
+
+.tile .metric-name { margin: 0; font-size: 0.86rem; }
+
+.tile-value {
+  margin: 0.35rem 0 0.25rem;
+  font-family: Fraunces, Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 560;
+  line-height: 1;
+}
+
+.tile-question { margin: 0 0 0.5rem; font-size: 0.95rem; }
+
+.tile .fine { margin: 0.25rem 0 0; }
+
+.tile .ignored { color: var(--refuse); }
+
+.tile details { margin-top: auto; padding-top: 0.7rem; }
+
+.tile summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.chart-wide { grid-column: 1 / -1; }
+
+.chart h2, .table-head h2 { margin: 0; font-size: 1.2rem; }
+
+.chart .fine { margin: 0.2rem 0 0; }
+
+.chart-body {
+  width: 100%;
+  min-height: 250px;
+  margin-top: 0.6rem;
+}
+
+.table-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
   margin-top: 1.6rem;
 }
 
-.chapters a {
-  display: block;
-  text-decoration: none;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 0.9rem;
-  min-height: 7.5rem;
+.table-head .fine { margin: 0.2rem 0 0; }
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
-.chapters strong { display: block; margin-bottom: 0.35rem; }
-
-.issue, .table-wrap { margin-top: 1rem; }
+tfoot td { font-weight: 600; }
 
 table {
   width: 100%;
@@ -290,11 +338,22 @@ code {
   padding: 1rem 0 2rem;
 }
 
+@media (max-width: 960px) {
+  .filter-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kpis { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 800px) {
-  .header-inner, .grid-3, .grid-2, .chapters, .diagram, .ask-layout { display: block; }
+  .header-inner, .diagram, .ask-layout, .charts, .table-head { display: block; }
   .header-inner { padding-bottom: 1rem; }
   .nav { justify-content: flex-start; margin-top: 0.8rem; }
-  .card, .chapters a, .diagram div { margin-top: 0.8rem; }
+  .card, .diagram div, .chart { margin-top: 0.8rem; }
   .ask-form { display: block; }
   .ask-form button { margin-top: 0.5rem; }
+  .filter-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .table-head .button { margin-top: 0.6rem; }
+}
+
+@media (max-width: 520px) {
+  .kpis, .filter-bar { grid-template-columns: 1fr; }
 }
