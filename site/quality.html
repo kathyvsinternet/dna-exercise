@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quality · Three Houses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html"><strong>Three Houses</strong><span>Governed subscription metrics</span></a>
+      <nav class="nav" aria-label="Sections">
+        <a href="index.html">Overview</a>
+        <a href="quality.html" aria-current="page">Quality</a>
+        <a href="model.html">Model</a>
+        <a href="ask.html">Ask</a>
+        <a href="access.html">Access</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <p class="kicker">Quality</p>
+    <h1>What was wrong, and what the build now refuses</h1>
+    <p class="lede">The raw files stay untouched in <code>data/raw/</code>. <code>python pipeline/build.py</code> applies these treatments and stops before writing the model if a check fails. The longer write-up is in <code>data/quality/issues/</code>.</p>
+
+    <article class="card issue">
+      <h2>Duplicate users</h2>
+      <p>806 user rows, 800 distinct ids. Six ids were repeated, and each pair matched on every column.</p>
+      <p><strong>Treatment.</strong> Keep the first row. <code>dim_user</code> has 800 rows.</p>
+      <p><strong>Check.</strong> Fail if a user id is repeated. Fail if a new pair disagrees on any column, instead of picking a winner silently.</p>
+    </article>
+
+    <article class="card issue">
+      <h2>Test accounts and sentinel values</h2>
+      <p>40 users are flagged as test accounts. They account for 39 subscriptions and 308 events. Planted tokens such as <code>carrier_pigeon</code>, <code>TEST_TYPE</code>, <code>TEST_STATUS_DO_NOT_USE</code>, and <code>glitch_in_the_matrix</code> also appear on rows that are not test accounts.</p>
+      <p><strong>Treatment.</strong> Keep the rows. Marts and metrics leave test accounts out. Planted tokens become <code>unknown</code> on the governed column, and the original stays in a raw column. Fictional countries and <code>lifetime_deal_fake</code> stay as they are.</p>
+      <p><strong>Check.</strong> Fail if a metric is built from a test account, or if a governed column still contains a planted token.</p>
+    </article>
+
+    <article class="card issue">
+      <h2>Missing foreign keys</h2>
+      <p>195 of 300 content items have a blank creator. That is every PageGarden and GatherSquare item. Every MakerHarbor item has one. 323 of 6,000 events have a blank content id, and those blanks are the search, page-view, and subscription events, plus two glitch events. No row points at an id that does not exist.</p>
+      <p><strong>Treatment.</strong> Keep the row and store a null key. Do not invent a creator or a title.</p>
+      <p><strong>Check.</strong> Fail on a dangling key. Fail if MakerHarbor content loses its creator, if a search or subscription event gains a content id, or if an open, complete, like, share, comment, or download loses one.</p>
+    </article>
+
+    <article class="card issue">
+      <h2>Invalid measures</h2>
+      <p>A few measures use sentinel numbers: runtime <code>-1</code> and <code>99999</code> (10 rows), followers <code>-5</code> and <code>999999</code> (4), price <code>-9.99</code> and <code>999.99</code> (16), and session length <code>-15</code>, exactly 24 hours, or exactly 7 days (64).</p>
+      <p><strong>Treatment.</strong> Keep the row. Null the governed measure, keep the source number, and set an invalid flag. Counts still include the row. Sums do not.</p>
+      <p><strong>Check.</strong> Fail if a governed measure is still negative or still holds one of those sentinels.</p>
+    </article>
+
+    <article class="card issue">
+      <h2>Blank subscription fields</h2>
+      <p>215 subscriptions are Free, have a blank billing cycle, and have a zero price. Those are the same 215 rows. End date is blank for every status except canceled. All 224 canceled subscriptions have an end date, and none ends before it starts.</p>
+      <p><strong>Treatment.</strong> Free billing cycle becomes <code>not_applicable</code>. A blank end date stays null and is valid unless the raw status is canceled.</p>
+      <p><strong>Check.</strong> Fail if a Free plan has a price or a raw billing cycle. Fail if a paid plan is blank or zero. Fail if a canceled plan has no end date.</p>
+    </article>
+  </main>
+  <footer class="wrap site-footer">The checks live in <code>pipeline/checks.py</code>. The classified values live in <code>pipeline/rules.py</code>.</footer>
+</body>
+</html>

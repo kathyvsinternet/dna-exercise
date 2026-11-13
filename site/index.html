@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Three Houses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html"><strong>Three Houses</strong><span>Governed subscription metrics</span></a>
+      <nav class="nav" aria-label="Sections">
+        <a href="index.html" aria-current="page">Overview</a>
+        <a href="quality.html">Quality</a>
+        <a href="model.html">Model</a>
+        <a href="ask.html">Ask</a>
+        <a href="access.html">Access</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <p class="kicker">Overview</p>
+    <h1>What the three houses can answer today</h1>
+    <p class="lede">PageGarden, GatherSquare, and MakerHarbor share one subscription catalog. Every number on this page is one of four named metrics. A question without a metric file gets a refusal on Ask, not a guess.</p>
+    <div class="grid-3" id="houses" aria-live="polite">Loading the catalog…</div>
+    <section class="band" id="starts"></section>
+    <p class="fine" id="subscriber-note"></p>
+    <section class="chapters">
+      <a href="quality.html"><strong>Quality</strong><span class="fine">Five treatments, and the check that should fail if each one comes back.</span></a>
+      <a href="model.html"><strong>Model</strong><span class="fine">Grain, joins, and which table a business reader is meant to use.</span></a>
+      <a href="ask.html"><strong>Ask</strong><span class="fine">A question returns a metric name, its filters, and a number from the fact table.</span></a>
+      <a href="access.html"><strong>Access</strong><span class="fine">Names, emails, and age bands stay off this site.</span></a>
+    </section>
+  </main>
+  <footer class="wrap site-footer">Synthetic data. Aggregates only. Generated from <code>fct_subscription.csv</code> by <code>python pipeline/build.py</code>.</footer>
+  <script src="js/catalog.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
