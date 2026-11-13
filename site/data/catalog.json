@@ -1,0 +1,290 @@
+{
+  "source": "data/model/fct_subscription.csv",
+  "businesses": [
+    {
+      "id": "BIZ_1",
+      "name": "PageGarden Premium (SYNTHETIC)",
+      "short": "PageGarden",
+      "line": "Premium published content",
+      "planet": "Terra Prime"
+    },
+    {
+      "id": "BIZ_2",
+      "name": "GatherSquare Community (SYNTHETIC)",
+      "short": "GatherSquare",
+      "line": "Consumer community",
+      "planet": "Nearia"
+    },
+    {
+      "id": "BIZ_3",
+      "name": "MakerHarbor (SYNTHETIC)",
+      "short": "MakerHarbor",
+      "line": "Creator content",
+      "planet": "Wavanda"
+    }
+  ],
+  "metrics": [
+    {
+      "name": "plans_active",
+      "file": "metrics/plans_active.yml",
+      "question": "How many active plan subscriptions do we have??",
+      "source": "data/model/fct_subscription.csv",
+      "aggregation": "count of subscription_id",
+      "filters": [
+        "is_test_account = false",
+        "status = active"
+      ],
+      "group_by": [
+        "business_id",
+        "plan_tier",
+        "billing_cycle"
+      ],
+      "notes": [
+        "Count subscription rows. A person with two active subscriptions counts twice.",
+        "Use the governed status column. A status of unknown is not active.",
+        "Take subscription counts from this table. subscription_start events are not plans."
+      ],
+      "total": 444,
+      "by_business": [
+        {
+          "id": "BIZ_1",
+          "short": "PageGarden",
+          "value": 137
+        },
+        {
+          "id": "BIZ_2",
+          "short": "GatherSquare",
+          "value": 158
+        },
+        {
+          "id": "BIZ_3",
+          "short": "MakerHarbor",
+          "value": 149
+        }
+      ],
+      "by_plan_tier": [
+        {
+          "label": "Basic",
+          "value": 115
+        },
+        {
+          "label": "Free",
+          "value": 134
+        },
+        {
+          "label": "Premium",
+          "value": 85
+        },
+        {
+          "label": "Premium_Plus_Deluxe_XL",
+          "value": 110
+        }
+      ],
+      "by_billing_cycle": [
+        {
+          "label": "annual",
+          "value": 135
+        },
+        {
+          "label": "lifetime_deal_fake",
+          "value": 98
+        },
+        {
+          "label": "monthly",
+          "value": 77
+        },
+        {
+          "label": "not_applicable",
+          "value": 134
+        }
+      ]
+    },
+    {
+      "name": "subscribers_active",
+      "file": "metrics/subscribers_active.yml",
+      "question": "How many users hold an active subscription?",
+      "source": "data/model/fct_subscription.csv",
+      "aggregation": "count distinct user_id",
+      "filters": [
+        "is_test_account = false",
+        "status = active"
+      ],
+      "group_by": [
+        "business_id"
+      ],
+      "notes": [
+        "Count people, not subscription rows. plans_active counts the rows.",
+        "Recompute the distinct count at every grain. Adding the business totals double-counts a person who is active in more than one business.",
+        "Use the governed status column. A status of unknown is not active."
+      ],
+      "total": 389,
+      "by_business": [
+        {
+          "id": "BIZ_1",
+          "short": "PageGarden",
+          "value": 125
+        },
+        {
+          "id": "BIZ_2",
+          "short": "GatherSquare",
+          "value": 147
+        },
+        {
+          "id": "BIZ_3",
+          "short": "MakerHarbor",
+          "value": 145
+        }
+      ],
+      "business_totals_sum": 417,
+      "people_in_more_than_one_business": 28
+    },
+    {
+      "name": "plans_paid_active",
+      "file": "metrics/plans_paid_active.yml",
+      "question": "How many active subscriptions are for a paid plan?",
+      "source": "data/model/fct_subscription.csv",
+      "aggregation": "count of subscription_id",
+      "filters": [
+        "is_test_account = false",
+        "status = active",
+        "plan_tier \u2260 Free"
+      ],
+      "group_by": [
+        "business_id",
+        "plan_tier",
+        "billing_cycle"
+      ],
+      "notes": [
+        "This is plans_active with Free removed.",
+        "A Free plan with a zero price stays in plans_active and stays out of this metric.",
+        "Use the governed plan_tier column."
+      ],
+      "total": 310,
+      "by_business": [
+        {
+          "id": "BIZ_1",
+          "short": "PageGarden",
+          "value": 94
+        },
+        {
+          "id": "BIZ_2",
+          "short": "GatherSquare",
+          "value": 116
+        },
+        {
+          "id": "BIZ_3",
+          "short": "MakerHarbor",
+          "value": 100
+        }
+      ],
+      "by_plan_tier": [
+        {
+          "label": "Basic",
+          "value": 115
+        },
+        {
+          "label": "Premium",
+          "value": 85
+        },
+        {
+          "label": "Premium_Plus_Deluxe_XL",
+          "value": 110
+        }
+      ],
+      "by_billing_cycle": [
+        {
+          "label": "annual",
+          "value": 135
+        },
+        {
+          "label": "lifetime_deal_fake",
+          "value": 98
+        },
+        {
+          "label": "monthly",
+          "value": 77
+        }
+      ]
+    },
+    {
+      "name": "plan_starts",
+      "file": "metrics/plan_starts.yml",
+      "question": "How many subscriptions began within a certain date range?",
+      "source": "data/model/fct_subscription.csv",
+      "aggregation": "count of subscription_id",
+      "filters": [
+        "is_test_account = false",
+        "start_date on or after 2026-01-01",
+        "start_date on or before 2026-09-30"
+      ],
+      "group_by": [
+        "business_id",
+        "plan_tier"
+      ],
+      "notes": [
+        "A start counts even when the subscription is later canceled, paused, or unknown.",
+        "The period is required. There is no default window.",
+        "Take starts from start_date on this table. subscription_start events are a different count."
+      ],
+      "total": 311,
+      "by_business": [
+        {
+          "id": "BIZ_1",
+          "short": "PageGarden",
+          "value": 99
+        },
+        {
+          "id": "BIZ_2",
+          "short": "GatherSquare",
+          "value": 108
+        },
+        {
+          "id": "BIZ_3",
+          "short": "MakerHarbor",
+          "value": 104
+        }
+      ],
+      "period": {
+        "start": "2026-01-01",
+        "end": "2026-09-30"
+      }
+    }
+  ],
+  "refusals": [
+    {
+      "id": "revenue",
+      "title": "Revenue is not a metric",
+      "body": "The catalog has no revenue, ARR, or cash metric. active monthly price on the model mart is a list-price total, and it is not in metrics/."
+    },
+    {
+      "id": "completion",
+      "title": "Completion rate is not a metric",
+      "body": "Completes are not a subset of opens, so a completion rate is not defined. content_completes and content_opens are not in the catalog."
+    },
+    {
+      "id": "identity",
+      "title": "User-level fields stay off this site",
+      "body": "email, user_name, and age_band are restricted. This page only returns a metric from metrics/."
+    },
+    {
+      "id": "history",
+      "title": "There is no point-in-time subscriber metric",
+      "body": "status is the current value. A past date cannot be reconstructed from it. plan_starts counts subscriptions whose start_date falls in a period, which is a different question."
+    },
+    {
+      "id": "events",
+      "title": "Subscription events are not plan counts",
+      "body": "subscription_start and subscription_cancel are engagement events. Plan metrics are counted from fct_subscription."
+    },
+    {
+      "id": "period",
+      "title": "That period is not in the catalog",
+      "body": "plan_starts requires a period. The worked example on this site is 2026-01-01 through 2026-09-30."
+    },
+    {
+      "id": "unknown",
+      "title": "That question is not in the catalog",
+      "body": "The page can answer plans_active, subscribers_active, plans_paid_active, and plan_starts. It will not invent another metric."
+    }
+  ]
+}
