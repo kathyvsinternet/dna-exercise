@@ -17,7 +17,7 @@ Four measures contain a small set of impossible or round sentinel numbers. The r
 
 Keep the row. Set the governed measure to null, keep the source number in the `*_raw` column, and set `*_is_invalid` to true.
 
-Counts of rows still include these records. Sums and averages use the governed measure only, so the sentinel numbers never enter a total. `active_monthly_price_usd` on the business snapshot skips the 16 invalid prices. `subscription_mix` still counts those subscriptions and reports them in `invalid_price_subscriptions`.
+Counts of rows still include these records. Sums and averages use the governed measure only, so the sentinel numbers never enter a total. `active_monthly_price_usd` on `mart_business` skips the 16 invalid prices. `mart_plans` still counts those subscriptions and reports them in `invalid_price_subscriptions`.
 
 ## Check to enforce
 

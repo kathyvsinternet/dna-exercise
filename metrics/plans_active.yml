@@ -1,10 +1,8 @@
 name: plans_active
 question: How many active plan subscriptions do we have??
-source: data/model/fct_subscription.csv
-count: subscription_id
+source: data/marts/mart_plans.csv
+sum: subscriptions
 filters:
-  - column: is_test_account
-    equals: "false"
   - column: status
     equals: active
 group_by:
@@ -12,11 +10,12 @@ group_by:
   - plan_tier
   - billing_cycle
 notes:
-  - Count subscription rows. A person with two active subscriptions counts twice.
-  - Use the governed status column. A status of unknown is not active.
-  - Take subscription counts from this table. subscription_start events are not plans.
+  - Sum the subscriptions column. mart_plans already excludes test accounts, and one row is one business, plan, cycle, and status.
+  - A person with two active subscriptions counts twice. This metric counts plans, not people.
+  - A status of unknown is not active.
+  - subscription_start events are not plans.
 known_result:
-  note: Result of the current fact table. Recompute after python pipeline/build.py.
+  note: Result of mart_plans. Recompute after python pipeline/build.py.
   total: 444
   by_business_id:
     BIZ_1: 137

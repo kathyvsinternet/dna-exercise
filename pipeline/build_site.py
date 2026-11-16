@@ -133,13 +133,19 @@ def _ordered(metrics):
 def _catalog_entry(definition, rows, businesses):
     params = _worked_params(definition)
     names = dimensions(definition)
-    key = definition.get("count_distinct") or definition.get("count")
+    key = definition.get("count_distinct") or definition.get("count") or definition.get("sum")
+    if "count_distinct" in definition:
+        aggregation = f"count distinct {key}"
+    elif "sum" in definition:
+        aggregation = f"sum of {key}"
+    else:
+        aggregation = f"count of {key}"
     entry = {
         "name": definition["name"],
         "file": definition["file"],
         "question": definition["question"],
         "source": definition["source"],
-        "aggregation": f"count distinct {key}" if "count_distinct" in definition else f"count of {key}",
+        "aggregation": aggregation,
         "filters": [_filter_label(item, params) for item in definition.get("filters", [])],
         "conditions": [
             item for item in definition.get("filters", []) if "equals" in item or "not_equals" in item

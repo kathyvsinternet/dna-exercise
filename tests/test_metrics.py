@@ -5,6 +5,7 @@ Run from the repository root after python pipeline/build.py:
     python -m unittest discover -s tests -v
 """
 
+import csv
 import sys
 import unittest
 from pathlib import Path
@@ -134,6 +135,22 @@ class SiteDataTest(unittest.TestCase):
         published = repr(self.catalog) + repr(self.cubes)
         self.assertNotIn("USR_", published)
         self.assertNotIn("@", published)
+
+    def test_metrics_read_marts(self):
+        for name, definition in self.metrics.items():
+            with self.subTest(metric=name):
+                self.assertTrue(definition["source"].startswith("data/marts/"))
+
+    def test_subscriber_mart_is_not_additive(self):
+        with (ROOT / "data" / "marts" / "mart_active_subscribers.csv").open(newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        known = self.metrics["subscribers_active"]["known_result"]
+        self.assertEqual(
+            {row["business_id"]: int(row["active_subscribers"]) for row in rows},
+            {business_id: value for business_id, value in known["by_business_id"].items()},
+        )
+        self.assertEqual(sum(int(row["active_subscribers"]) for row in rows), known["business_totals_sum"])
+        self.assertNotEqual(sum(int(row["active_subscribers"]) for row in rows), known["total"])
 
 
 if __name__ == "__main__":

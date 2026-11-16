@@ -40,9 +40,10 @@ def read_source(definition, root=ROOT):
 def dimensions(definition):
     names = list(definition.get("group_by", []))
     for parameter in definition.get("parameters", []):
-        month = month_dimension(parameter["column"])
-        if month not in names:
-            names.append(month)
+        column = parameter["column"]
+        extra = column if column.endswith(MONTH_SUFFIX) else month_dimension(column)
+        if extra not in names:
+            names.append(extra)
     return names
 
 
@@ -85,6 +86,17 @@ def evaluate(definition, rows, where=None, params=None):
 
 
 def measure(definition, rows):
+    if "sum" in definition:
+        column = definition["sum"]
+        total = 0
+        for row in rows:
+            if row[column] == "":
+                continue
+            number = float(row[column])
+            if not number.is_integer():
+                raise MetricError(f"{definition['name']} cannot sum {column} because {row[column]} is not a whole number.")
+            total += int(number)
+        return total
     if "count_distinct" in definition:
         key = definition["count_distinct"]
         return len({row[key] for row in rows})
@@ -124,9 +136,9 @@ def _validate(definition, path):
     for key in ("question", "source"):
         if not definition.get(key):
             raise MetricError(f"{path.name} is missing {key}.")
-    counts = [key for key in ("count", "count_distinct") if key in definition]
+    counts = [key for key in ("count", "count_distinct", "sum") if key in definition]
     if len(counts) != 1:
-        raise MetricError(f"{path.name} needs exactly one of count or count_distinct.")
+        raise MetricError(f"{path.name} needs exactly one of count, count_distinct, or sum.")
     for item in definition.get("filters", []):
         found = [key for key in COMPARISONS if key in item]
         if "column" not in item or len(found) != 1:

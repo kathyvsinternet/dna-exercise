@@ -5,9 +5,9 @@ Run from the repository root:
     python pipeline/build.py
 
 The command rewrites data/quality/profile.json from the raw files, applies the
-treatments in data/quality/issues/, replaces the CSVs in data/model/, and
-refreshes site/data/ from the metric files. If a check fails, the model CSVs
-and the site data are left unchanged.
+treatments in data/quality/issues/, replaces the CSVs in data/model/, runs the
+SQL in data/marts/sql/, and refreshes site/data/ from the metric files. If a fact
+check fails, the model CSVs and the site data are left unchanged.
 """
 
 import csv
@@ -16,19 +16,21 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+import duckdb
+
 PIPELINE_DIR = Path(__file__).resolve().parent
 if str(PIPELINE_DIR) not in sys.path:
     sys.path.insert(0, str(PIPELINE_DIR))
 
 from build_site import write_site_data
-from checks import check
+from checks import check, check_marts
+from marts import MART_ORDER, build_marts
 from transform import BuildError, transform
 
 ROOT = PIPELINE_DIR.parent
 RAW_DIR = ROOT / "data" / "raw"
 QUALITY_DIR = ROOT / "data" / "quality"
 MODEL_DIR = ROOT / "data" / "model"
-MARTS_DIR = MODEL_DIR / "marts"
 
 RAW_FILES = [
     "Exercise_Businesses.csv",
@@ -119,54 +121,6 @@ MODEL_FILES = {
     ],
 }
 
-MART_FILES = {
-    "business_snapshot": [
-        "business_id",
-        "business_name",
-        "business_line",
-        "content_items",
-        "unknown_type_content_items",
-        "creators",
-        "subscriptions",
-        "active_subscriptions",
-        "canceled_subscriptions",
-        "paused_subscriptions",
-        "trialing_subscriptions",
-        "unknown_status_subscriptions",
-        "subscribers",
-        "active_monthly_price_usd",
-        "engagement_events",
-        "content_items_with_engagement",
-    ],
-    "subscription_mix": [
-        "business_id",
-        "plan_tier",
-        "billing_cycle",
-        "status",
-        "subscriptions",
-        "invalid_price_subscriptions",
-        "monthly_price_usd_sum",
-    ],
-    "content_performance": [
-        "content_id",
-        "business_id",
-        "title",
-        "category",
-        "content_type",
-        "creator_id",
-        "events",
-        "content_opens",
-        "content_completes",
-        "likes",
-        "shares",
-        "comments",
-        "downloads",
-        "other_events",
-        "events_with_valid_duration",
-        "session_duration_sec_sum",
-    ],
-}
-
 
 def main():
     raw = _read_raw()
@@ -179,14 +133,22 @@ def main():
         print("data/model was not changed.", file=sys.stderr)
         return 1
     _write_model(model)
+    try:
+        mart_tables = build_marts(ROOT)
+        check_marts(model, mart_tables)
+    except (BuildError, duckdb.Error, FileNotFoundError) as error:
+        print(f"Build failed: {error}", file=sys.stderr)
+        print("data/marts CSVs may be partial. site/data was not changed.", file=sys.stderr)
+        return 1
     site_files = write_site_data(ROOT)
     print("Checks passed.")
     print(f"Wrote {QUALITY_DIR.relative_to(ROOT) / 'profile.json'}")
     for path in site_files:
         print(f"Wrote {path.relative_to(ROOT)}")
     for name, rows in model.items():
-        folder = "data/model/marts" if name in MART_FILES else "data/model"
-        print(f"Wrote {folder}/{name}.csv ({len(rows)} rows)")
+        print(f"Wrote data/model/{name}.csv ({len(rows)} rows)")
+    for name in MART_ORDER:
+        print(f"Wrote data/marts/{name}.csv ({len(mart_tables[name])} rows)")
     return 0
 
 
@@ -223,11 +185,8 @@ def _profile_table(rows):
 
 
 def _write_model(model):
-    MARTS_DIR.mkdir(parents=True, exist_ok=True)
     for name, fields in MODEL_FILES.items():
         _write_csv(MODEL_DIR / f"{name}.csv", model[name], fields)
-    for name, fields in MART_FILES.items():
-        _write_csv(MARTS_DIR / f"{name}.csv", model[name], fields)
 
 
 def _write_csv(path, rows, fields):

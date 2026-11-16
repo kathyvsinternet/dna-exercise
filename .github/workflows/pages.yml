@@ -33,7 +33,7 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Fail if committed outputs are stale
-        run: git diff --exit-code -- data/model data/quality/profile.json site/data
+        run: git diff --exit-code -- data/model data/marts data/quality/profile.json site/data
 
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

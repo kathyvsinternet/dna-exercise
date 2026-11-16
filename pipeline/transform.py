@@ -1,11 +1,12 @@
-"""Turn the raw exercise files into the model tables and marts."""
+"""Turn the raw exercise files into the dimension and fact tables.
 
-from collections import Counter, defaultdict
+Marts are not built here. data/marts/sql/*.sql defines them, and pipeline/marts.py
+runs that SQL after these tables are written.
+"""
 
 from rules import (
     AGE_TO_UNKNOWN,
     CHANNEL_TO_UNKNOWN,
-    CONTENT_EVENT_COLUMNS,
     CONTENT_TYPE_TO_UNKNOWN,
     DEVICE_TO_UNKNOWN,
     EVENT_TYPE_TO_UNKNOWN,
@@ -95,9 +96,6 @@ def transform(raw):
         "fct_subscription": _sort(fct_subscription, "subscription_id"),
         "fct_engagement_event": _sort(fct_engagement_event, "event_id"),
     }
-    model["business_snapshot"] = _business_snapshot(model)
-    model["subscription_mix"] = _subscription_mix(model)
-    model["content_performance"] = _content_performance(model)
     return model
 
 
@@ -199,119 +197,3 @@ def _event_row(row, test_ids):
         "session_duration_is_invalid": flag(invalid),
         "is_test_account": flag(row["user_id"] in test_ids),
     }
-
-
-def _metric_subscriptions(model):
-    return [row for row in model["fct_subscription"] if row["is_test_account"] == "false"]
-
-
-def _metric_events(model):
-    return [row for row in model["fct_engagement_event"] if row["is_test_account"] == "false"]
-
-
-def _business_snapshot(model):
-    subscriptions = _metric_subscriptions(model)
-    events = _metric_events(model)
-    content_ids = defaultdict(set)
-    for row in model["dim_content"]:
-        content_ids[row["business_id"]].add(row["content_id"])
-
-    snapshots = []
-    for business in model["dim_business"]:
-        business_id = business["business_id"]
-        business_subs = [row for row in subscriptions if row["business_id"] == business_id]
-        statuses = Counter(row["status"] for row in business_subs)
-        active_price = sum(
-            float(row["monthly_price_usd"])
-            for row in business_subs
-            if row["status"] == "active" and row["monthly_price_usd"] != ""
-        )
-        linked = [row for row in events if row["content_id"] in content_ids[business_id]]
-        snapshots.append(
-            {
-                "business_id": business_id,
-                "business_name": business["business_name"],
-                "business_line": business["business_line"],
-                "content_items": str(sum(1 for row in model["dim_content"] if row["business_id"] == business_id)),
-                "unknown_type_content_items": str(
-                    sum(
-                        1
-                        for row in model["dim_content"]
-                        if row["business_id"] == business_id and row["content_type"] == "unknown"
-                    )
-                ),
-                "creators": str(sum(1 for row in model["dim_creator"] if row["business_id"] == business_id)),
-                "subscriptions": str(len(business_subs)),
-                "active_subscriptions": str(statuses.get("active", 0)),
-                "canceled_subscriptions": str(statuses.get("canceled", 0)),
-                "paused_subscriptions": str(statuses.get("paused", 0)),
-                "trialing_subscriptions": str(statuses.get("trialing", 0)),
-                "unknown_status_subscriptions": str(statuses.get("unknown", 0)),
-                "subscribers": str(len({row["user_id"] for row in business_subs})),
-                "active_monthly_price_usd": f"{active_price:.2f}",
-                "engagement_events": str(len(linked)),
-                "content_items_with_engagement": str(len({row["content_id"] for row in linked})),
-            }
-        )
-    return snapshots
-
-
-def _subscription_mix(model):
-    buckets = defaultdict(lambda: {"subscriptions": 0, "invalid_price_subscriptions": 0, "monthly_price_usd_sum": 0.0})
-    for row in _metric_subscriptions(model):
-        key = (row["business_id"], row["plan_tier"], row["billing_cycle"], row["status"])
-        bucket = buckets[key]
-        bucket["subscriptions"] += 1
-        if row["monthly_price_is_invalid"] == "true":
-            bucket["invalid_price_subscriptions"] += 1
-        elif row["monthly_price_usd"] != "":
-            bucket["monthly_price_usd_sum"] += float(row["monthly_price_usd"])
-
-    mix = []
-    for key in sorted(buckets):
-        business_id, plan_tier, billing_cycle, status = key
-        bucket = buckets[key]
-        mix.append(
-            {
-                "business_id": business_id,
-                "plan_tier": plan_tier,
-                "billing_cycle": billing_cycle,
-                "status": status,
-                "subscriptions": str(bucket["subscriptions"]),
-                "invalid_price_subscriptions": str(bucket["invalid_price_subscriptions"]),
-                "monthly_price_usd_sum": f"{bucket['monthly_price_usd_sum']:.2f}",
-            }
-        )
-    return mix
-
-
-def _content_performance(model):
-    by_content = defaultdict(list)
-    for row in _metric_events(model):
-        if row["content_id"]:
-            by_content[row["content_id"]].append(row)
-
-    performance = []
-    for content in model["dim_content"]:
-        events = by_content.get(content["content_id"], [])
-        counts = Counter(row["event_type"] for row in events)
-        named = 0
-        record = {
-            "content_id": content["content_id"],
-            "business_id": content["business_id"],
-            "title": content["title"],
-            "category": content["category"],
-            "content_type": content["content_type"],
-            "creator_id": content["creator_id"],
-            "events": str(len(events)),
-        }
-        for event_type, column in CONTENT_EVENT_COLUMNS.items():
-            count = counts.get(event_type, 0)
-            record[column] = str(count)
-            named += count
-        valid = [row for row in events if row["session_duration_sec"] != ""]
-        record["other_events"] = str(len(events) - named)
-        record["events_with_valid_duration"] = str(len(valid))
-        record["session_duration_sec_sum"] = str(sum(int(row["session_duration_sec"]) for row in valid))
-        performance.append(record)
-    return performance

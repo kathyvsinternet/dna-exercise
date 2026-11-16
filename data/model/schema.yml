@@ -4,8 +4,9 @@
 # Governed columns are the ones a metric is allowed to use. Raw columns keep
 # the source value so a treatment can be audited.
 #
-# Marts exclude test accounts. Fact tables keep those rows and flag them
-# with is_test_account. The site should read marts/ only.
+# Marts are defined in data/marts/sql/*.sql and built from these tables.
+# They exclude test accounts. Fact tables keep those rows and flag them
+# with is_test_account. Metrics read the marts.
 # user_name, email, and age_band are restricted. They are not in any mart.
 
 tables:
@@ -123,11 +124,66 @@ tables:
       - {name: session_duration_is_invalid, description: true when session_duration_sec was nulled.}
       - {name: is_test_account, description: true when the user is a test account.}
 
-  - name: marts/business_snapshot
+  - name: mart_subscription
+    grain: one row per non-test subscription_id
+    primary_key: subscription_id
+    rows: 804
+    defined_in: data/marts/sql/mart_subscription.sql
+    notes: subscribers_active counts distinct user_id here. The count is recomputed at each grain because a person can be active in more than one business.
+    columns:
+      - {name: subscription_id, description: Subscription key.}
+      - {name: user_id, description: Subscriber key. Used for distinct counts. Not a name or an email.}
+      - {name: business_id, description: Business being subscribed to.}
+      - {name: plan_tier, description: Free, Basic, Premium, or Premium_Plus_Deluxe_XL.}
+      - {name: billing_cycle, description: monthly, annual, lifetime_deal_fake, or not_applicable for Free.}
+      - {name: status, description: Governed status.}
+      - {name: start_date, description: Subscription start date.}
+      - {name: start_month, description: First seven characters of start_date.}
+      - {name: monthly_price_usd, description: Governed monthly price. Blank when the source price was invalid.}
+      - {name: monthly_price_is_invalid, description: true when monthly_price_usd was nulled.}
+
+  - name: mart_plans
+    grain: one row per business_id, plan_tier, billing_cycle, and status
+    rows: 118
+    defined_in: data/marts/sql/mart_plans.sql
+    notes: subscriptions is additive. plans_active and plans_paid_active sum it. There is no subscriber column, because a distinct count at this grain cannot be added up.
+    columns:
+      - {name: business_id, description: Business key.}
+      - {name: plan_tier, description: Plan tier.}
+      - {name: billing_cycle, description: Governed billing cycle, including not_applicable and lifetime_deal_fake.}
+      - {name: status, description: Governed status.}
+      - {name: subscriptions, description: Non-test subscriptions in this group, including rows with an invalid price.}
+      - {name: invalid_price_subscriptions, description: Subscriptions in this group whose price was nulled.}
+      - {name: monthly_price_usd_sum, description: Sum of governed monthly price for this group.}
+
+  - name: mart_plan_starts
+    grain: one row per business_id, plan_tier, and start_date_month
+    rows: 397
+    defined_in: data/marts/sql/mart_plan_starts.sql
+    notes: plan_starts is additive across businesses, plan tiers, and months. The metric sums it for a month range. A later cancellation still counts as a start.
+    columns:
+      - {name: business_id, description: Business key.}
+      - {name: plan_tier, description: Plan tier.}
+      - {name: start_date_month, description: Month the subscription began, YYYY-MM.}
+      - {name: plan_starts, description: Non-test subscriptions that began in this month.}
+
+  - name: mart_active_subscribers
     grain: one row per business_id
     primary_key: business_id
     rows: 3
-    notes: Subscription counts and the price total exclude test accounts. Engagement counts are events whose content belongs to the business, also excluding test accounts. Events with no content id are not included.
+    defined_in: data/marts/sql/mart_active_subscribers.sql
+    notes: The per-business check for subscribers_active. Adding active_subscribers across businesses double-counts people. The all-business total is computed from mart_subscription, not from this table.
+    columns:
+      - {name: business_id, description: Business key.}
+      - {name: active_subscribers, description: Distinct non-test users with an active subscription to this business.}
+      - {name: active_subscriptions, description: Active non-test subscriptions. Matches plans_active for the business.}
+
+  - name: mart_business
+    grain: one row per business_id
+    primary_key: business_id
+    rows: 3
+    defined_in: data/marts/sql/mart_business.sql
+    notes: House summary. subscribers includes every status, so it is not subscribers_active. Engagement counts are events whose content belongs to the business. Events with no content id are not included.
     columns:
       - {name: business_id, description: Business key.}
       - {name: business_name, description: Display name.}
@@ -141,29 +197,17 @@ tables:
       - {name: paused_subscriptions, description: Non-test subscriptions with governed status paused.}
       - {name: trialing_subscriptions, description: Non-test subscriptions with governed status trialing.}
       - {name: unknown_status_subscriptions, description: Non-test subscriptions whose status was TEST_STATUS_DO_NOT_USE.}
-      - {name: subscribers, description: Distinct non-test users with a subscription to this business.}
+      - {name: subscribers, description: Distinct non-test users with a subscription to this business, any status.}
       - {name: active_monthly_price_usd, description: Sum of governed monthly price on active non-test subscriptions. Invalid prices are omitted. This is a monthly price total, not annualized revenue.}
       - {name: engagement_events, description: Non-test events on this business's content.}
       - {name: content_items_with_engagement, description: Content items that have at least one of those events.}
 
-  - name: marts/subscription_mix
-    grain: one row per business_id, plan_tier, billing_cycle, and status
-    rows: 118
-    notes: Test accounts are excluded. monthly_price_usd_sum uses governed prices only.
-    columns:
-      - {name: business_id, description: Business key.}
-      - {name: plan_tier, description: Plan tier.}
-      - {name: billing_cycle, description: Governed billing cycle, including not_applicable and lifetime_deal_fake.}
-      - {name: status, description: Governed status.}
-      - {name: subscriptions, description: Non-test subscriptions in this group, including rows with an invalid price.}
-      - {name: invalid_price_subscriptions, description: Subscriptions in this group whose price was nulled.}
-      - {name: monthly_price_usd_sum, description: Sum of governed monthly price for this group.}
-
-  - name: marts/content_performance
+  - name: mart_content
     grain: one row per content_id
     primary_key: content_id
     rows: 300
-    notes: Event counts exclude test accounts. An item with no remaining events stays in the table with zeros.
+    defined_in: data/marts/sql/mart_content.sql
+    notes: Event counts exclude test accounts. An item with no remaining events stays in the table with zeros. Opens and completes are not a governed metric.
     columns:
       - {name: content_id, description: Content key.}
       - {name: business_id, description: Business that published the item.}

@@ -1,10 +1,8 @@
 name: plans_paid_active
 question: How many active subscriptions are for a paid plan?
-source: data/model/fct_subscription.csv
-count: subscription_id
+source: data/marts/mart_plans.csv
+sum: subscriptions
 filters:
-  - column: is_test_account
-    equals: "false"
   - column: status
     equals: active
   - column: plan_tier
@@ -14,11 +12,11 @@ group_by:
   - plan_tier
   - billing_cycle
 notes:
-  - This is plans_active with Free removed.
-  - A Free plan with a zero price stays in plans_active and stays out of this metric.
-  - Use the governed plan_tier column.
+  - This is plans_active with Free removed. Both metrics sum mart_plans.
+  - A Free plan stays in plans_active and stays out of this metric.
+  - mart_plans already excludes test accounts.
 known_result:
-  note: Result of the current fact table. Recompute after python pipeline/build.py.
+  note: Result of mart_plans. Recompute after python pipeline/build.py.
   total: 310
   by_business_id:
     BIZ_1: 94
