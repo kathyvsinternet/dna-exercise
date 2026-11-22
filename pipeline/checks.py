@@ -51,6 +51,31 @@ def check_marts(model, marts):
     _check_active_subscriber_mart(marts)
 
 
+def check_dashboard_marts(model, marts):
+    """Each mart the dashboard publishes must reconcile to the fact tables."""
+    if "mart_quarterly_users" in marts:
+        _check_quarterly_users(model, marts["mart_quarterly_users"])
+
+
+def _check_quarterly_users(model, rows):
+    quarters = [row["quarter"] for row in rows]
+    if len(quarters) != len(set(quarters)):
+        raise BuildError(f"mart_quarterly_users has a repeated quarter. See {ISSUE_DUPLICATES}.")
+    real_users = [row for row in model["dim_user"] if row["is_test_account"] == "false"]
+    real_subs = [row for row in model["fct_subscription"] if row["is_test_account"] == "false"]
+    expected = {
+        "user_subscriptions": len(real_subs),
+        "user_cancellations": sum(1 for row in real_subs if row["status"] == "canceled" and not blank(row["end_date"])),
+    }
+    for column, want in expected.items():
+        got = sum(int(row[column]) for row in rows)
+        if got != want:
+            raise BuildError(
+                f"mart_quarterly_users adds up to {got} {column}, but the fact tables have {want} "
+                f"for non-test accounts. See {ISSUE_SENTINELS}."
+            )
+
+
 def _check_raw_tokens(raw):
     _expect(raw["Exercise_users.csv"], "is_test_account_flag", TEST_FLAGS, ISSUE_SENTINELS)
     _expect(raw["Exercise_Businesses.csv"], "business_id", BUSINESS_IDS, ISSUE_SENTINELS)

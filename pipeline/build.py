@@ -6,8 +6,9 @@ Run from the repository root:
 
 The command rewrites data/quality/profile.json from the raw files, applies the
 treatments in data/quality/issues/, replaces the CSVs in data/model/, runs the
-SQL in data/marts/sql/, and refreshes site/data/ from the metric files. If a fact
-check fails, the model CSVs and the site data are left unchanged.
+SQL models in data/marts/, and publishes each mart to data/marts/ as a CSV and to
+site/data/marts/ as JSON. If a fact check fails, the model CSVs and the marts are
+left unchanged.
 """
 
 import csv
@@ -16,15 +17,12 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-import duckdb
-
 PIPELINE_DIR = Path(__file__).resolve().parent
 if str(PIPELINE_DIR) not in sys.path:
     sys.path.insert(0, str(PIPELINE_DIR))
 
-from build_site import write_site_data
-from checks import check, check_marts
-from marts import MART_ORDER, build_marts
+from checks import check, check_dashboard_marts
+from marts import ModelError, build_marts
 from transform import BuildError, transform
 
 ROOT = PIPELINE_DIR.parent
@@ -135,20 +133,17 @@ def main():
     _write_model(model)
     try:
         mart_tables = build_marts(ROOT)
-        check_marts(model, mart_tables)
-    except (BuildError, duckdb.Error, FileNotFoundError) as error:
+        check_dashboard_marts(model, mart_tables)
+    except (BuildError, ModelError) as error:
         print(f"Build failed: {error}", file=sys.stderr)
-        print("data/marts CSVs may be partial. site/data was not changed.", file=sys.stderr)
+        print("data/marts and site/data/marts may be partial.", file=sys.stderr)
         return 1
-    site_files = write_site_data(ROOT)
     print("Checks passed.")
     print(f"Wrote {QUALITY_DIR.relative_to(ROOT) / 'profile.json'}")
-    for path in site_files:
-        print(f"Wrote {path.relative_to(ROOT)}")
     for name, rows in model.items():
         print(f"Wrote data/model/{name}.csv ({len(rows)} rows)")
-    for name in MART_ORDER:
-        print(f"Wrote data/marts/{name}.csv ({len(mart_tables[name])} rows)")
+    for name, rows in mart_tables.items():
+        print(f"Wrote data/marts/{name}.csv and site/data/marts/{name}.json ({len(rows)} rows)")
     return 0
 
 

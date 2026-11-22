@@ -338,6 +338,31 @@ code {
   padding: 1rem 0 2rem;
 }
 
+.dash { margin-top: 1.4rem; }
+
+.chart-tall { min-height: 380px; }
+
+.peek { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
+
+.peek summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.peek .table-wrap { max-height: 22rem; overflow: auto; }
+
+.sql {
+  margin: 0.5rem 0 0;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  background: #1b1914;
+  color: #f3efe6;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
 @media (max-width: 960px) {
   .filter-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpis { grid-template-columns: repeat(2, 1fr); }
