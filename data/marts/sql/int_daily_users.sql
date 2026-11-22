@@ -1,5 +1,3 @@
--- intermediate model for daily activity counts
-
 WITH user_signups AS (
   SELECT signup_date AS date,
     COUNT(DISTINCT user_id) as user_signups
