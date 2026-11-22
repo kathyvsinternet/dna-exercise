@@ -1,5 +1,5 @@
 {
- "name": "mart_quarterly_users",
+ "name": "mart_user_qtr_counts",
  "sql": "SELECT\n  DATE_TRUNC('quarter', date)::DATE as quarter,\n  SUM(user_subscriptions) as user_subscriptions,\n  SUM(user_cancellations) as user_cancellations\nFROM int_daily_users\nGROUP BY quarter\nORDER BY quarter",
  "depends_on": [
   "int_daily_users"

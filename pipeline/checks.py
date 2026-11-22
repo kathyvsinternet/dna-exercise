@@ -51,16 +51,50 @@ def check_marts(model, marts):
     _check_active_subscriber_mart(marts)
 
 
+USER_BREAKDOWN_MARTS = {
+    "mart_user_share_country": "user_geo_country",
+    "mart_user_share_age": "user_age_band",
+    "mart_user_share_channel": "user_acq_channel",
+    "mart_user_info_prim_device": "user_prim_device",
+}
+
+
 def check_dashboard_marts(model, marts):
     """Each mart the dashboard publishes must reconcile to the fact tables."""
-    if "mart_quarterly_users" in marts:
-        _check_quarterly_users(model, marts["mart_quarterly_users"])
+    if "mart_user_qtr_counts" in marts:
+        _check_quarterly_users(model, marts["mart_user_qtr_counts"])
+    _check_user_breakdowns(model, marts)
+
+
+def _check_user_breakdowns(model, marts):
+    """Every user lands in exactly one row of each breakdown, so each one adds up to all active users."""
+    active_users = {
+        row["user_id"]
+        for row in model["fct_subscription"]
+        if row["is_test_account"] == "false" and row["status"] == "active"
+    }
+    for name, column in USER_BREAKDOWN_MARTS.items():
+        if name not in marts:
+            continue
+        rows = marts[name]
+        values = [row[column] for row in rows]
+        if len(values) != len(set(values)):
+            raise BuildError(f"{name} has a repeated {column}. See {ISSUE_DUPLICATES}.")
+        got = sum(int(row["n_users"]) for row in rows)
+        if got != len(active_users):
+            raise BuildError(
+                f"{name} adds up to {got} users, but {len(active_users)} non-test users hold an active "
+                f"subscription. See {ISSUE_SENTINELS}."
+            )
+        share = sum(float(row["n_share"]) for row in rows)
+        if abs(share - 1) > 0.005:
+            raise BuildError(f"{name} shares add up to {share:.4f}, not 1. See {ISSUE_SENTINELS}.")
 
 
 def _check_quarterly_users(model, rows):
     quarters = [row["quarter"] for row in rows]
     if len(quarters) != len(set(quarters)):
-        raise BuildError(f"mart_quarterly_users has a repeated quarter. See {ISSUE_DUPLICATES}.")
+        raise BuildError(f"mart_user_qtr_counts has a repeated quarter. See {ISSUE_DUPLICATES}.")
     real_users = [row for row in model["dim_user"] if row["is_test_account"] == "false"]
     real_subs = [row for row in model["fct_subscription"] if row["is_test_account"] == "false"]
     expected = {
@@ -71,7 +105,7 @@ def _check_quarterly_users(model, rows):
         got = sum(int(row[column]) for row in rows)
         if got != want:
             raise BuildError(
-                f"mart_quarterly_users adds up to {got} {column}, but the fact tables have {want} "
+                f"mart_user_qtr_counts adds up to {got} {column}, but the fact tables have {want} "
                 f"for non-test accounts. See {ISSUE_SENTINELS}."
             )
 

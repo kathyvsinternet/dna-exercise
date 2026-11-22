@@ -1,0 +1,390 @@
+user_id,n_subs_active,n_subs_paid,n_subs_free,n_subs_basic,n_biz_supported,monthly_payment,user_geo_country,user_age_band,user_acq_channel,user_prim_device
+USR_00001,1,1,0,1,1,7.99,Australia,18-24,unknown,iOS_app
+USR_00003,1,1,0,0,1,14.99,Japan,13-17,organic_search,Android_app
+USR_00006,1,1,0,1,1,7.99,Latoria,45-54,paid_social,web_mobile
+USR_00010,1,1,0,0,1,19.99,Genora,13-17,unknown,web_mobile
+USR_00011,1,1,0,0,1,9.99,Genora,25-34,email_campaign,Android_app
+USR_00013,1,0,1,0,1,0.0,Eloria,35-44,paid_social,web_desktop
+USR_00014,1,1,0,0,1,24.99,Nearia,25-34,email_campaign,Android_app
+USR_00018,1,0,1,0,1,0.0,Zubria,65+,email_campaign,web_desktop
+USR_00020,1,0,1,0,1,0.0,Zubria,65+,paid_social,web_mobile
+USR_00021,1,1,0,0,1,11.99,Canada,35-44,paid_social,web_mobile
+USR_00022,1,1,0,0,1,9.99,Germany,13-17,paid_social,web_mobile
+USR_00023,1,1,0,1,1,4.99,Altara,35-44,email_campaign,web_desktop
+USR_00027,3,0,3,0,2,0.0,Wondervale,13-17,referral,web_desktop
+USR_00028,1,1,0,0,1,14.99,Germany,18-24,paid_social,Android_app
+USR_00029,1,1,0,0,1,11.99,Gondale,35-44,referral,iOS_app
+USR_00036,1,1,0,0,1,9.99,Altara,unknown,unknown,web_mobile
+USR_00037,1,1,0,1,1,4.99,Australia,18-24,paid_social,iOS_app
+USR_00039,1,1,0,0,1,19.99,Latoria,25-34,organic_search,web_desktop
+USR_00043,1,1,0,0,1,14.99,Nearia,55-64,email_campaign,web_mobile
+USR_00044,2,1,1,1,2,4.99,Genora,45-54,organic_search,web_desktop
+USR_00046,1,1,0,1,1,7.99,United States,18-24,email_campaign,iOS_app
+USR_00048,1,0,1,0,1,0.0,Brazil,45-54,email_campaign,unknown
+USR_00050,1,1,0,0,1,14.99,Hogglewick,unknown,referral,web_mobile
+USR_00051,2,1,1,0,2,14.99,Australia,18-24,unknown,Android_app
+USR_00053,1,0,1,0,1,0.0,Germany,45-54,paid_social,web_mobile
+USR_00056,2,2,0,1,1,24.98,Germany,18-24,organic_search,web_desktop
+USR_00057,2,1,1,1,1,9.99,Genora,25-34,paid_social,web_mobile
+USR_00058,1,1,0,0,1,19.99,Hogglewick,65+,referral,web_desktop
+USR_00059,1,0,1,0,1,0.0,Altara,45-54,email_campaign,web_mobile
+USR_00062,1,1,0,0,1,19.99,Australia,45-54,paid_social,web_desktop
+USR_00065,1,0,1,0,1,0.0,Freelandia,25-34,paid_social,web_desktop
+USR_00067,1,0,1,0,1,0.0,Freelandia,55-64,referral,web_mobile
+USR_00069,2,2,0,0,1,19.99,Germany,55-64,organic_search,web_mobile
+USR_00071,1,0,1,0,1,0.0,Wavanda,25-34,referral,unknown
+USR_00072,2,2,0,0,1,34.98,United Kingdom,25-34,email_campaign,iOS_app
+USR_00073,3,1,2,1,2,7.99,Japan,65+,email_campaign,Android_app
+USR_00074,1,1,0,0,1,19.99,Freelandia,18-24,email_campaign,iOS_app
+USR_00075,1,1,0,1,1,7.99,Zubria,13-17,paid_social,iOS_app
+USR_00076,1,0,1,0,1,0.0,Wondervale,unknown,email_campaign,unknown
+USR_00077,1,1,0,1,1,9.99,Germany,45-54,email_campaign,iOS_app
+USR_00080,1,1,0,0,1,11.99,Nearia,65+,email_campaign,web_mobile
+USR_00081,1,0,1,0,1,0.0,Eloria,13-17,organic_search,Android_app
+USR_00082,1,1,0,1,1,9.99,Germany,13-17,email_campaign,iOS_app
+USR_00086,1,1,0,1,1,9.99,Freelandia,25-34,email_campaign,Android_app
+USR_00087,1,1,0,1,1,,United Kingdom,18-24,paid_social,iOS_app
+USR_00089,1,1,0,0,1,14.99,Australia,35-44,unknown,iOS_app
+USR_00092,1,1,0,0,1,24.99,Altara,35-44,organic_search,web_mobile
+USR_00096,1,1,0,0,1,9.99,Germany,13-17,organic_search,web_mobile
+USR_00098,1,1,0,1,1,7.99,Brazil,45-54,organic_search,web_desktop
+USR_00102,2,1,1,0,1,19.99,Wavanda,45-54,paid_social,web_mobile
+USR_00103,1,1,0,1,1,9.99,Hogglewick,55-64,referral,web_mobile
+USR_00105,1,1,0,1,1,7.99,Canada,18-24,paid_social,Android_app
+USR_00106,1,1,0,0,1,9.99,Germany,55-64,paid_social,web_mobile
+USR_00107,2,2,0,0,2,26.98,Gondale,25-34,referral,iOS_app
+USR_00108,1,0,1,0,1,0.0,United Kingdom,45-54,email_campaign,Android_app
+USR_00112,1,1,0,0,1,9.99,Germany,18-24,referral,iOS_app
+USR_00114,2,2,0,0,2,26.98,United Kingdom,25-34,paid_social,web_desktop
+USR_00116,1,0,1,0,1,0.0,Hogglewick,unknown,organic_search,iOS_app
+USR_00118,1,1,0,0,1,19.99,Germany,45-54,paid_social,iOS_app
+USR_00125,2,1,1,1,2,9.99,Japan,65+,paid_social,unknown
+USR_00127,1,1,0,0,1,24.99,Latoria,18-24,organic_search,web_mobile
+USR_00128,2,2,0,1,2,32.98,Wondervale,35-44,email_campaign,Android_app
+USR_00130,2,1,1,1,1,0.0,Germany,45-54,unknown,web_desktop
+USR_00132,1,0,1,0,1,0.0,Germany,65+,referral,web_desktop
+USR_00134,2,0,2,0,2,0.0,Hogglewick,55-64,referral,iOS_app
+USR_00135,1,1,0,0,1,11.99,Nearia,18-24,paid_social,Android_app
+USR_00138,1,1,0,1,1,7.99,Freelandia,65+,email_campaign,Android_app
+USR_00140,1,0,1,0,1,0.0,Hogglewick,65+,paid_social,Android_app
+USR_00143,1,0,1,0,1,0.0,United States,13-17,referral,Android_app
+USR_00146,2,1,1,0,1,11.99,Latoria,25-34,organic_search,iOS_app
+USR_00149,1,1,0,0,1,14.99,Germany,55-64,paid_social,iOS_app
+USR_00150,1,1,0,1,1,4.99,Genora,35-44,email_campaign,unknown
+USR_00151,1,0,1,0,1,0.0,Genora,13-17,organic_search,web_desktop
+USR_00152,1,1,0,1,1,4.99,Germany,25-34,organic_search,Android_app
+USR_00154,1,1,0,0,1,9.99,Nearia,55-64,email_campaign,web_desktop
+USR_00157,1,1,0,0,1,24.99,Brazil,unknown,paid_social,iOS_app
+USR_00159,3,2,1,1,1,22.98,Wondervale,45-54,organic_search,Android_app
+USR_00160,2,2,0,1,2,24.979999999999997,United Kingdom,35-44,paid_social,web_mobile
+USR_00166,1,1,0,0,1,24.99,Freelandia,35-44,organic_search,Android_app
+USR_00167,1,1,0,0,1,14.99,Japan,13-17,organic_search,web_desktop
+USR_00168,1,0,1,0,1,0.0,Canada,13-17,organic_search,web_desktop
+USR_00169,1,1,0,0,1,19.99,Hogglewick,25-34,referral,web_mobile
+USR_00172,1,1,0,1,1,7.99,Brazil,55-64,referral,web_desktop
+USR_00173,1,1,0,0,1,24.99,United Kingdom,65+,email_campaign,Android_app
+USR_00174,1,1,0,0,1,11.99,Australia,25-34,organic_search,iOS_app
+USR_00178,1,0,1,0,1,0.0,Genora,35-44,email_campaign,iOS_app
+USR_00179,3,2,1,1,2,22.98,United States,35-44,referral,web_mobile
+USR_00181,1,1,0,1,1,9.99,Japan,45-54,organic_search,iOS_app
+USR_00182,1,0,1,0,1,0.0,Wavanda,18-24,email_campaign,web_mobile
+USR_00183,1,1,0,1,1,7.99,Australia,55-64,paid_social,Android_app
+USR_00187,1,1,0,0,1,,Nearia,55-64,email_campaign,Android_app
+USR_00188,1,1,0,1,1,4.99,Brazil,55-64,referral,web_mobile
+USR_00190,1,0,1,0,1,0.0,United States,35-44,organic_search,web_mobile
+USR_00192,1,1,0,0,1,24.99,United States,65+,referral,web_mobile
+USR_00194,1,1,0,1,1,7.99,Eloria,18-24,referral,web_mobile
+USR_00195,1,0,1,0,1,0.0,Wavanda,55-64,email_campaign,web_desktop
+USR_00196,2,0,2,0,2,0.0,Altara,13-17,email_campaign,web_mobile
+USR_00197,1,1,0,0,1,9.99,United Kingdom,25-34,referral,Android_app
+USR_00198,1,1,0,0,1,14.99,Altara,35-44,referral,web_desktop
+USR_00199,1,1,0,0,1,19.99,Freelandia,13-17,email_campaign,iOS_app
+USR_00201,2,0,2,0,2,0.0,Eloria,18-24,organic_search,iOS_app
+USR_00205,1,1,0,0,1,11.99,United Kingdom,65+,email_campaign,web_desktop
+USR_00206,1,0,1,0,1,0.0,Latoria,25-34,referral,Android_app
+USR_00209,1,1,0,0,1,14.99,Nearia,35-44,paid_social,web_desktop
+USR_00211,1,1,0,1,1,4.99,Genora,55-64,organic_search,web_desktop
+USR_00215,2,2,0,1,1,19.98,Japan,13-17,email_campaign,Android_app
+USR_00216,1,0,1,0,1,0.0,Gondale,13-17,email_campaign,web_mobile
+USR_00219,1,1,0,1,1,4.99,Genora,65+,referral,web_desktop
+USR_00220,1,1,0,0,1,9.99,Altara,unknown,email_campaign,iOS_app
+USR_00227,1,1,0,0,1,14.99,Canada,25-34,paid_social,Android_app
+USR_00229,1,1,0,0,1,14.99,Nearia,18-24,paid_social,web_mobile
+USR_00230,1,1,0,0,1,11.99,Canada,18-24,organic_search,web_mobile
+USR_00231,1,1,0,1,1,7.99,Genora,65+,email_campaign,web_mobile
+USR_00234,1,1,0,1,1,4.99,Latoria,55-64,referral,iOS_app
+USR_00235,2,1,1,1,1,7.99,Freelandia,55-64,email_campaign,web_mobile
+USR_00239,1,1,0,0,1,9.99,Freelandia,55-64,paid_social,web_desktop
+USR_00241,1,1,0,1,1,7.99,United States,13-17,email_campaign,web_desktop
+USR_00242,1,1,0,0,1,19.99,Latoria,55-64,referral,web_mobile
+USR_00244,1,1,0,0,1,24.99,Freelandia,65+,email_campaign,web_mobile
+USR_00245,1,1,0,0,1,9.99,Canada,25-34,organic_search,web_mobile
+USR_00250,1,0,1,0,1,0.0,United Kingdom,25-34,organic_search,Android_app
+USR_00253,1,1,0,0,1,19.99,Wondervale,18-24,unknown,iOS_app
+USR_00255,2,2,0,1,1,24.98,Germany,55-64,email_campaign,iOS_app
+USR_00259,1,1,0,0,1,11.99,Gondale,35-44,email_campaign,Android_app
+USR_00261,1,0,1,0,1,0.0,Australia,55-64,organic_search,web_desktop
+USR_00263,1,1,0,0,1,19.99,Zubria,13-17,paid_social,web_mobile
+USR_00266,1,1,0,0,1,24.99,United Kingdom,18-24,paid_social,web_mobile
+USR_00269,1,1,0,0,1,19.99,Altara,45-54,unknown,unknown
+USR_00272,1,1,0,0,1,14.99,Latoria,35-44,unknown,Android_app
+USR_00276,1,1,0,1,1,7.99,Japan,45-54,email_campaign,web_mobile
+USR_00278,1,1,0,0,1,14.99,Altara,65+,unknown,iOS_app
+USR_00279,1,0,1,0,1,0.0,Gondale,13-17,paid_social,web_mobile
+USR_00286,1,0,1,0,1,0.0,Eloria,45-54,organic_search,Android_app
+USR_00287,1,1,0,0,1,9.99,Japan,35-44,email_campaign,web_desktop
+USR_00290,1,1,0,0,1,,Germany,18-24,unknown,Android_app
+USR_00291,1,0,1,0,1,0.0,Gondale,35-44,email_campaign,web_desktop
+USR_00292,1,1,0,1,1,9.99,Freelandia,18-24,email_campaign,Android_app
+USR_00293,1,1,0,1,1,7.99,Zubria,65+,organic_search,web_desktop
+USR_00294,1,1,0,1,1,9.99,Hogglewick,18-24,organic_search,iOS_app
+USR_00296,1,1,0,1,1,7.99,Germany,45-54,paid_social,Android_app
+USR_00299,1,0,1,0,1,0.0,Germany,13-17,email_campaign,web_desktop
+USR_00302,1,1,0,0,1,14.99,United Kingdom,35-44,paid_social,iOS_app
+USR_00304,1,1,0,0,1,11.99,Genora,13-17,paid_social,web_desktop
+USR_00306,1,1,0,0,1,24.99,United States,25-34,paid_social,iOS_app
+USR_00307,1,0,1,0,1,0.0,Wondervale,35-44,organic_search,Android_app
+USR_00309,1,1,0,1,1,7.99,Gondale,18-24,email_campaign,web_desktop
+USR_00310,1,0,1,0,1,0.0,Zubria,25-34,paid_social,web_desktop
+USR_00313,1,1,0,0,1,14.99,Freelandia,55-64,paid_social,unknown
+USR_00314,1,0,1,0,1,0.0,Freelandia,18-24,organic_search,web_desktop
+USR_00320,1,1,0,1,1,4.99,Japan,35-44,unknown,web_mobile
+USR_00321,1,1,0,0,1,14.99,Eloria,18-24,referral,iOS_app
+USR_00322,1,1,0,1,1,7.99,Canada,55-64,referral,iOS_app
+USR_00323,1,0,1,0,1,0.0,United States,65+,email_campaign,Android_app
+USR_00324,1,0,1,0,1,0.0,Freelandia,45-54,referral,Android_app
+USR_00327,1,0,1,0,1,0.0,Eloria,25-34,organic_search,web_desktop
+USR_00330,1,1,0,0,1,19.99,Hogglewick,45-54,referral,iOS_app
+USR_00331,1,1,0,0,1,24.99,Wondervale,45-54,paid_social,web_mobile
+USR_00332,1,1,0,1,1,7.99,Australia,45-54,email_campaign,web_mobile
+USR_00335,1,1,0,1,1,9.99,Latoria,65+,referral,iOS_app
+USR_00339,1,1,0,0,1,14.99,Freelandia,35-44,referral,web_mobile
+USR_00341,1,1,0,0,1,14.99,Genora,35-44,email_campaign,web_desktop
+USR_00344,1,1,0,0,1,19.99,Nearia,55-64,unknown,web_desktop
+USR_00345,1,1,0,0,1,24.99,Freelandia,13-17,organic_search,unknown
+USR_00346,1,0,1,0,1,0.0,Hogglewick,13-17,paid_social,web_desktop
+USR_00349,1,1,0,0,1,14.99,Brazil,45-54,email_campaign,web_desktop
+USR_00350,1,1,0,1,1,4.99,Gondale,55-64,organic_search,web_desktop
+USR_00351,1,1,0,0,1,11.99,Nearia,25-34,unknown,Android_app
+USR_00352,1,1,0,1,1,7.99,United Kingdom,65+,organic_search,Android_app
+USR_00354,1,0,1,0,1,0.0,Hogglewick,65+,referral,Android_app
+USR_00357,1,1,0,1,1,9.99,Canada,unknown,referral,web_mobile
+USR_00358,1,1,0,0,1,11.99,United Kingdom,unknown,referral,web_mobile
+USR_00360,1,1,0,0,1,14.99,Hogglewick,18-24,email_campaign,web_desktop
+USR_00361,1,1,0,1,1,9.99,Latoria,25-34,paid_social,Android_app
+USR_00363,1,1,0,0,1,14.99,Genora,35-44,paid_social,iOS_app
+USR_00366,1,1,0,0,1,24.99,Canada,65+,paid_social,Android_app
+USR_00371,1,1,0,1,1,7.99,Japan,18-24,referral,iOS_app
+USR_00372,1,0,1,0,1,0.0,Australia,55-64,referral,web_desktop
+USR_00373,1,1,0,1,1,4.99,Freelandia,18-24,email_campaign,unknown
+USR_00374,1,1,0,1,1,4.99,Australia,13-17,organic_search,Android_app
+USR_00376,1,1,0,0,1,14.99,Zubria,35-44,referral,Android_app
+USR_00377,1,1,0,0,1,24.99,Zubria,55-64,email_campaign,web_mobile
+USR_00378,1,0,1,0,1,0.0,United Kingdom,18-24,paid_social,web_desktop
+USR_00380,1,1,0,0,1,11.99,Nearia,45-54,referral,Android_app
+USR_00381,2,1,1,0,2,19.99,Hogglewick,65+,paid_social,web_mobile
+USR_00382,1,0,1,0,1,0.0,Zubria,45-54,paid_social,web_desktop
+USR_00385,1,1,0,0,1,24.99,Canada,unknown,referral,web_desktop
+USR_00388,1,1,0,1,1,4.99,Nearia,45-54,email_campaign,web_desktop
+USR_00389,1,1,0,0,1,11.99,Eloria,45-54,organic_search,iOS_app
+USR_00390,1,1,0,0,1,9.99,Wavanda,65+,email_campaign,web_desktop
+USR_00394,1,1,0,0,1,14.99,Latoria,35-44,unknown,Android_app
+USR_00396,1,1,0,1,1,7.99,Brazil,65+,referral,web_desktop
+USR_00401,1,1,0,0,1,19.99,Wavanda,18-24,email_campaign,web_desktop
+USR_00404,1,1,0,0,1,9.99,Hogglewick,13-17,organic_search,Android_app
+USR_00408,1,1,0,0,1,24.99,Altara,35-44,email_campaign,iOS_app
+USR_00412,1,1,0,0,1,14.99,Nearia,25-34,referral,web_mobile
+USR_00416,1,1,0,1,1,7.99,Altara,45-54,organic_search,unknown
+USR_00417,1,1,0,0,1,9.99,Germany,13-17,paid_social,Android_app
+USR_00418,1,1,0,0,1,24.99,Japan,65+,organic_search,web_desktop
+USR_00419,1,0,1,0,1,0.0,Canada,35-44,organic_search,web_desktop
+USR_00421,1,1,0,0,1,11.99,Hogglewick,35-44,unknown,iOS_app
+USR_00423,1,0,1,0,1,0.0,Wavanda,25-34,paid_social,web_mobile
+USR_00427,1,1,0,0,1,14.99,Altara,18-24,email_campaign,web_desktop
+USR_00428,2,2,0,0,1,49.98,Brazil,65+,email_campaign,Android_app
+USR_00429,1,0,1,0,1,0.0,Gondale,45-54,referral,web_desktop
+USR_00432,1,1,0,1,1,7.99,Genora,65+,email_campaign,iOS_app
+USR_00435,1,0,1,0,1,0.0,Gondale,unknown,paid_social,web_desktop
+USR_00438,1,0,1,0,1,0.0,Freelandia,13-17,paid_social,iOS_app
+USR_00440,1,0,1,0,1,0.0,Germany,65+,email_campaign,web_desktop
+USR_00441,1,0,1,0,1,0.0,Zubria,18-24,email_campaign,Android_app
+USR_00442,1,0,1,0,1,0.0,Zubria,13-17,referral,iOS_app
+USR_00443,1,1,0,0,1,,Freelandia,35-44,paid_social,web_mobile
+USR_00446,1,1,0,1,1,9.99,Eloria,35-44,organic_search,web_mobile
+USR_00449,1,0,1,0,1,0.0,Wondervale,13-17,paid_social,Android_app
+USR_00452,1,0,1,0,1,0.0,United States,65+,referral,web_mobile
+USR_00454,1,1,0,1,1,4.99,United Kingdom,25-34,organic_search,Android_app
+USR_00456,2,1,1,1,2,7.99,Genora,55-64,organic_search,web_mobile
+USR_00457,1,1,0,0,1,9.99,Eloria,55-64,paid_social,Android_app
+USR_00458,1,0,1,0,1,0.0,Canada,65+,paid_social,Android_app
+USR_00460,1,0,1,0,1,0.0,Canada,45-54,email_campaign,iOS_app
+USR_00461,1,1,0,0,1,14.99,Freelandia,45-54,referral,Android_app
+USR_00463,1,0,1,0,1,0.0,Canada,45-54,referral,iOS_app
+USR_00464,1,1,0,0,1,,Nearia,13-17,email_campaign,iOS_app
+USR_00465,1,1,0,1,1,9.99,Japan,25-34,paid_social,Android_app
+USR_00466,1,1,0,0,1,14.99,Germany,unknown,referral,Android_app
+USR_00467,1,1,0,1,1,,United States,45-54,organic_search,iOS_app
+USR_00474,1,1,0,0,1,11.99,Germany,unknown,referral,Android_app
+USR_00476,1,1,0,1,1,9.99,Wavanda,35-44,unknown,iOS_app
+USR_00478,1,1,0,1,1,7.99,Hogglewick,35-44,referral,web_desktop
+USR_00484,1,1,0,1,1,7.99,Brazil,25-34,referral,web_desktop
+USR_00485,1,1,0,0,1,11.99,Nearia,25-34,organic_search,web_mobile
+USR_00486,1,1,0,1,1,9.99,Brazil,35-44,email_campaign,web_mobile
+USR_00488,1,1,0,0,1,9.99,Eloria,18-24,referral,web_desktop
+USR_00489,1,1,0,1,1,7.99,United States,35-44,paid_social,web_desktop
+USR_00495,1,0,1,0,1,0.0,Canada,13-17,referral,web_mobile
+USR_00497,2,1,1,0,2,14.99,Genora,25-34,email_campaign,web_mobile
+USR_00498,1,1,0,1,1,7.99,United States,45-54,email_campaign,web_mobile
+USR_00500,1,1,0,0,1,11.99,Canada,18-24,paid_social,Android_app
+USR_00502,1,0,1,0,1,0.0,Brazil,35-44,paid_social,web_desktop
+USR_00503,1,1,0,1,1,4.99,United Kingdom,45-54,organic_search,web_desktop
+USR_00504,3,3,0,1,2,39.97,Genora,18-24,paid_social,web_desktop
+USR_00506,1,1,0,0,1,9.99,Altara,18-24,organic_search,web_mobile
+USR_00508,1,1,0,0,1,24.99,United States,25-34,email_campaign,web_mobile
+USR_00514,1,0,1,0,1,0.0,Wavanda,35-44,email_campaign,web_desktop
+USR_00516,1,1,0,1,1,7.99,Japan,unknown,organic_search,web_mobile
+USR_00519,1,0,1,0,1,0.0,Gondale,55-64,email_campaign,iOS_app
+USR_00521,1,0,1,0,1,0.0,Wondervale,unknown,referral,web_mobile
+USR_00523,1,0,1,0,1,0.0,Wondervale,35-44,paid_social,web_mobile
+USR_00527,1,1,0,0,1,9.99,Latoria,35-44,email_campaign,iOS_app
+USR_00529,1,1,0,0,1,9.99,Canada,65+,organic_search,iOS_app
+USR_00530,1,0,1,0,1,0.0,Altara,45-54,paid_social,web_desktop
+USR_00531,1,1,0,0,1,9.99,Altara,55-64,organic_search,web_mobile
+USR_00534,1,1,0,0,1,19.99,Germany,25-34,organic_search,web_desktop
+USR_00536,1,0,1,0,1,0.0,Wondervale,25-34,organic_search,iOS_app
+USR_00537,1,1,0,0,1,9.99,Altara,13-17,email_campaign,Android_app
+USR_00538,1,1,0,0,1,19.99,United States,13-17,email_campaign,Android_app
+USR_00542,1,1,0,0,1,11.99,Eloria,13-17,referral,unknown
+USR_00545,1,1,0,1,1,7.99,Nearia,25-34,organic_search,Android_app
+USR_00548,1,0,1,0,1,0.0,Japan,25-34,email_campaign,web_mobile
+USR_00552,2,2,0,0,1,29.979999999999997,Wavanda,25-34,email_campaign,iOS_app
+USR_00554,1,0,1,0,1,0.0,Eloria,35-44,unknown,Android_app
+USR_00556,1,1,0,0,1,14.99,Gondale,45-54,unknown,web_mobile
+USR_00558,2,1,1,1,1,4.99,Canada,25-34,email_campaign,web_mobile
+USR_00563,1,1,0,1,1,7.99,Japan,unknown,email_campaign,web_mobile
+USR_00564,1,0,1,0,1,0.0,Canada,18-24,email_campaign,web_desktop
+USR_00565,1,1,0,1,1,4.99,Altara,18-24,referral,Android_app
+USR_00566,1,1,0,1,1,7.99,Latoria,unknown,referral,Android_app
+USR_00569,1,0,1,0,1,0.0,Gondale,45-54,email_campaign,iOS_app
+USR_00570,1,0,1,0,1,0.0,Nearia,35-44,paid_social,Android_app
+USR_00572,1,1,0,0,1,24.99,Gondale,45-54,organic_search,Android_app
+USR_00576,1,1,0,0,1,,Hogglewick,13-17,paid_social,web_mobile
+USR_00577,1,1,0,0,1,19.99,Brazil,45-54,referral,Android_app
+USR_00578,1,1,0,1,1,7.99,Zubria,unknown,paid_social,web_mobile
+USR_00581,1,0,1,0,1,0.0,Genora,25-34,paid_social,iOS_app
+USR_00582,1,1,0,0,1,14.99,Germany,55-64,referral,iOS_app
+USR_00583,2,1,1,0,2,14.99,Altara,25-34,referral,web_mobile
+USR_00584,1,0,1,0,1,0.0,United States,13-17,paid_social,unknown
+USR_00587,1,1,0,0,1,11.99,Genora,55-64,referral,iOS_app
+USR_00590,1,1,0,0,1,19.99,Eloria,13-17,email_campaign,web_mobile
+USR_00593,1,0,1,0,1,0.0,Canada,65+,referral,web_mobile
+USR_00594,1,1,0,1,1,9.99,Eloria,25-34,organic_search,web_desktop
+USR_00596,1,1,0,0,1,11.99,Nearia,65+,referral,Android_app
+USR_00598,1,0,1,0,1,0.0,Nearia,unknown,email_campaign,iOS_app
+USR_00600,1,0,1,0,1,0.0,Canada,35-44,paid_social,web_mobile
+USR_00603,1,0,1,0,1,0.0,Wavanda,65+,referral,Android_app
+USR_00608,2,1,1,0,1,11.99,United States,35-44,paid_social,iOS_app
+USR_00609,2,2,0,1,2,32.98,Nearia,13-17,referral,web_mobile
+USR_00611,1,1,0,1,1,7.99,Wondervale,65+,organic_search,iOS_app
+USR_00613,1,1,0,0,1,9.99,Wavanda,35-44,referral,web_desktop
+USR_00615,1,1,0,0,1,19.99,Wavanda,13-17,paid_social,unknown
+USR_00616,1,1,0,0,1,11.99,Germany,55-64,unknown,iOS_app
+USR_00617,1,1,0,0,1,14.99,Hogglewick,35-44,paid_social,web_desktop
+USR_00619,1,1,0,0,1,24.99,Eloria,55-64,email_campaign,web_mobile
+USR_00623,1,1,0,0,1,19.99,Nearia,65+,email_campaign,Android_app
+USR_00625,1,1,0,1,1,7.99,Latoria,35-44,unknown,Android_app
+USR_00626,1,1,0,1,1,7.99,Germany,25-34,paid_social,web_desktop
+USR_00628,1,1,0,0,1,24.99,Zubria,13-17,paid_social,Android_app
+USR_00629,1,1,0,0,1,14.99,United States,25-34,paid_social,web_desktop
+USR_00631,1,0,1,0,1,0.0,United States,55-64,referral,iOS_app
+USR_00632,2,2,0,1,2,19.98,United States,18-24,organic_search,web_desktop
+USR_00633,1,1,0,0,1,11.99,Hogglewick,25-34,email_campaign,web_desktop
+USR_00634,1,1,0,1,1,9.99,United Kingdom,55-64,paid_social,iOS_app
+USR_00640,1,1,0,1,1,7.99,Gondale,55-64,organic_search,Android_app
+USR_00647,1,0,1,0,1,0.0,Latoria,65+,unknown,iOS_app
+USR_00650,1,0,1,0,1,0.0,Eloria,25-34,referral,Android_app
+USR_00651,1,0,1,0,1,0.0,Japan,18-24,email_campaign,iOS_app
+USR_00652,1,1,0,0,1,,Latoria,65+,unknown,iOS_app
+USR_00653,1,1,0,0,1,19.99,United States,35-44,email_campaign,Android_app
+USR_00654,1,1,0,1,1,7.99,Brazil,55-64,referral,iOS_app
+USR_00657,1,1,0,0,1,19.99,Zubria,45-54,organic_search,iOS_app
+USR_00659,2,0,2,0,2,0.0,Gondale,55-64,organic_search,web_mobile
+USR_00661,1,0,1,0,1,0.0,Latoria,13-17,paid_social,web_mobile
+USR_00662,1,1,0,0,1,24.99,Gondale,18-24,paid_social,web_mobile
+USR_00663,1,1,0,0,1,14.99,Eloria,18-24,unknown,web_desktop
+USR_00665,1,1,0,0,1,14.99,Gondale,45-54,paid_social,iOS_app
+USR_00666,1,1,0,1,1,7.99,Nearia,45-54,referral,Android_app
+USR_00668,1,1,0,1,1,4.99,United Kingdom,35-44,email_campaign,web_mobile
+USR_00669,1,1,0,0,1,14.99,Australia,55-64,organic_search,web_mobile
+USR_00671,1,0,1,0,1,0.0,Eloria,18-24,email_campaign,web_desktop
+USR_00672,1,0,1,0,1,0.0,Germany,55-64,organic_search,web_desktop
+USR_00673,2,1,1,1,1,4.99,Altara,55-64,email_campaign,iOS_app
+USR_00676,1,0,1,0,1,0.0,Gondale,13-17,referral,web_mobile
+USR_00678,1,1,0,0,1,19.99,Latoria,unknown,referral,Android_app
+USR_00679,1,1,0,1,1,4.99,United Kingdom,18-24,email_campaign,web_mobile
+USR_00682,1,1,0,0,1,19.99,Genora,55-64,referral,web_desktop
+USR_00683,1,0,1,0,1,0.0,Gondale,55-64,referral,iOS_app
+USR_00684,1,1,0,1,1,7.99,United States,65+,organic_search,web_desktop
+USR_00685,2,2,0,1,2,27.979999999999997,Altara,45-54,organic_search,web_desktop
+USR_00687,2,1,1,1,1,7.99,Canada,55-64,unknown,Android_app
+USR_00690,1,0,1,0,1,0.0,Brazil,55-64,email_campaign,web_mobile
+USR_00698,1,1,0,0,1,,Latoria,18-24,referral,iOS_app
+USR_00702,1,1,0,0,1,19.99,Freelandia,45-54,paid_social,web_desktop
+USR_00703,1,1,0,0,1,14.99,Freelandia,45-54,email_campaign,web_mobile
+USR_00704,1,1,0,1,1,4.99,Nearia,65+,organic_search,Android_app
+USR_00706,1,1,0,0,1,24.99,Hogglewick,25-34,email_campaign,Android_app
+USR_00707,1,0,1,0,1,0.0,Nearia,13-17,email_campaign,web_mobile
+USR_00709,2,1,1,1,2,7.99,Zubria,13-17,referral,web_desktop
+USR_00711,1,0,1,0,1,0.0,Nearia,18-24,organic_search,web_mobile
+USR_00713,2,0,2,0,1,0.0,Brazil,65+,paid_social,web_mobile
+USR_00714,1,1,0,1,1,9.99,Latoria,45-54,organic_search,web_mobile
+USR_00715,2,2,0,0,2,24.98,United Kingdom,25-34,organic_search,web_desktop
+USR_00716,1,1,0,0,1,11.99,United States,25-34,email_campaign,web_mobile
+USR_00717,1,1,0,1,1,4.99,Canada,65+,referral,web_desktop
+USR_00718,1,1,0,1,1,7.99,United States,13-17,email_campaign,unknown
+USR_00720,1,1,0,0,1,11.99,Germany,25-34,email_campaign,web_mobile
+USR_00721,2,2,0,0,1,26.98,Gondale,55-64,email_campaign,unknown
+USR_00722,1,1,0,0,1,11.99,United Kingdom,25-34,organic_search,web_mobile
+USR_00723,1,1,0,1,1,9.99,Eloria,25-34,email_campaign,web_desktop
+USR_00724,1,1,0,1,1,9.99,United Kingdom,18-24,email_campaign,iOS_app
+USR_00725,1,1,0,1,1,7.99,Hogglewick,unknown,email_campaign,unknown
+USR_00726,1,1,0,0,1,11.99,Eloria,18-24,email_campaign,web_mobile
+USR_00729,1,1,0,0,1,19.99,Wavanda,25-34,paid_social,iOS_app
+USR_00731,1,0,1,0,1,0.0,Nearia,35-44,email_campaign,iOS_app
+USR_00735,2,1,1,1,2,9.99,Brazil,55-64,paid_social,Android_app
+USR_00738,1,1,0,0,1,14.99,Altara,55-64,paid_social,Android_app
+USR_00740,1,0,1,0,1,0.0,Eloria,25-34,organic_search,Android_app
+USR_00744,2,2,0,1,2,32.98,Latoria,45-54,email_campaign,web_mobile
+USR_00745,1,0,1,0,1,0.0,Australia,13-17,paid_social,iOS_app
+USR_00746,1,1,0,0,1,,Zubria,13-17,paid_social,web_mobile
+USR_00749,2,0,2,0,1,0.0,United Kingdom,13-17,email_campaign,iOS_app
+USR_00751,1,1,0,1,1,9.99,Wondervale,25-34,paid_social,web_desktop
+USR_00752,1,1,0,0,1,24.99,Australia,18-24,email_campaign,Android_app
+USR_00755,1,1,0,1,1,4.99,Japan,45-54,referral,web_mobile
+USR_00756,1,1,0,1,1,4.99,Hogglewick,55-64,organic_search,Android_app
+USR_00757,1,0,1,0,1,0.0,Wondervale,45-54,paid_social,iOS_app
+USR_00758,1,1,0,0,1,14.99,Gondale,18-24,organic_search,iOS_app
+USR_00759,1,1,0,0,1,14.99,Brazil,25-34,organic_search,Android_app
+USR_00760,1,1,0,1,1,,Brazil,65+,organic_search,iOS_app
+USR_00764,1,1,0,1,1,9.99,Germany,35-44,paid_social,iOS_app
+USR_00765,2,1,1,0,1,9.99,Japan,55-64,organic_search,web_mobile
+USR_00766,1,1,0,0,1,11.99,Wondervale,13-17,referral,web_desktop
+USR_00769,1,1,0,1,1,7.99,Hogglewick,55-64,organic_search,iOS_app
+USR_00770,1,0,1,0,1,0.0,Altara,13-17,paid_social,web_mobile
+USR_00771,1,1,0,0,1,14.99,Japan,18-24,organic_search,web_desktop
+USR_00772,1,1,0,1,1,7.99,Gondale,65+,email_campaign,Android_app
+USR_00773,1,1,0,0,1,14.99,Germany,55-64,referral,web_desktop
+USR_00774,1,1,0,0,1,24.99,Hogglewick,55-64,email_campaign,web_desktop
+USR_00778,2,1,1,0,2,11.99,Germany,25-34,organic_search,Android_app
+USR_00779,1,1,0,0,1,11.99,Germany,45-54,organic_search,Android_app
+USR_00782,3,2,1,1,2,27.979999999999997,Wavanda,25-34,unknown,web_desktop
+USR_00783,1,1,0,0,1,19.99,Genora,18-24,paid_social,web_desktop
+USR_00784,1,0,1,0,1,0.0,Gondale,45-54,unknown,Android_app
+USR_00785,1,0,1,0,1,0.0,Wavanda,45-54,organic_search,web_mobile
+USR_00788,1,1,0,0,1,11.99,Nearia,45-54,organic_search,Android_app
+USR_00789,1,0,1,0,1,0.0,Brazil,35-44,organic_search,web_desktop
+USR_00790,1,1,0,0,1,14.99,Nearia,13-17,organic_search,Android_app
+USR_00791,1,1,0,0,1,9.99,Canada,55-64,unknown,Android_app
+USR_00792,1,1,0,1,1,9.99,Altara,65+,paid_social,iOS_app
+USR_00798,1,0,1,0,1,0.0,Wavanda,45-54,email_campaign,Android_app
+USR_00799,1,1,0,0,1,11.99,Genora,25-34,organic_search,Android_app

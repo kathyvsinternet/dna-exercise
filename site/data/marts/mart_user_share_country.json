@@ -1,0 +1,113 @@
+{
+ "name": "mart_user_share_country",
+ "sql": "SELECT\n  user_geo_country,\n  COUNT(DISTINCT user_id) AS n_users,\n  ROUND(COUNT(DISTINCT user_id) / SUM(COUNT(DISTINCT user_id)) OVER (), 4) AS n_share\nFROM mart_user_info\nGROUP BY user_geo_country\nORDER BY n_users DESC, user_geo_country",
+ "depends_on": [
+  "mart_user_info"
+ ],
+ "columns": [
+  {
+   "name": "user_geo_country",
+   "type": "VARCHAR"
+  },
+  {
+   "name": "n_users",
+   "type": "BIGINT"
+  },
+  {
+   "name": "n_share",
+   "type": "DOUBLE"
+  }
+ ],
+ "rows": [
+  {
+   "user_geo_country": "Germany",
+   "n_users": 33,
+   "n_share": 0.0848
+  },
+  {
+   "user_geo_country": "Nearia",
+   "n_users": 28,
+   "n_share": 0.072
+  },
+  {
+   "user_geo_country": "Canada",
+   "n_users": 24,
+   "n_share": 0.0617
+  },
+  {
+   "user_geo_country": "Gondale",
+   "n_users": 24,
+   "n_share": 0.0617
+  },
+  {
+   "user_geo_country": "Hogglewick",
+   "n_users": 24,
+   "n_share": 0.0617
+  },
+  {
+   "user_geo_country": "Altara",
+   "n_users": 23,
+   "n_share": 0.0591
+  },
+  {
+   "user_geo_country": "United Kingdom",
+   "n_users": 23,
+   "n_share": 0.0591
+  },
+  {
+   "user_geo_country": "United States",
+   "n_users": 23,
+   "n_share": 0.0591
+  },
+  {
+   "user_geo_country": "Eloria",
+   "n_users": 22,
+   "n_share": 0.0566
+  },
+  {
+   "user_geo_country": "Freelandia",
+   "n_users": 22,
+   "n_share": 0.0566
+  },
+  {
+   "user_geo_country": "Genora",
+   "n_users": 22,
+   "n_share": 0.0566
+  },
+  {
+   "user_geo_country": "Latoria",
+   "n_users": 21,
+   "n_share": 0.054
+  },
+  {
+   "user_geo_country": "Brazil",
+   "n_users": 19,
+   "n_share": 0.0488
+  },
+  {
+   "user_geo_country": "Japan",
+   "n_users": 19,
+   "n_share": 0.0488
+  },
+  {
+   "user_geo_country": "Wavanda",
+   "n_users": 17,
+   "n_share": 0.0437
+  },
+  {
+   "user_geo_country": "Zubria",
+   "n_users": 16,
+   "n_share": 0.0411
+  },
+  {
+   "user_geo_country": "Wondervale",
+   "n_users": 15,
+   "n_share": 0.0386
+  },
+  {
+   "user_geo_country": "Australia",
+   "n_users": 14,
+   "n_share": 0.036
+  }
+ ]
+}

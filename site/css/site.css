@@ -175,17 +175,22 @@ main { padding: 2.2rem 0 3rem; }
   border-top: 4px solid var(--accent);
 }
 
-.tile .metric-name { margin: 0; font-size: 0.86rem; }
+.tile-title { margin: 0; font-size: 0.98rem; }
 
 .tile-value {
-  margin: 0.35rem 0 0.25rem;
+  margin: 0.35rem 0 0.35rem;
   font-family: Fraunces, Georgia, serif;
   font-size: 2.5rem;
   font-weight: 560;
   line-height: 1;
 }
 
-.tile-question { margin: 0 0 0.5rem; font-size: 0.95rem; }
+.tile-column {
+  margin: 0;
+  color: var(--muted);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.75rem;
+}
 
 .tile .fine { margin: 0.25rem 0 0; }
 
@@ -340,6 +345,51 @@ code {
 
 .dash { margin-top: 1.4rem; }
 
+.dash .chart { margin-top: 1rem; }
+
+.breakdowns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin-top: 1rem;
+}
+
+.dash .breakdowns .chart { margin-top: 0; }
+
+.breakdown .table-wrap { margin-top: 0.6rem; }
+
+.breakdown th, .breakdown td { padding: 0.45rem 0.5rem; }
+
+.col-name {
+  display: block;
+  color: var(--muted);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.breakdown-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+  min-height: 2rem;
+}
+
+.breakdown-controls { display: flex; gap: 0.4rem; }
+
+.button-small { padding: 0.3rem 0.7rem; font-size: 0.85rem; }
+
+.button:disabled { opacity: 0.45; cursor: default; }
+
+.button:disabled:hover { border-color: var(--line); }
+
+.breakdown > .fine { margin: 0.5rem 0 0; }
+
 .chart-tall { min-height: 380px; }
 
 .peek { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
@@ -370,6 +420,7 @@ code {
 
 @media (max-width: 800px) {
   .header-inner, .diagram, .ask-layout, .charts, .table-head { display: block; }
+  .breakdowns { grid-template-columns: 1fr; }
   .header-inner { padding-bottom: 1rem; }
   .nav { justify-content: flex-start; margin-top: 0.8rem; }
   .card, .diagram div, .chart { margin-top: 0.8rem; }

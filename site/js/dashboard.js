@@ -1,4 +1,20 @@
-const MART = "data/marts/mart_quarterly_users.json";
+const MART = "data/marts/mart_user_qtr_counts.json";
+const COUNTS = "data/marts/mart_user_info_counts.json";
+// One table per mart. The first column of each mart is the value; n_users and n_share follow.
+const BREAKDOWNS = [
+  { mart: "mart_user_share_country", title: "Active Users by Country", header: "Country" },
+  { mart: "mart_user_share_age", title: "Active Users by Age Band", header: "Age Band" },
+  { mart: "mart_user_share_channel", title: "Active Users by Acquisition Channel", header: "Acquisition Channel" },
+  { mart: "mart_user_info_prim_device", title: "Active Users by Primary Device", header: "Primary Device" },
+];
+const PREVIEW_ROWS = 5;
+const PAGE_ROWS = 10;
+const SCORECARDS = [
+  { column: "n_users_active", label: "Active Users" },
+  { column: "n_subs_active", label: "Active Subscriptions" },
+  { column: "n_subs_paid", label: "Paid Subscriptions" },
+  { column: "avg_monthly_payment", label: "Average Monthly Payment", money: true },
+];
 // Named colors for known series. Any other series takes the next fallback color.
 const SERIES_COLORS = {
   user_subscriptions: "#1f4d3a",
@@ -6,9 +22,19 @@ const SERIES_COLORS = {
 };
 const FALLBACK_COLORS = ["#8a4b2f", "#243e66", "#a79e90"];
 
-loadMart(MART)
-  .then(render)
+Promise.all([
+  loadMart(COUNTS),
+  loadMart(MART),
+  ...BREAKDOWNS.map((breakdown) => loadMart(`data/marts/${breakdown.mart}.json`)),
+])
+  .then(([counts, mart, ...breakdowns]) => {
+    renderScorecards(counts);
+    renderBreakdowns(breakdowns);
+    render(mart);
+  })
   .catch((error) => {
+    document.querySelector("#scorecards").textContent = error.message;
+    document.querySelector("#breakdowns").textContent = error.message;
     document.querySelector("#chart-note").textContent = error.message;
   });
 
@@ -22,6 +48,126 @@ async function loadMart(path) {
     throw new Error(`${mart.name} has no rows.`);
   }
   return mart;
+}
+
+function renderScorecards(mart) {
+  const row = mart.rows[0];
+  document.querySelector("#scorecards").replaceChildren(
+    ...SCORECARDS.map((card) => {
+      const tile = element("article", { className: "tile" });
+      tile.append(
+        element("p", { className: "tile-title" }, card.label),
+        element("p", { className: "tile-value" }, formatScore(row[card.column], card.money)),
+        element("p", { className: "tile-column" }, card.column),
+      );
+      return tile;
+    }),
+  );
+  document.querySelector("#scorecards-source").textContent = `Source: ${mart.name}`;
+}
+
+function renderBreakdowns(marts) {
+  document.querySelector("#breakdowns").replaceChildren(
+    ...BREAKDOWNS.map((breakdown, index) => breakdownCard(breakdown, marts[index])),
+  );
+}
+
+// Top 5 rows by default. "Expand" switches to pages of 10 rows over the full list.
+function breakdownCard(config, mart) {
+  const [valueColumn, usersColumn, shareColumn] = mart.columns.map((column) => column.name);
+  const rows = mart.rows;
+  const pageCount = Math.ceil(rows.length / PAGE_ROWS);
+  const state = { expanded: false, page: 0 };
+
+  const body = element("tbody", {});
+  const status = element("span", { className: "fine" });
+  const controls = element("div", { className: "breakdown-controls" });
+
+  function draw() {
+    const start = state.expanded ? state.page * PAGE_ROWS : 0;
+    const end = Math.min(start + (state.expanded ? PAGE_ROWS : PREVIEW_ROWS), rows.length);
+    body.replaceChildren(
+      ...rows.slice(start, end).map((row) =>
+        element(
+          "tr",
+          {},
+          element("td", {}, String(row[valueColumn])),
+          element("td", { className: "num" }, row[usersColumn].toLocaleString("en-US")),
+          element("td", { className: "num" }, formatShare(row[shareColumn])),
+        ),
+      ),
+    );
+    status.textContent = state.expanded
+      ? `Showing ${start + 1}–${end} of ${rows.length}`
+      : `Top ${end} of ${rows.length}`;
+
+    const buttons = [];
+    if (state.expanded) {
+      if (pageCount > 1) {
+        buttons.push(
+          button("Previous", () => { state.page -= 1; draw(); }, state.page === 0),
+          button("Next", () => { state.page += 1; draw(); }, state.page === pageCount - 1),
+        );
+      }
+      buttons.push(button("Collapse", () => { state.expanded = false; state.page = 0; draw(); }));
+    } else if (rows.length > PREVIEW_ROWS) {
+      buttons.push(button("Expand", () => { state.expanded = true; draw(); }));
+    }
+    controls.replaceChildren(...buttons);
+  }
+
+  const card = element("article", { className: "chart breakdown" });
+  card.append(
+    element("h2", {}, config.title),
+    element(
+      "div",
+      { className: "table-wrap" },
+      element(
+        "table",
+        {},
+        element(
+          "thead",
+          {},
+          element(
+            "tr",
+            {},
+            columnHeader(config.header, valueColumn),
+            columnHeader("Users", usersColumn, true),
+            columnHeader("Share", shareColumn, true),
+          ),
+        ),
+        body,
+      ),
+    ),
+    element("div", { className: "breakdown-foot" }, status, controls),
+    element("p", { className: "fine" }, `Source: ${mart.name}`),
+  );
+  draw();
+  return card;
+}
+
+function columnHeader(label, column, numeric) {
+  return element(
+    "th",
+    numeric ? { className: "num" } : {},
+    label,
+    element("span", { className: "col-name" }, column),
+  );
+}
+
+function button(label, onClick, disabled) {
+  return element("button", { className: "button button-small", type: "button", onclick: onClick, disabled: Boolean(disabled) }, label);
+}
+
+function formatShare(share) {
+  return `${(share * 100).toFixed(1)}%`;
+}
+
+function formatScore(value, money) {
+  if (money) {
+    return value.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  }
+  return value.toLocaleString("en-US");
 }
 
 function render(mart) {
