@@ -7,7 +7,8 @@
 # Marts are defined in data/marts/sql/*.sql and built from these tables.
 # They exclude test accounts. Fact tables keep those rows and flag them
 # with is_test_account. Metrics read the marts.
-# user_name, email, and age_band are restricted. They are not in any mart.
+# user_name and email are restricted. They are not in any mart.
+# age_band is not restricted.
 
 tables:
   - name: dim_business
@@ -32,8 +33,8 @@ tables:
       - {name: email, description: Email address., access: restricted}
       - {name: signup_date, description: Date the account was created.}
       - {name: country, description: Country as given, including fictional countries that belong to this world.}
-      - {name: age_band, description: Governed age band. Blank, N/A, and 999 are unknown., access: restricted}
-      - {name: age_band_raw, description: Source age band, kept so the reason for unknown is visible., access: restricted}
+      - {name: age_band, description: Governed age band. Blank, N/A, and 999 are unknown.}
+      - {name: age_band_raw, description: Source age band, kept so the reason for unknown is visible.}
       - {name: acquisition_channel, description: Governed channel. Blank, carrier_pigeon, and influencer_TEST_CAMPAIGN are unknown.}
       - {name: acquisition_channel_raw, description: Source channel.}
       - {name: primary_device, description: Governed device. smart_toaster and unknown_device are unknown.}

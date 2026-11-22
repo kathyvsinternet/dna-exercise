@@ -40,7 +40,7 @@ function routeQuestion(question) {
   if (/completion rate|complete rate|finish rate|percent complete/.test(text)) {
     return { refusal: "completion" };
   }
-  if (/email|e-mail|user name|username|age band|phone|usr_\d+/.test(text)) {
+  if (/email|e-mail|user name|username|phone|usr_\d+/.test(text)) {
     return { refusal: "identity" };
   }
   if (/subscription_start|subscription_cancel|from events/.test(text)) {

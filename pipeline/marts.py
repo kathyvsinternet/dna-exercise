@@ -33,6 +33,12 @@ MODEL_TABLES = (
 )
 SITE_MARTS = Path("site") / "data" / "marts"
 
+# CSV cells carry no type. Every model column is read as text, except the numeric
+# columns listed here. Empty cells load as NULL, so an invalid price is NULL.
+MODEL_COLUMN_TYPES = {
+    "fct_subscription": {"monthly_price_usd": "DOUBLE"},
+}
+
 
 class ModelError(Exception):
     """A SQL model could not be found, ordered, or run."""
@@ -46,7 +52,12 @@ def build_marts(root=ROOT):
     connection = duckdb.connect()
     try:
         for name in MODEL_TABLES:
-            _view_from_csv(connection, name, root / "data" / "model" / f"{name}.csv")
+            _view_from_csv(
+                connection,
+                name,
+                root / "data" / "model" / f"{name}.csv",
+                MODEL_COLUMN_TYPES.get(name),
+            )
         marts = {}
         for name in ordered:
             model = models[name]
@@ -120,11 +131,15 @@ def _references(model, models):
     return sorted(words & known)
 
 
-def _view_from_csv(connection, name, path):
+def _view_from_csv(connection, name, path, types=None):
     escaped = str(path).replace("'", "''")
+    type_clause = ""
+    if types:
+        pairs = ", ".join(f"'{column}': '{kind}'" for column, kind in types.items())
+        type_clause = f", types = {{{pairs}}}"
     connection.execute(
         f"create or replace view {name} as "
-        f"select * from read_csv('{escaped}', header = true, all_varchar = true)"
+        f"select * from read_csv('{escaped}', header = true, all_varchar = true{type_clause})"
     )
 
 

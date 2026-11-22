@@ -35,7 +35,7 @@
         <tbody>
           <tr><td><code>user_name</code></td><td><code>dim_user</code></td><td>Restricted. Not in any mart, metric, or page on this site.</td></tr>
           <tr><td><code>email</code></td><td><code>dim_user</code></td><td>Restricted. Ask refuses a request for an address.</td></tr>
-          <tr><td><code>age_band</code> and <code>age_band_raw</code></td><td><code>dim_user</code></td><td>Restricted. The column includes a 13–17 band, so the whole column stays off the site.</td></tr>
+          <tr><td><code>age_band</code> and <code>age_band_raw</code></td><td><code>dim_user</code></td><td>Not restricted. The governed age band, including the 13–17 band, may be used in a mart.</td></tr>
           <tr><td><code>is_test_account</code></td><td>User dimension and both facts</td><td>Visible to the build. Metrics keep only <code>false</code>.</td></tr>
           <tr><td>Metric totals</td><td><code>metrics/*.yml</code> and this site</td><td>Anyone who can open the page. Counts and distinct people, never a person.</td></tr>
           <tr><td>Dashboard aggregates</td><td><code>site/data/cubes/*.json</code></td><td>Anyone who can open the page. Each file holds a metric’s counts for every combination of the dimensions its file allows. There are no <code>user_id</code> values and no row-level data.</td></tr>
@@ -46,7 +46,7 @@
 
     <article class="card issue">
       <h2>What a row-level role would add</h2>
-      <p>A named analyst could open <code>fct_subscription</code> and <code>dim_user</code> to audit a duplicate or a sentinel. That role still cannot publish <code>email</code> or <code>age_band</code> through Ask. The interface has no metric whose grain is a person.</p>
+      <p>A named analyst could open <code>fct_subscription</code> and <code>dim_user</code> to audit a duplicate or a sentinel. That role still cannot publish <code>email</code> through Ask. The interface has no metric whose grain is a person.</p>
       <p>Test accounts remain in the fact tables with <code>is_test_account = true</code> so the exclusion can be checked. They are already gone from the numbers on the dashboard and Ask.</p>
     </article>
   </main>

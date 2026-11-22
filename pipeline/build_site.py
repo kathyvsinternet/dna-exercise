@@ -258,7 +258,7 @@ def _refusals(names):
         {
             "id": "identity",
             "title": "User-level fields stay off this site",
-            "body": "email, user_name, and age_band are restricted. This page only returns a metric from metrics/.",
+            "body": "email and user_name are restricted. age_band is not. This page only returns a metric from metrics/.",
         },
         {
             "id": "history",
