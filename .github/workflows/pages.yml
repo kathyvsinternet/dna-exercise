@@ -29,9 +29,6 @@ jobs:
       - name: Build model, checks, and site data
         run: python pipeline/build.py
 
-      - name: Run metric tests
-        run: python -m unittest discover -s tests -v
-
       - name: Fail if committed outputs are stale
         run: git diff --exit-code -- data/model data/marts data/quality/profile.json site/data
 

@@ -5,7 +5,6 @@ Layout:
     data/marts/sql/*.sql    intermediate models (int_*). Built as views, not published.
     data/marts/*.sql        marts (mart_*). Published as a CSV beside the SQL and as
                             JSON in site/data/marts/ for the dashboard.
-    data/marts/old/         ignored.
 
 A model is one select. The file name is the model name. A model may read the
 dimension and fact CSVs in data/model and any other model. Order is worked out

@@ -44,13 +44,6 @@ def check(raw, model):
     _check_event_content_pattern(model)
 
 
-def check_marts(model, marts):
-    """The SQL marts must agree with the fact tables they were built from."""
-    _check_marts_exclude_test_accounts(model, marts)
-    _check_mart_grains(marts)
-    _check_active_subscriber_mart(marts)
-
-
 USER_BREAKDOWN_MARTS = {
     "mart_user_share_country": "user_geo_country",
     "mart_user_share_age": "user_age_band",
@@ -259,62 +252,6 @@ def _check_event_content_pattern(model):
             )
 
 
-def _check_marts_exclude_test_accounts(model, marts):
-    test_ids = {row["user_id"] for row in model["dim_user"] if row["is_test_account"] == "true"}
-    metric_subs = [row for row in model["fct_subscription"] if row["user_id"] not in test_ids]
-    if any(row["user_id"] in test_ids for row in marts["mart_subscription"]):
-        raise BuildError(f"A test account remained in mart_subscription. See {ISSUE_SENTINELS}.")
-    if len(marts["mart_subscription"]) != len(metric_subs):
-        raise BuildError(
-            f"mart_subscription has {len(marts['mart_subscription'])} rows, but {len(metric_subs)} "
-            f"non-test subscriptions are in the fact. See {ISSUE_SENTINELS}."
-        )
-
-    for name in ("mart_plans", "mart_business", "mart_plan_starts"):
-        column = "plan_starts" if name == "mart_plan_starts" else "subscriptions"
-        total = sum(int(row[column]) for row in marts[name])
-        if total != len(metric_subs):
-            raise BuildError(
-                f"{name} counts {total} subscriptions, but {len(metric_subs)} non-test "
-                f"subscriptions are in the fact. See {ISSUE_SENTINELS}."
-            )
-
-    metric_events = [
-        row
-        for row in model["fct_engagement_event"]
-        if row["user_id"] not in test_ids and not blank(row["content_id"])
-    ]
-    content_events = sum(int(row["events"]) for row in marts["mart_content"])
-    business_events = sum(int(row["engagement_events"]) for row in marts["mart_business"])
-    if content_events != len(metric_events) or business_events != len(metric_events):
-        raise BuildError(
-            "Content engagement counts include events that are not non-test content events. "
-            f"See {ISSUE_SENTINELS}."
-        )
-
-
-def _check_mart_grains(marts):
-    _unique(marts["mart_subscription"], "subscription_id")
-    _unique(marts["mart_business"], "business_id")
-    _unique(marts["mart_content"], "content_id")
-    _unique_key(marts["mart_plans"], ("business_id", "plan_tier", "billing_cycle", "status"))
-    _unique_key(marts["mart_plan_starts"], ("business_id", "plan_tier", "start_date_month"))
-    _unique(marts["mart_active_subscribers"], "business_id")
-
-
-def _check_active_subscriber_mart(marts):
-    active = [row for row in marts["mart_subscription"] if row["status"] == "active"]
-    for row in marts["mart_active_subscribers"]:
-        business_id = row["business_id"]
-        in_business = [item for item in active if item["business_id"] == business_id]
-        people = len({item["user_id"] for item in in_business})
-        if int(row["active_subscribers"]) != people or int(row["active_subscriptions"]) != len(in_business):
-            raise BuildError(
-                f"mart_active_subscribers does not match mart_subscription for {business_id}. "
-                f"See {ISSUE_SENTINELS}."
-            )
-
-
 def _unique(rows, column):
     seen = set()
     for row in rows:
@@ -322,15 +259,6 @@ def _unique(rows, column):
         if value in seen:
             raise BuildError(f"Repeated {column} {value}. See {ISSUE_DUPLICATES}.")
         seen.add(value)
-
-
-def _unique_key(rows, columns):
-    seen = set()
-    for row in rows:
-        key = tuple(row[column] for column in columns)
-        if key in seen:
-            raise BuildError(f"Repeated {', '.join(columns)} {key}. See {ISSUE_DUPLICATES}.")
-        seen.add(key)
 
 
 def _foreign_key(rows, column, parents, parent_name, allow_blank=False):

@@ -1,4 +1,0 @@
-business_id,business_name,business_line,content_items,unknown_type_content_items,creators,subscriptions,active_subscriptions,canceled_subscriptions,paused_subscriptions,trialing_subscriptions,unknown_status_subscriptions,subscribers,active_monthly_price_usd,engagement_events,content_items_with_engagement
-BIZ_1,PageGarden Premium (SYNTHETIC),premium_published_content,112,5,3,258,137,78,26,12,5,236,1145.12,1970,112
-BIZ_2,GatherSquare Community (SYNTHETIC),consumer_community,83,3,0,287,158,68,41,14,6,262,1501.87,1555,83
-BIZ_3,MakerHarbor (SYNTHETIC),creator_content,105,0,37,259,149,66,25,11,8,244,1237.04,1863,105
