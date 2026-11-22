@@ -1,12 +1,8 @@
 const MART = "data/marts/mart_user_qtr_counts.json";
 const COUNTS = "data/marts/mart_user_info_counts.json";
-// One table per mart. The first column of each mart is the value; n_users and n_share follow.
-const BREAKDOWNS = [
-  { mart: "mart_user_share_country", title: "Active Users by Country", header: "Country" },
-  { mart: "mart_user_share_age", title: "Active Users by Age Band", header: "Age Band" },
-  { mart: "mart_user_share_channel", title: "Active Users by Acquisition Channel", header: "Acquisition Channel" },
-  { mart: "mart_user_info_prim_device", title: "Active Users by Primary Device", header: "Primary Device" },
-];
+// The share tables come from site/data/user_share.json, which pipeline/user_share.py writes.
+// Each mart's first column is the value; n_users and n_share follow.
+const USER_SHARE = "data/user_share.json";
 const PREVIEW_ROWS = 5;
 const PAGE_ROWS = 10;
 const SCORECARDS = [
@@ -22,12 +18,8 @@ const SERIES_COLORS = {
 };
 const FALLBACK_COLORS = ["#8a4b2f", "#243e66", "#a79e90"];
 
-Promise.all([
-  loadMart(COUNTS),
-  loadMart(MART),
-  ...BREAKDOWNS.map((breakdown) => loadMart(`data/marts/${breakdown.mart}.json`)),
-])
-  .then(([counts, mart, ...breakdowns]) => {
+Promise.all([loadMart(COUNTS), loadMart(MART), loadBreakdowns()])
+  .then(([counts, mart, breakdowns]) => {
     renderScorecards(counts);
     renderBreakdowns(breakdowns);
     render(mart);
@@ -37,6 +29,19 @@ Promise.all([
     document.querySelector("#breakdowns").textContent = error.message;
     document.querySelector("#chart-note").textContent = error.message;
   });
+
+async function loadBreakdowns() {
+  const response = await fetch(USER_SHARE);
+  if (!response.ok) {
+    throw new Error(`Could not load ${USER_SHARE}. Run python pipeline/build.py first.`);
+  }
+  const cuts = await response.json();
+  const marts = await Promise.all(cuts.map((cut) => loadMart(`data/marts/${cut.mart}.json`)));
+  return cuts.map((cut, index) => ({
+    config: { title: `Active Users by ${cut.label}`, header: cut.label },
+    mart: marts[index],
+  }));
+}
 
 async function loadMart(path) {
   const response = await fetch(path);
@@ -66,9 +71,9 @@ function renderScorecards(mart) {
   document.querySelector("#scorecards-source").textContent = `Source: ${mart.name}`;
 }
 
-function renderBreakdowns(marts) {
+function renderBreakdowns(breakdowns) {
   document.querySelector("#breakdowns").replaceChildren(
-    ...BREAKDOWNS.map((breakdown, index) => breakdownCard(breakdown, marts[index])),
+    ...breakdowns.map(({ config, mart }) => breakdownCard(config, mart)),
   );
 }
 
@@ -140,7 +145,7 @@ function breakdownCard(config, mart) {
       ),
     ),
     element("div", { className: "breakdown-foot" }, status, controls),
-    element("p", { className: "fine" }, `Source: ${mart.name}`),
+    element("p", { className: "source-note" }, `Source: ${mart.name}`),
   );
   draw();
   return card;
@@ -172,11 +177,7 @@ function formatScore(value, money) {
 
 function render(mart) {
   const [timeColumn, ...seriesColumns] = mart.columns.map((column) => column.name);
-  const first = quarterLabel(mart.rows[0][timeColumn]);
-  const last = quarterLabel(mart.rows[mart.rows.length - 1][timeColumn]);
 
-  document.querySelector("#chart-note").textContent =
-    `${seriesColumns.map(seriesLabel).join(", ")} per quarter, ${first} through ${last}. Click a legend entry to focus a line.`;
   document.querySelector("#chart-source").textContent =
     `Source: ${mart.name} · ${mart.rows.length} quarters`;
 
@@ -215,7 +216,7 @@ function drawLine(mart, timeColumn, seriesColumns) {
         scale: { type: "point", padding: 0.4 },
         axis: { labelAngle: -45 },
       },
-      y: { field: "count", type: "quantitative", title: "Count", axis: { format: ",d" } },
+      y: { field: "count", type: "quantitative", title: null, axis: { format: ",d" } },
       color: {
         field: "series",
         type: "nominal",

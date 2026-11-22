@@ -33,6 +33,7 @@ from rules import (
     runtime_is_invalid,
 )
 from transform import BuildError, blank
+from user_share import user_share_columns
 
 
 def check(raw, model):
@@ -42,14 +43,6 @@ def check(raw, model):
     _check_measures(model)
     _check_subscriptions(model)
     _check_event_content_pattern(model)
-
-
-USER_BREAKDOWN_MARTS = {
-    "mart_user_share_country": "user_geo_country",
-    "mart_user_share_age": "user_age_band",
-    "mart_user_share_channel": "user_acq_channel",
-    "mart_user_info_prim_device": "user_prim_device",
-}
 
 
 def check_dashboard_marts(model, marts):
@@ -66,7 +59,7 @@ def _check_user_breakdowns(model, marts):
         for row in model["fct_subscription"]
         if row["is_test_account"] == "false" and row["status"] == "active"
     }
-    for name, column in USER_BREAKDOWN_MARTS.items():
+    for name, column in user_share_columns().items():
         if name not in marts:
             continue
         rows = marts[name]

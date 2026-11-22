@@ -2,6 +2,7 @@
   --paper: #f3efe6;
   --ink: #1b1914;
   --muted: #5e584e;
+  --muted-light: #7d776c;
   --line: #d8d0c3;
   --card: #fffaf3;
   --header: #1b1914;
@@ -187,9 +188,16 @@ main { padding: 2.2rem 0 3rem; }
 
 .tile-column {
   margin: 0;
-  color: var(--muted);
+  color: var(--muted-light);
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.75rem;
+  font-size: 10px;
+}
+
+/* Source notes and metric (column) names: 10px, lighter than body gray. */
+.source-note {
+  margin: 0.5rem 0 0;
+  color: var(--muted-light);
+  font-size: 10px;
 }
 
 .tile .fine { margin: 0.25rem 0 0; }
@@ -363,9 +371,9 @@ code {
 
 .col-name {
   display: block;
-  color: var(--muted);
+  color: var(--muted-light);
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.7rem;
+  font-size: 10px;
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
@@ -388,7 +396,6 @@ code {
 
 .button:disabled:hover { border-color: var(--line); }
 
-.breakdown > .fine { margin: 0.5rem 0 0; }
 
 .chart-tall { min-height: 380px; }
 

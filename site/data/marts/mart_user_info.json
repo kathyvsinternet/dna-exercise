@@ -1,6 +1,6 @@
 {
  "name": "mart_user_info",
- "sql": "SELECT * FROM int_user_info",
+ "sql": "-- One row per user with an active, non-test subscription (see int_user_info).\n--\n-- The mart_user_share_* tables are built from this mart. They have no .sql files.\n-- pipeline/user_share.py lists them in USER_SHARE_CUTS as (name, column, label),\n-- and python pipeline/build.py writes each one as mart_user_share_<name> using:\n--\n--   SELECT <column>,\n--          COUNT(DISTINCT user_id) AS n_users,\n--          ROUND(COUNT(DISTINCT user_id) / SUM(COUNT(DISTINCT user_id)) OVER (), 4) AS n_share\n--   FROM mart_user_info\n--   GROUP BY <column>\n--   ORDER BY n_users DESC, <column>\n--\n-- <column> is any column of this mart. To add a table, add a line to USER_SHARE_CUTS.\n-- The CSV lands in data/marts/, the JSON in site/data/marts/, and the dashboard shows it.\nSELECT * FROM int_user_info",
  "depends_on": [
   "int_user_info"
  ],

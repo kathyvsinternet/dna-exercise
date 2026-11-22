@@ -6,6 +6,8 @@ Layout:
     data/marts/*.sql        marts (mart_*). Published as a CSV beside the SQL and as
                             JSON in site/data/marts/ for the dashboard.
 
+mart_user_share_* marts have no file. pipeline/user_share.py lists them.
+
 A model is one select. The file name is the model name. A model may read the
 dimension and fact CSVs in data/model and any other model. Order is worked out
 from the names a model's SQL mentions, so a new file needs no registration.
@@ -20,6 +22,8 @@ from decimal import Decimal
 from pathlib import Path
 
 import duckdb
+
+from user_share import user_share_manifest, user_share_models
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_TABLES = (
@@ -72,6 +76,8 @@ def build_marts(root=ROOT):
                 _write_csv(root / "data" / "marts" / f"{name}.csv", columns, rows)
                 _write_json(root / SITE_MARTS / f"{name}.json", model, columns, rows)
                 marts[name] = rows
+        manifest = root / "site" / "data" / "user_share.json"
+        manifest.write_text(json.dumps(user_share_manifest(), indent=1) + "\n")
         return marts
     finally:
         connection.close()
@@ -94,6 +100,10 @@ def discover_models(root=ROOT):
                 "sql": path.read_text().strip().rstrip(";").strip(),
                 "published": published,
             }
+    for name, model in user_share_models().items():
+        if name in found:
+            raise ModelError(f"{name} is defined twice: {found[name]['path']} and {model['path']}.")
+        found[name] = model
     if not any(model["published"] for model in found.values()):
         raise ModelError("data/marts has no mart .sql file to publish.")
     for model in found.values():
