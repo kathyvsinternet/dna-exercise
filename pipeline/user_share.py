@@ -1,16 +1,16 @@
-"""Share-of-users tables, one per cut of mart_user_info.
+"""Share-of-users tables, one per cut of eph_user_info.
 
 To add a table, add a line to USER_SHARE_CUTS and run python pipeline/build.py.
 No SQL file is needed. Each cut becomes the mart mart_user_share_<name>, written
 to data/marts/ as a CSV and to site/data/marts/ as JSON. The dashboard reads
 site/data/user_share.json, so the new table appears there too.
 
-Each line is (name, column on mart_user_info, label shown on the dashboard).
+Each line is (name, column on eph_user_info, label shown on the dashboard).
 """
 
 import re
 
-SOURCE = "mart_user_info"
+SOURCE = "eph_user_info"
 PREFIX = "mart_user_share_"
 
 USER_SHARE_CUTS = [

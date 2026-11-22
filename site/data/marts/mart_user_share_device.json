@@ -1,8 +1,8 @@
 {
  "name": "mart_user_share_device",
- "sql": "SELECT\n  user_prim_device,\n  COUNT(DISTINCT user_id) AS n_users,\n  ROUND(COUNT(DISTINCT user_id) / SUM(COUNT(DISTINCT user_id)) OVER (), 4) AS n_share\nFROM mart_user_info\nGROUP BY user_prim_device\nORDER BY n_users DESC, user_prim_device",
+ "sql": "SELECT\n  user_prim_device,\n  COUNT(DISTINCT user_id) AS n_users,\n  ROUND(COUNT(DISTINCT user_id) / SUM(COUNT(DISTINCT user_id)) OVER (), 4) AS n_share\nFROM eph_user_info\nGROUP BY user_prim_device\nORDER BY n_users DESC, user_prim_device",
  "depends_on": [
-  "mart_user_info"
+  "eph_user_info"
  ],
  "columns": [
   {

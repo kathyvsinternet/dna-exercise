@@ -1,10 +1,11 @@
-"""Run the SQL models in data/marts and publish each mart.
+"""Run the SQL models in data/marts/sql and publish each mart.
 
 Layout:
 
-    data/marts/sql/*.sql    intermediate models (int_*). Built as views, not published.
-    data/marts/*.sql        marts (mart_*). Published as a CSV beside the SQL and as
-                            JSON in site/data/marts/ for the dashboard.
+    data/marts/sql/*.sql    every model. The file name is the model name.
+                            mart_*  published as a CSV in data/marts/ and as JSON in
+                                    site/data/marts/ for the dashboard.
+                            int_*, eph_*, anything else  built as views, not published.
 
 mart_user_share_* marts have no file. pipeline/user_share.py lists them.
 
@@ -87,9 +88,10 @@ def discover_models(root=ROOT):
     root = Path(root)
     marts_dir = root / "data" / "marts"
     found = {}
-    for folder, published in ((marts_dir / "sql", False), (marts_dir, True)):
+    for folder in (marts_dir / "sql", marts_dir):
         for path in sorted(folder.glob("*.sql")):
             name = path.stem
+            published = name.startswith("mart_")
             if name in found:
                 raise ModelError(f"{name} is defined twice: {found[name]['path']} and {path.relative_to(root)}.")
             if name in MODEL_TABLES:
@@ -105,7 +107,7 @@ def discover_models(root=ROOT):
             raise ModelError(f"{name} is defined twice: {found[name]['path']} and {model['path']}.")
         found[name] = model
     if not any(model["published"] for model in found.values()):
-        raise ModelError("data/marts has no mart .sql file to publish.")
+        raise ModelError("data/marts/sql has no mart_*.sql file to publish.")
     for model in found.values():
         model["depends_on"] = _references(model, found)
     return found
