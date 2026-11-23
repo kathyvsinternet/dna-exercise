@@ -13,7 +13,7 @@
   --gathersquare: #8a4b2f;
   --makerharbor: #243e66;
   --shadow: 0 1px 0 rgba(27, 25, 20, 0.06);
-  font-family: "Public Sans", "Avenir Next", "Segoe UI", sans-serif;
+  font-family: "Open Sans", "Avenir Next", "Segoe UI", sans-serif;
   color: var(--ink);
   background: var(--paper);
 }
@@ -26,8 +26,8 @@ body {
 }
 
 h1, h2, h3 {
-  font-family: Fraunces, Georgia, serif;
-  font-weight: 560;
+  font-family: "Source Serif Pro", Georgia, serif;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
 
@@ -57,9 +57,9 @@ a { color: inherit; }
 
 .brand strong {
   display: block;
-  font-family: Fraunces, Georgia, serif;
+  font-family: "Source Serif Pro", Georgia, serif;
   font-size: 1.45rem;
-  font-weight: 560;
+  font-weight: 600;
 }
 
 .brand span {
@@ -189,9 +189,9 @@ main { padding: 2.2rem 0 3rem; }
 
 .tile-value {
   margin: 0.35rem 0 0.35rem;
-  font-family: Fraunces, Georgia, serif;
+  font-family: "Source Serif Pro", Georgia, serif;
   font-size: min(2.5rem, 17cqi);
-  font-weight: 560;
+  font-weight: 600;
   line-height: 1;
   white-space: nowrap;
 }
@@ -288,7 +288,7 @@ th { font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; colo
   padding: 0.9rem 1rem;
 }
 
-.diagram strong { font-family: Fraunces, Georgia, serif; }
+.diagram strong { font-family: "Source Serif Pro", Georgia, serif; }
 
 code {
   font-family: "IBM Plex Mono", ui-monospace, monospace;

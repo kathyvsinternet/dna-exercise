@@ -328,7 +328,7 @@ function drawLine(mart, timeColumn, seriesColumns) {
       ],
     },
     config: {
-      font: "Public Sans",
+      font: "Open Sans",
       view: { stroke: null },
       axis: {
         labelColor: "#5e584e",
