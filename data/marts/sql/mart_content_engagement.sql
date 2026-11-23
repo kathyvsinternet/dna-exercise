@@ -11,4 +11,4 @@ SELECT
   SUM(n_events) as n_engagement_events
 FROM int_content_event_counts
 GROUP BY ALL
-ORDER BY n_engagement_events DESC
+ORDER BY n_engagement_events DESC, content_id
