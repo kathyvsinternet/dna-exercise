@@ -141,7 +141,7 @@ main { padding: 2.2rem 0 3rem; }
   text-transform: uppercase;
 }
 
-.filter-bar select, .button {
+.filter-bar select, .control select, .button {
   border: 1px solid var(--line);
   background: white;
   border-radius: 9px;
@@ -379,6 +379,22 @@ code {
 }
 
 .content-performance { margin-top: 1rem; }
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+  max-width: 18rem;
+}
+
+.control label {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 
 .dash .content-performance .chart { margin-top: 0; }
 

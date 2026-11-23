@@ -90,7 +90,10 @@ function breakdownCard(config, mart) {
   ]);
 }
 
-// Content Performance: one table of every mart column except content_id.
+// Content Performance: one table of every mart column except content_id, filtered by
+// the Category dropdown. The dropdown picks the category, so that column is not shown.
+const ALL_CATEGORIES = "All Categories";
+
 function renderContentPerformance(mart) {
   const labels = {
     title: "Title",
@@ -105,7 +108,7 @@ function renderContentPerformance(mart) {
   };
   const columns = mart.columns
     .map((column) => column.name)
-    .filter((name) => name !== "content_id")
+    .filter((name) => name !== "content_id" && name !== "category")
     .map((name) => ({
       column: name,
       label: labels[name] || name,
@@ -119,15 +122,30 @@ function renderContentPerformance(mart) {
   }
   const card = pagedTable(null, mart, columns);
   card.classList.add("content-table");
-  document.querySelector("#content-performance").replaceChildren(card);
+
+  const categories = [...new Set(mart.rows.map((row) => row.category))].sort((a, b) => a.localeCompare(b));
+  const select = element(
+    "select",
+    { id: "category-filter" },
+    ...[ALL_CATEGORIES, ...categories].map((name) => element("option", { value: name }, name)),
+  );
+  select.addEventListener("change", () => {
+    card.setRows(select.value === ALL_CATEGORIES ? mart.rows : mart.rows.filter((row) => row.category === select.value));
+  });
+  const control = element(
+    "div",
+    { className: "control" },
+    element("label", { htmlFor: "category-filter" }, "Category"),
+    select,
+  );
+  document.querySelector("#content-performance").replaceChildren(control, card);
 }
 
 // A card with a table. Shows the first 5 rows. "Expand" switches to pages of 10 rows
 // over the whole mart, in the order the mart's SQL sorted it. columns is
 // [{column, label, numeric, format}].
 function pagedTable(title, mart, columns) {
-  const rows = mart.rows;
-  const pageCount = Math.ceil(rows.length / PAGE_ROWS);
+  let rows = mart.rows;
   const state = { expanded: false, page: 0 };
 
   const body = element("tbody", {});
@@ -135,6 +153,7 @@ function pagedTable(title, mart, columns) {
   const controls = element("div", { className: "breakdown-controls" });
 
   function draw() {
+    const pageCount = Math.ceil(rows.length / PAGE_ROWS);
     const start = state.expanded ? state.page * PAGE_ROWS : 0;
     const end = Math.min(start + (state.expanded ? PAGE_ROWS : PREVIEW_ROWS), rows.length);
     body.replaceChildren(
@@ -148,9 +167,11 @@ function pagedTable(title, mart, columns) {
         ),
       ),
     );
-    status.textContent = state.expanded
-      ? `Showing ${start + 1}–${end} of ${rows.length}`
-      : `Top ${end} of ${rows.length}`;
+    status.textContent = !rows.length
+      ? "No rows"
+      : state.expanded
+        ? `Showing ${start + 1}–${end} of ${rows.length}`
+        : `Top ${end} of ${rows.length}`;
 
     const buttons = [];
     if (state.expanded) {
@@ -189,6 +210,13 @@ function pagedTable(title, mart, columns) {
     element("div", { className: "breakdown-foot" }, status, controls),
     element("p", { className: "source-note" }, `Source: ${mart.name}`),
   );
+  // Swap in a new list of rows, for example after a filter changes. Back to the top 5.
+  card.setRows = (newRows) => {
+    rows = newRows;
+    state.expanded = false;
+    state.page = 0;
+    draw();
+  };
   draw();
   return card;
 }
