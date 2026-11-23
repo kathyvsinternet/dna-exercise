@@ -123,7 +123,7 @@ function renderContentPerformance(mart) {
       column.format = (value) => Number(value).toLocaleString("en-US");
     }
   }
-  const card = pagedTable(null, mart, columns);
+  const card = pagedTable(null, mart, columns, 10);
   card.classList.add("content-table");
 
   const selects = CONTENT_FILTERS.map((filter) => {
@@ -156,10 +156,10 @@ function renderContentPerformance(mart) {
   document.querySelector("#content-performance").replaceChildren(controls, card);
 }
 
-// A card with a table. Shows the first 5 rows. "Expand" switches to pages of 10 rows
+// A card with a table. Shows the first previewRows. "Expand" switches to pages of 10 rows
 // over the whole mart, in the order the mart's SQL sorted it. columns is
 // [{column, label, numeric, format}].
-function pagedTable(title, mart, columns) {
+function pagedTable(title, mart, columns, previewRows = PREVIEW_ROWS) {
   let rows = mart.rows;
   const state = { expanded: false, page: 0 };
 
@@ -170,7 +170,7 @@ function pagedTable(title, mart, columns) {
   function draw() {
     const pageCount = Math.ceil(rows.length / PAGE_ROWS);
     const start = state.expanded ? state.page * PAGE_ROWS : 0;
-    const end = Math.min(start + (state.expanded ? PAGE_ROWS : PREVIEW_ROWS), rows.length);
+    const end = Math.min(start + (state.expanded ? PAGE_ROWS : previewRows), rows.length);
     body.replaceChildren(
       ...rows.slice(start, end).map((row) =>
         element(
@@ -197,7 +197,7 @@ function pagedTable(title, mart, columns) {
         );
       }
       buttons.push(button("Collapse", () => { state.expanded = false; state.page = 0; draw(); }));
-    } else if (rows.length > PREVIEW_ROWS) {
+    } else if (rows.length > previewRows) {
       buttons.push(button("Expand", () => { state.expanded = true; draw(); }));
     }
     controls.replaceChildren(...buttons);
