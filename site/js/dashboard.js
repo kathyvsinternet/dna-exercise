@@ -15,10 +15,10 @@ const SCORECARDS = [
 ];
 // Named colors for known series. Any other series takes the next fallback color.
 const SERIES_COLORS = {
-  user_subscriptions: "#1f4d3a",
-  user_cancellations: "#b3261e",
+  user_subscriptions: "#2c6aa0",
+  user_cancellations: "#c23b3b",
 };
-const FALLBACK_COLORS = ["#8a4b2f", "#243e66", "#a79e90"];
+const FALLBACK_COLORS = ["#3d7ab5", "#5b8fbf", "#8aa4b8"];
 
 Promise.all([loadMart(COUNTS), loadMart(MART), loadBreakdowns(), loadMart(CONTENT)])
   .then(([counts, mart, breakdowns, content]) => {
@@ -331,14 +331,14 @@ function drawLine(mart, timeColumn, seriesColumns) {
       font: "Open Sans",
       view: { stroke: null },
       axis: {
-        labelColor: "#5e584e",
-        titleColor: "#5e584e",
-        gridColor: "#e7e0d4",
-        domainColor: "#d8d0c3",
-        tickColor: "#d8d0c3",
+        labelColor: "#5a6570",
+        titleColor: "#5a6570",
+        gridColor: "#e4eaf0",
+        domainColor: "#d3dbe3",
+        tickColor: "#d3dbe3",
       },
       legend: {
-        labelColor: "#1b1914",
+        labelColor: "#1c2430",
         orient: "top",
         symbolType: "stroke",
         symbolStrokeWidth: 3,

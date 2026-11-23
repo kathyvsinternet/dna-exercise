@@ -1,18 +1,18 @@
 :root {
-  --paper: #f3efe6;
-  --ink: #1b1914;
-  --muted: #5e584e;
-  --muted-light: #7d776c;
-  --line: #d8d0c3;
-  --card: #fffaf3;
-  --header: #1b1914;
-  --header-text: #f3efe6;
-  --accent: #1f4d3a;
-  --refuse: #6e3b2e;
-  --pagegarden: #1f4d3a;
-  --gathersquare: #8a4b2f;
+  --paper: #f3f5f8;
+  --ink: #1c2430;
+  --muted: #5a6570;
+  --muted-light: #7d8792;
+  --line: #d3dbe3;
+  --card: #f7f9fb;
+  --header: #1b2838;
+  --header-text: #eef2f6;
+  --accent: #2c6aa0;
+  --refuse: #8a4d56;
+  --pagegarden: #2c6aa0;
+  --gathersquare: #5b7c99;
   --makerharbor: #243e66;
-  --shadow: 0 1px 0 rgba(27, 25, 20, 0.06);
+  --shadow: 0 1px 0 rgba(28, 36, 48, 0.06);
   font-family: "Open Sans", "Avenir Next", "Segoe UI", sans-serif;
   color: var(--ink);
   background: var(--paper);
@@ -64,7 +64,7 @@ a { color: inherit; }
 
 .brand span {
   display: block;
-  color: #c8bfb1;
+  color: #b7c2cc;
   font-size: 0.85rem;
   margin-top: 0.15rem;
 }
@@ -78,13 +78,13 @@ a { color: inherit; }
 
 .nav a {
   text-decoration: none;
-  color: #ddd6cb;
+  color: #c5d0da;
   font-size: 0.95rem;
 }
 
 .nav a[aria-current="page"] {
   color: white;
-  border-bottom: 2px solid #e6c7a1;
+  border-bottom: 2px solid #8eb4d4;
 }
 
 main { padding: 2.2rem 0 3rem; }
@@ -338,7 +338,7 @@ code {
   color: var(--accent);
 }
 
-.refuse { border-color: #e2cfc6; background: #fbf6f3; }
+.refuse { border-color: #d5c5c8; background: #f7f4f5; }
 .refuse h2 { color: var(--refuse); font-size: 1.45rem; }
 
 .filters { padding-left: 1.1rem; }
@@ -354,12 +354,13 @@ code {
   border: 0;
 }
 
-.site-footer {
+.section-head,
+.section-title {
   border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.88rem;
-  padding: 1rem 0 2rem;
+  padding-top: 1.15rem;
 }
+
+.section-head { margin-top: 0.4rem; }
 
 .dash { margin-top: 1.4rem; }
 
@@ -375,7 +376,7 @@ code {
 
 .dash .breakdowns .chart { margin-top: 0; }
 
-.section-title { margin: 2rem 0 0; }
+.section-title { margin: 2.2rem 0 0; }
 
 .content-performance { margin-top: 1rem; }
 
@@ -391,6 +392,16 @@ code {
   flex-direction: column;
   gap: 0.3rem;
   min-width: 14rem;
+}
+
+.control select {
+  appearance: none;
+  padding-right: 2.4rem;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%231c2430' stroke-width='1.5' d='M1 1.5 L6 6.5 L11 1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 0.65rem;
 }
 
 .control label {
@@ -460,8 +471,8 @@ code {
   margin: 0.5rem 0 0;
   padding: 0.9rem 1rem;
   overflow-x: auto;
-  background: #1b1914;
-  color: #f3efe6;
+  background: #1b2838;
+  color: #eef2f6;
   border-radius: 10px;
   font-size: 0.86rem;
   line-height: 1.5;
