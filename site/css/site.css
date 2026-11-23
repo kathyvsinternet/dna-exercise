@@ -373,6 +373,22 @@ code {
 
 .dash .breakdowns .chart { margin-top: 0; }
 
+.section-title {
+  margin: 2rem 0 0;
+  font-size: 1.45rem;
+}
+
+.content-performance { margin-top: 1rem; }
+
+.dash .content-performance .chart { margin-top: 0; }
+
+.content-table .table-wrap { overflow-x: auto; }
+
+/* The title column gets room to wrap. Dates stay on one line. */
+.content-table th, .content-table td { padding: 0.45rem 0.35rem; }
+.content-table td:first-child { min-width: 10rem; }
+.content-table .nowrap { white-space: nowrap; }
+
 .breakdown .table-wrap { margin-top: 0.6rem; }
 
 .breakdown th, .breakdown td { padding: 0.45rem 0.5rem; }

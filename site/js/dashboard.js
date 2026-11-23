@@ -1,5 +1,6 @@
 const MART = "data/marts/mart_user_qtr_counts.json";
 const COUNTS = "data/marts/mart_user_info_counts.json";
+const CONTENT = "data/marts/mart_content_engagement.json";
 // The share tables come from site/data/user_share.json, which pipeline/user_share.py writes.
 // Each mart's first column is the value; n_users and n_share follow.
 const USER_SHARE = "data/user_share.json";
@@ -19,16 +20,18 @@ const SERIES_COLORS = {
 };
 const FALLBACK_COLORS = ["#8a4b2f", "#243e66", "#a79e90"];
 
-Promise.all([loadMart(COUNTS), loadMart(MART), loadBreakdowns()])
-  .then(([counts, mart, breakdowns]) => {
+Promise.all([loadMart(COUNTS), loadMart(MART), loadBreakdowns(), loadMart(CONTENT)])
+  .then(([counts, mart, breakdowns, content]) => {
     renderScorecards(counts);
     renderBreakdowns(breakdowns);
     render(mart);
+    renderContentPerformance(content);
   })
   .catch((error) => {
     document.querySelector("#scorecards").textContent = error.message;
     document.querySelector("#breakdowns").textContent = error.message;
     document.querySelector("#chart-note").textContent = error.message;
+    document.querySelector("#content-performance").textContent = error.message;
   });
 
 async function loadBreakdowns() {
@@ -78,9 +81,51 @@ function renderBreakdowns(breakdowns) {
   );
 }
 
-// Top 5 rows by default. "Expand" switches to pages of 10 rows over the full list.
 function breakdownCard(config, mart) {
   const [valueColumn, usersColumn, shareColumn] = mart.columns.map((column) => column.name);
+  return pagedTable(config.title, mart, [
+    { column: valueColumn, label: config.header },
+    { column: usersColumn, label: "Users", numeric: true, format: (value) => value.toLocaleString("en-US") },
+    { column: shareColumn, label: "Share", numeric: true, format: formatShare },
+  ]);
+}
+
+// Content Performance: one table of every mart column except content_id.
+function renderContentPerformance(mart) {
+  const labels = {
+    title: "Title",
+    category: "Category",
+    content_type: "Content Type",
+    publish_date: "Publish Date",
+    duration_min: "Duration (min)",
+    n_content_complete: "Content Complete",
+    n_content_open: "Content Open",
+    n_download: "Download",
+    n_engagement_events: "Engagement Events",
+  };
+  const columns = mart.columns
+    .map((column) => column.name)
+    .filter((name) => name !== "content_id")
+    .map((name) => ({
+      column: name,
+      label: labels[name] || name,
+      numeric: mart.rows.every((row) => row[name] === null || /^-?\d+(\.\d+)?$/.test(String(row[name]))),
+      nowrap: name === "publish_date",
+    }));
+  for (const column of columns) {
+    if (column.numeric) {
+      column.format = (value) => Number(value).toLocaleString("en-US");
+    }
+  }
+  const card = pagedTable(null, mart, columns);
+  card.classList.add("content-table");
+  document.querySelector("#content-performance").replaceChildren(card);
+}
+
+// A card with a table. Shows the first 5 rows. "Expand" switches to pages of 10 rows
+// over the whole mart, in the order the mart's SQL sorted it. columns is
+// [{column, label, numeric, format}].
+function pagedTable(title, mart, columns) {
   const rows = mart.rows;
   const pageCount = Math.ceil(rows.length / PAGE_ROWS);
   const state = { expanded: false, page: 0 };
@@ -97,9 +142,9 @@ function breakdownCard(config, mart) {
         element(
           "tr",
           {},
-          element("td", {}, String(row[valueColumn])),
-          element("td", { className: "num" }, row[usersColumn].toLocaleString("en-US")),
-          element("td", { className: "num" }, formatShare(row[shareColumn])),
+          ...columns.map((spec) =>
+            element("td", { className: cellClass(spec) }, cellText(row[spec.column], spec.format)),
+          ),
         ),
       ),
     );
@@ -123,8 +168,10 @@ function breakdownCard(config, mart) {
   }
 
   const card = element("article", { className: "chart breakdown" });
+  if (title) {
+    card.append(element("h2", {}, title));
+  }
   card.append(
-    element("h2", {}, config.title),
     element(
       "div",
       { className: "table-wrap" },
@@ -134,13 +181,7 @@ function breakdownCard(config, mart) {
         element(
           "thead",
           {},
-          element(
-            "tr",
-            {},
-            columnHeader(config.header, valueColumn),
-            columnHeader("Users", usersColumn, true),
-            columnHeader("Share", shareColumn, true),
-          ),
+          element("tr", {}, ...columns.map((spec) => columnHeader(spec.label, spec.column, cellClass(spec)))),
         ),
         body,
       ),
@@ -152,10 +193,21 @@ function breakdownCard(config, mart) {
   return card;
 }
 
-function columnHeader(label, column, numeric) {
+function cellText(value, format) {
+  if (value === null || value === undefined || value === "") {
+    return "–";
+  }
+  return format ? format(value) : String(value);
+}
+
+function cellClass(spec) {
+  return [spec.numeric ? "num" : "", spec.nowrap ? "nowrap" : ""].filter(Boolean).join(" ");
+}
+
+function columnHeader(label, column, className) {
   return element(
     "th",
-    numeric ? { className: "num" } : {},
+    className ? { className } : {},
     label,
     element("span", { className: "col-name" }, column),
   );
