@@ -12,12 +12,6 @@
   "title": "Active Users by Age Band"
  },
  {
-  "mart": "mart_user_share_channel",
-  "column": "user_acq_channel",
-  "header": "Acquisition Channel",
-  "title": "Active Users by Acquisition Channel"
- },
- {
   "mart": "mart_user_share_device",
   "column": "user_prim_device",
   "header": "Primary Device",
@@ -34,5 +28,11 @@
   "column": "n_subs_paid",
   "header": "Paid Subscriptions",
   "title": "Users by Paid Subscriptions"
+ },
+ {
+  "mart": "mart_user_share_channel",
+  "column": "user_acq_channel",
+  "header": "Acquisition Channel",
+  "title": "Active Users by Acquisition Channel"
  }
 ]

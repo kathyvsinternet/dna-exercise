@@ -21,10 +21,10 @@ PREFIX = "mart_user_share_"
 USER_SHARE_CUTS = [
     ("country", "user_geo_country", "Country", "Active Users by Country"),
     ("age", "user_age_band", "Age Band", "Active Users by Age Band"),
-    ("channel", "user_acq_channel", "Acquisition Channel", "Active Users by Acquisition Channel"),
     ("device", "user_prim_device", "Primary Device", "Active Users by Primary Device"),
     ("subs_active", "n_subs_active", "Active Subscriptions", "Users by Active Subscriptions"),
     ("subs_paid", "n_subs_paid", "Paid Subscriptions", "Users by Paid Subscriptions"),
+    ("channel", "user_acq_channel", "Acquisition Channel", "Active Users by Acquisition Channel"),
 ]
 
 _IDENTIFIER = re.compile(r"^[a-z][a-z0-9_]*$")
