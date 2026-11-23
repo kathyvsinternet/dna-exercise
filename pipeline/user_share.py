@@ -5,7 +5,7 @@ No SQL file is needed. Each cut becomes the mart mart_user_share_<name>, written
 to data/marts/ as a CSV and to site/data/marts/ as JSON. The dashboard reads
 site/data/user_share.json, so the new table appears there too.
 
-This build does not suppress small cells. The under-5 rule on site/access.html applies
+This build does not suppress small cells. The under-5 rule in documentation.md applies
 to published people counts, and the subs_active and subs_paid tables are an approved
 exception to it: they show groups of fewer than 5 people as they are.
 
