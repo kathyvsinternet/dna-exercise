@@ -442,7 +442,9 @@ code {
 .button:disabled:hover { border-color: var(--line); }
 
 
-.chart-tall { min-height: 323px; }
+.chart-tall { min-height: 0; }
+
+#chart-source { margin-top: 0; }
 
 .peek { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
 
