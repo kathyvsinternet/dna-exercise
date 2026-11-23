@@ -297,7 +297,7 @@ function drawLine(mart, timeColumn, seriesColumns) {
   const spec = {
     $schema: "https://vega.github.io/schema/vega-lite/v5.json",
     width: "container",
-    height: 340,
+    height: 289,
     autosize: { type: "fit", contains: "padding" },
     background: "transparent",
     data: { values },

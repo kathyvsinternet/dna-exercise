@@ -95,6 +95,8 @@ main { padding: 2.2rem 0 3rem; }
   line-height: 1.5;
 }
 
+.lede-wide { max-width: 75%; }
+
 .muted { color: var(--muted); }
 
 .kicker {
@@ -440,14 +442,14 @@ code {
 .button:disabled:hover { border-color: var(--line); }
 
 
-.chart-tall { min-height: 380px; }
+.chart-tall { min-height: 323px; }
 
 .peek { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
 
 .peek summary {
   cursor: pointer;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.75rem;
 }
 
 .peek .table-wrap { max-height: 22rem; overflow: auto; }

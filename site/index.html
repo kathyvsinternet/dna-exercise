@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css?v=25">
+  <link rel="stylesheet" href="css/site.css?v=28">
 </head>
 <body>
   <header class="site-header">
@@ -25,12 +25,11 @@
   <main class="wrap">
     <p class="kicker">Dashboard</p>
     <h1>Users and Subscriptions</h1>
-    <p class="lede">This section shows information on our active user base and provides a snapshot of revenue. </p>
+    <p class="lede lede-wide">This section shows information on our active user base and provides a snapshot of revenue. </p>
 
     <section class="dash" id="dash" aria-live="polite">
       <section class="kpis" id="scorecards" aria-label="Current totals">Loading totals…</section>
       <p class="source-note" id="scorecards-source"></p>
-      <section class="breakdowns" id="breakdowns" aria-label="Active users by segment">Loading tables…</section>
       <article class="chart chart-wide">
         <h2 id="chart-title">Quarterly Subscriptions and Cancellations</h2>
         <p class="fine" id="chart-note">Q3 2026 is a partial quarter.</p>
@@ -53,9 +52,10 @@
           </div>
         </details>
       </article>
+      <section class="breakdowns" id="breakdowns" aria-label="Active users by segment">Loading tables…</section>
 
       <h1 class="section-title">Content Performance</h1>
-      <p class="lede">This section shows user engagement with various content on the platform. The filters in this section only apply to the table below.</p>
+      <p class="lede lede-wide">This section shows user engagement with various content on the platform. The filters in this section only apply to the table below.</p>
       <section class="content-performance" id="content-performance">Loading content…</section>
     </section>
   </main>
@@ -63,6 +63,6 @@
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-  <script src="js/dashboard.js?v=23"></script>
+  <script src="js/dashboard.js?v=24"></script>
 </body>
 </html>
