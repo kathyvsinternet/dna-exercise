@@ -91,24 +91,27 @@ function breakdownCard(config, mart) {
 }
 
 // Content Performance: one table of every mart column except content_id, filtered by
-// the Category dropdown. The dropdown picks the category, so that column is not shown.
-const ALL_CATEGORIES = "All Categories";
+// the dropdowns above it. A row has to match every dropdown that is not set to "All".
+const ALL = "All";
+const CONTENT_FILTERS = [
+  { column: "category", label: "Category", all: "All Categories" },
+  { column: "content_type", label: "Content Type", all: "All Content Types" },
+];
 
 function renderContentPerformance(mart) {
   const labels = {
     title: "Title",
     category: "Category",
     content_type: "Content Type",
-    publish_date: "Publish Date",
-    duration_min: "Duration (min)",
-    n_content_complete: "Content Complete",
-    n_content_open: "Content Open",
-    n_download: "Download",
-    n_engagement_events: "Engagement Events",
+    publish_date: "Published",
+    n_content_complete: "Completes",
+    n_content_open: "Opens",
+    n_download: "Downloads",
+    n_engagement_events: "Total Engagements",
   };
   const columns = mart.columns
     .map((column) => column.name)
-    .filter((name) => name !== "content_id" && name !== "category")
+    .filter((name) => name !== "content_id" && name !== "duration_min")
     .map((name) => ({
       column: name,
       label: labels[name] || name,
@@ -123,22 +126,34 @@ function renderContentPerformance(mart) {
   const card = pagedTable(null, mart, columns);
   card.classList.add("content-table");
 
-  const categories = [...new Set(mart.rows.map((row) => row.category))].sort((a, b) => a.localeCompare(b));
-  const select = element(
-    "select",
-    { id: "category-filter" },
-    ...[ALL_CATEGORIES, ...categories].map((name) => element("option", { value: name }, name)),
-  );
-  select.addEventListener("change", () => {
-    card.setRows(select.value === ALL_CATEGORIES ? mart.rows : mart.rows.filter((row) => row.category === select.value));
+  const selects = CONTENT_FILTERS.map((filter) => {
+    const values = [...new Set(mart.rows.map((row) => row[filter.column]))].sort((a, b) => a.localeCompare(b));
+    const select = element(
+      "select",
+      { id: `${filter.column}-filter` },
+      element("option", { value: ALL }, filter.all),
+      ...values.map((value) => element("option", { value }, value)),
+    );
+    select.addEventListener("change", applyFilters);
+    return { filter, select };
   });
-  const control = element(
+
+  function applyFilters() {
+    card.setRows(
+      mart.rows.filter((row) =>
+        selects.every(({ filter, select }) => select.value === ALL || row[filter.column] === select.value),
+      ),
+    );
+  }
+
+  const controls = element(
     "div",
-    { className: "control" },
-    element("label", { htmlFor: "category-filter" }, "Category"),
-    select,
+    { className: "controls" },
+    ...selects.map(({ filter, select }) =>
+      element("div", { className: "control" }, element("label", { htmlFor: select.id }, filter.label), select),
+    ),
   );
-  document.querySelector("#content-performance").replaceChildren(control, card);
+  document.querySelector("#content-performance").replaceChildren(controls, card);
 }
 
 // A card with a table. Shows the first 5 rows. "Expand" switches to pages of 10 rows

@@ -380,12 +380,18 @@ code {
 
 .content-performance { margin-top: 1rem; }
 
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 .control {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  margin-bottom: 1rem;
-  max-width: 18rem;
+  min-width: 14rem;
 }
 
 .control label {
