@@ -9,6 +9,7 @@ const SCORECARDS = [
   { column: "n_users_active", label: "Active Users" },
   { column: "n_subs_active", label: "Active Subscriptions" },
   { column: "n_subs_paid", label: "Paid Subscriptions" },
+  { column: "total_monthly_payment", label: "Total Monthly Payment", money: true },
   { column: "avg_monthly_payment", label: "Average Monthly Payment", money: true },
 ];
 // Named colors for known series. Any other series takes the next fallback color.

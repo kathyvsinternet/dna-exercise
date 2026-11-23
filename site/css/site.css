@@ -165,7 +165,7 @@ main { padding: 2.2rem 0 3rem; }
 
 .kpis {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -174,16 +174,24 @@ main { padding: 2.2rem 0 3rem; }
   display: flex;
   flex-direction: column;
   border-top: 4px solid var(--accent);
+  container-type: inline-size;
 }
 
-.tile-title { margin: 0; font-size: 0.98rem; }
+/* Five tiles share a row. The text scales with the tile so a long title or a value
+   like $3,884.03 never wraps or spills out. */
+.tile-title {
+  margin: 0;
+  font-size: min(0.98rem, 8.2cqi);
+  white-space: nowrap;
+}
 
 .tile-value {
   margin: 0.35rem 0 0.35rem;
   font-family: Fraunces, Georgia, serif;
-  font-size: 2.5rem;
+  font-size: min(2.5rem, 17cqi);
   font-weight: 560;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .tile-column {
