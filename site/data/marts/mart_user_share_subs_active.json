@@ -1,0 +1,38 @@
+{
+ "name": "mart_user_share_subs_active",
+ "sql": "SELECT\n  n_subs_active,\n  COUNT(DISTINCT user_id) AS n_users,\n  ROUND(COUNT(DISTINCT user_id) / SUM(COUNT(DISTINCT user_id)) OVER (), 4) AS n_share\nFROM eph_user_info\nGROUP BY n_subs_active\nORDER BY n_users DESC, n_subs_active",
+ "depends_on": [
+  "eph_user_info"
+ ],
+ "columns": [
+  {
+   "name": "n_subs_active",
+   "type": "BIGINT"
+  },
+  {
+   "name": "n_users",
+   "type": "BIGINT"
+  },
+  {
+   "name": "n_share",
+   "type": "DOUBLE"
+  }
+ ],
+ "rows": [
+  {
+   "n_subs_active": 1,
+   "n_users": 340,
+   "n_share": 0.874
+  },
+  {
+   "n_subs_active": 2,
+   "n_users": 43,
+   "n_share": 0.1105
+  },
+  {
+   "n_subs_active": 3,
+   "n_users": 6,
+   "n_share": 0.0154
+  }
+ ]
+}

@@ -38,7 +38,7 @@ async function loadBreakdowns() {
   const cuts = await response.json();
   const marts = await Promise.all(cuts.map((cut) => loadMart(`data/marts/${cut.mart}.json`)));
   return cuts.map((cut, index) => ({
-    config: { title: `Active Users by ${cut.label}`, header: cut.label },
+    config: { title: cut.title, header: cut.header },
     mart: marts[index],
   }));
 }

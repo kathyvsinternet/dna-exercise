@@ -1,7 +1,7 @@
 -- One row per user with an active, non-test subscription (see int_user_info).
 --
 -- The mart_user_share_* tables are built from this model. It is not published itself. They have no .sql files.
--- pipeline/user_share.py lists them in USER_SHARE_CUTS as (name, column, label),
+-- pipeline/user_share.py lists them in USER_SHARE_CUTS as (name, column, header, title),
 -- and python pipeline/build.py writes each one as mart_user_share_<name> using:
 --
 --   SELECT <column>,

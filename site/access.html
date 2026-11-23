@@ -39,7 +39,7 @@
           <tr><td><code>is_test_account</code></td><td>User dimension and both facts</td><td>Visible to the build. Metrics keep only <code>false</code>.</td></tr>
           <tr><td>Metric totals</td><td><code>metrics/*.yml</code> and this site</td><td>Anyone who can open the page. Counts and distinct people, never a person.</td></tr>
           <tr><td>Dashboard aggregates</td><td><code>site/data/cubes/*.json</code></td><td>Anyone who can open the page. Each file holds a metric’s counts for every combination of the dimensions its file allows. There are no <code>user_id</code> values and no row-level data.</td></tr>
-          <tr><td>Small counts of people</td><td><code>subscribers_active</code> cube</td><td>A distinct-people cell with fewer than 5 people is published as blank and shown as “&lt;5”. Counts of subscriptions are not suppressed because they do not describe a person.</td></tr>
+          <tr><td>Small counts of people</td><td><code>subscribers_active</code> cube</td><td>A distinct-people cell with fewer than 5 people is published as blank and shown as “&lt;5”. Counts of subscriptions are not suppressed because they do not describe a person. <strong>Exception:</strong> the “Users by Active Subscriptions” and “Users by Paid Subscriptions” dashboard tables (<code>mart_user_share_subs_active</code>, <code>mart_user_share_subs_paid</code>) show every count, including groups under 5 people.</td></tr>
         </tbody>
       </table>
     </div>

@@ -2,21 +2,37 @@
  {
   "mart": "mart_user_share_country",
   "column": "user_geo_country",
-  "label": "Country"
+  "header": "Country",
+  "title": "Active Users by Country"
  },
  {
   "mart": "mart_user_share_age",
   "column": "user_age_band",
-  "label": "Age Band"
+  "header": "Age Band",
+  "title": "Active Users by Age Band"
  },
  {
   "mart": "mart_user_share_channel",
   "column": "user_acq_channel",
-  "label": "Acquisition Channel"
+  "header": "Acquisition Channel",
+  "title": "Active Users by Acquisition Channel"
  },
  {
   "mart": "mart_user_share_device",
   "column": "user_prim_device",
-  "label": "Primary Device"
+  "header": "Primary Device",
+  "title": "Active Users by Primary Device"
+ },
+ {
+  "mart": "mart_user_share_subs_active",
+  "column": "n_subs_active",
+  "header": "Active Subscriptions",
+  "title": "Users by Active Subscriptions"
+ },
+ {
+  "mart": "mart_user_share_subs_paid",
+  "column": "n_subs_paid",
+  "header": "Paid Subscriptions",
+  "title": "Users by Paid Subscriptions"
  }
 ]
