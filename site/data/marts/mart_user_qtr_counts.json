@@ -1,0 +1,128 @@
+{
+ "name": "mart_user_qtr_counts",
+ "sql": "SELECT\n  DATE_TRUNC('quarter', date)::DATE as quarter,\n  SUM(user_subscriptions) as user_subscriptions,\n  SUM(user_cancellations) as user_cancellations\nFROM int_daily_users\nGROUP BY quarter\nORDER BY quarter",
+ "depends_on": [
+  "int_daily_users"
+ ],
+ "columns": [
+  {
+   "name": "quarter",
+   "type": "DATE"
+  },
+  {
+   "name": "user_subscriptions",
+   "type": "HUGEINT"
+  },
+  {
+   "name": "user_cancellations",
+   "type": "HUGEINT"
+  }
+ ],
+ "rows": [
+  {
+   "quarter": "2021-07-01",
+   "user_subscriptions": 1,
+   "user_cancellations": 0
+  },
+  {
+   "quarter": "2021-10-01",
+   "user_subscriptions": 5,
+   "user_cancellations": 0
+  },
+  {
+   "quarter": "2022-01-01",
+   "user_subscriptions": 7,
+   "user_cancellations": 0
+  },
+  {
+   "quarter": "2022-04-01",
+   "user_subscriptions": 16,
+   "user_cancellations": 0
+  },
+  {
+   "quarter": "2022-07-01",
+   "user_subscriptions": 7,
+   "user_cancellations": 1
+  },
+  {
+   "quarter": "2022-10-01",
+   "user_subscriptions": 9,
+   "user_cancellations": 0
+  },
+  {
+   "quarter": "2023-01-01",
+   "user_subscriptions": 16,
+   "user_cancellations": 0
+  },
+  {
+   "quarter": "2023-04-01",
+   "user_subscriptions": 15,
+   "user_cancellations": 0
+  },
+  {
+   "quarter": "2023-07-01",
+   "user_subscriptions": 23,
+   "user_cancellations": 1
+  },
+  {
+   "quarter": "2023-10-01",
+   "user_subscriptions": 30,
+   "user_cancellations": 0
+  },
+  {
+   "quarter": "2024-01-01",
+   "user_subscriptions": 22,
+   "user_cancellations": 6
+  },
+  {
+   "quarter": "2024-04-01",
+   "user_subscriptions": 26,
+   "user_cancellations": 1
+  },
+  {
+   "quarter": "2024-07-01",
+   "user_subscriptions": 35,
+   "user_cancellations": 3
+  },
+  {
+   "quarter": "2024-10-01",
+   "user_subscriptions": 45,
+   "user_cancellations": 4
+  },
+  {
+   "quarter": "2025-01-01",
+   "user_subscriptions": 48,
+   "user_cancellations": 13
+  },
+  {
+   "quarter": "2025-04-01",
+   "user_subscriptions": 58,
+   "user_cancellations": 17
+  },
+  {
+   "quarter": "2025-07-01",
+   "user_subscriptions": 54,
+   "user_cancellations": 9
+  },
+  {
+   "quarter": "2025-10-01",
+   "user_subscriptions": 76,
+   "user_cancellations": 15
+  },
+  {
+   "quarter": "2026-01-01",
+   "user_subscriptions": 81,
+   "user_cancellations": 18
+  },
+  {
+   "quarter": "2026-04-01",
+   "user_subscriptions": 103,
+   "user_cancellations": 51
+  },
+  {
+   "quarter": "2026-07-01",
+   "user_subscriptions": 127,
+   "user_cancellations": 73
+  }
+ ]
+}

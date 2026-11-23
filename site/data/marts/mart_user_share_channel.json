@@ -1,0 +1,48 @@
+{
+ "name": "mart_user_share_channel",
+ "sql": "SELECT\n  user_acq_channel,\n  COUNT(DISTINCT user_id) AS n_users,\n  ROUND(COUNT(DISTINCT user_id) / SUM(COUNT(DISTINCT user_id)) OVER (), 4) AS n_share\nFROM eph_user_info\nGROUP BY user_acq_channel\nORDER BY n_users DESC, user_acq_channel",
+ "depends_on": [
+  "eph_user_info"
+ ],
+ "columns": [
+  {
+   "name": "user_acq_channel",
+   "type": "VARCHAR"
+  },
+  {
+   "name": "n_users",
+   "type": "BIGINT"
+  },
+  {
+   "name": "n_share",
+   "type": "DOUBLE"
+  }
+ ],
+ "rows": [
+  {
+   "user_acq_channel": "email_campaign",
+   "n_users": 107,
+   "n_share": 0.2751
+  },
+  {
+   "user_acq_channel": "paid_social",
+   "n_users": 90,
+   "n_share": 0.2314
+  },
+  {
+   "user_acq_channel": "organic_search",
+   "n_users": 86,
+   "n_share": 0.2211
+  },
+  {
+   "user_acq_channel": "referral",
+   "n_users": 78,
+   "n_share": 0.2005
+  },
+  {
+   "user_acq_channel": "unknown",
+   "n_users": 28,
+   "n_share": 0.072
+  }
+ ]
+}

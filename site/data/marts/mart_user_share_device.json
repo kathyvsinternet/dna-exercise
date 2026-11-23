@@ -1,0 +1,48 @@
+{
+ "name": "mart_user_share_device",
+ "sql": "SELECT\n  user_prim_device,\n  COUNT(DISTINCT user_id) AS n_users,\n  ROUND(COUNT(DISTINCT user_id) / SUM(COUNT(DISTINCT user_id)) OVER (), 4) AS n_share\nFROM eph_user_info\nGROUP BY user_prim_device\nORDER BY n_users DESC, user_prim_device",
+ "depends_on": [
+  "eph_user_info"
+ ],
+ "columns": [
+  {
+   "name": "user_prim_device",
+   "type": "VARCHAR"
+  },
+  {
+   "name": "n_users",
+   "type": "BIGINT"
+  },
+  {
+   "name": "n_share",
+   "type": "DOUBLE"
+  }
+ ],
+ "rows": [
+  {
+   "user_prim_device": "web_mobile",
+   "n_users": 101,
+   "n_share": 0.2596
+  },
+  {
+   "user_prim_device": "Android_app",
+   "n_users": 94,
+   "n_share": 0.2416
+  },
+  {
+   "user_prim_device": "web_desktop",
+   "n_users": 94,
+   "n_share": 0.2416
+  },
+  {
+   "user_prim_device": "iOS_app",
+   "n_users": 84,
+   "n_share": 0.2159
+  },
+  {
+   "user_prim_device": "unknown",
+   "n_users": 16,
+   "n_share": 0.0411
+  }
+ ]
+}

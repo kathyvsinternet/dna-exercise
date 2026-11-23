@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FanKewl</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css?v=33">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html"><strong>FanKewl</strong><span>A Prototype for Data Reporting</span></a>
+      <nav class="nav" aria-label="Sections">
+        <a href="index.html" aria-current="page">Dashboard</a>
+        <a href="https://github.com/kathyvsinternet/dna-exercise/blob/main/documentation.md" target="_blank" rel="noopener noreferrer">Documentation</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1 class="section-head">Users and Subscriptions</h1>
+    <p class="lede lede-wide">This section shows information on our active user base and provides a snapshot of revenue. </p>
+
+    <section class="dash" id="dash" aria-live="polite">
+      <section class="kpis" id="scorecards" aria-label="Current totals">Loading totals…</section>
+      <p class="source-note" id="scorecards-source"></p>
+      <article class="chart chart-wide">
+        <h2 id="chart-title">Quarterly Subscriptions and Cancellations</h2>
+        <p class="fine" id="chart-note">Q3 2026 is a partial quarter.</p>
+        <div class="chart-body chart-tall" id="chart-quarterly"></div>
+        <p class="source-note" id="chart-source"></p>
+
+        <details class="peek">
+          <summary>Show the query</summary>
+          <p class="source-note" id="query-reads"></p>
+          <pre class="sql"><code id="query-sql"></code></pre>
+        </details>
+
+        <details class="peek">
+          <summary>Show the data</summary>
+          <div class="table-wrap">
+            <table>
+              <thead id="data-head"></thead>
+              <tbody id="data-body"></tbody>
+            </table>
+          </div>
+        </details>
+      </article>
+      <section class="breakdowns" id="breakdowns" aria-label="Active users by segment">Loading tables…</section>
+
+      <h1 class="section-title">Content Performance</h1>
+      <p class="lede lede-wide">This section shows user engagement with various content on the platform. The filters in this section only apply to the table below.</p>
+      <section class="content-performance" id="content-performance">Loading content…</section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+  <script src="js/dashboard.js?v=27"></script>
+</body>
+</html>

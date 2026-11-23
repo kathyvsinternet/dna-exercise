@@ -1,0 +1,501 @@
+:root {
+  --paper: #f3f5f8;
+  --ink: #1c2430;
+  --muted: #5a6570;
+  --muted-light: #7d8792;
+  --line: #d3dbe3;
+  --card: #f7f9fb;
+  --header: #1b2838;
+  --header-text: #eef2f6;
+  --accent: #2c6aa0;
+  --refuse: #8a4d56;
+  --pagegarden: #2c6aa0;
+  --gathersquare: #5b7c99;
+  --makerharbor: #243e66;
+  --shadow: 0 1px 0 rgba(28, 36, 48, 0.06);
+  font-family: "Open Sans", "Avenir Next", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: "Source Serif Pro", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+a { color: inherit; }
+
+.site-header {
+  background: var(--header);
+  color: var(--header-text);
+}
+
+.header-inner, .wrap {
+  width: min(1080px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: end;
+  padding: 1.25rem 0 1rem;
+}
+
+.brand {
+  text-decoration: none;
+}
+
+.brand strong {
+  display: block;
+  font-family: "Source Serif Pro", Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+}
+
+.brand span {
+  display: block;
+  color: #b7c2cc;
+  font-size: 0.85rem;
+  margin-top: 0.15rem;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  justify-content: flex-end;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #c5d0da;
+  font-size: 0.95rem;
+}
+
+.nav a[aria-current="page"] {
+  color: white;
+  border-bottom: 2px solid #8eb4d4;
+}
+
+main { padding: 2.2rem 0 3rem; }
+
+.lede {
+  max-width: 40rem;
+  font-size: 1.12rem;
+  line-height: 1.5;
+}
+
+.lede-wide { max-width: 75%; }
+
+.muted { color: var(--muted); }
+
+.kicker {
+  margin: 0 0 0.4rem;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card, .answer, .refuse, .tile, .chart, .filter-bar {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 1.1rem 1.15rem 1.2rem;
+}
+
+.fine {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.issue, .table-wrap { margin-top: 1rem; }
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  gap: 0.75rem;
+  align-items: end;
+  margin-top: 1.4rem;
+  padding: 0.9rem 1rem;
+}
+
+.filter-bar label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.filter-bar select, .control select, .button {
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 9px;
+  padding: 0.55rem 0.6rem;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.button {
+  cursor: pointer;
+  background: var(--card);
+  font-weight: 500;
+}
+
+.button:hover { border-color: var(--ink); }
+
+.scope { margin: 0.6rem 0 0; }
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  border-top: 4px solid var(--accent);
+  container-type: inline-size;
+}
+
+/* Five tiles share a row. The text scales with the tile so a long title or a value
+   like $3,884.03 never wraps or spills out. */
+.tile-title {
+  margin: 0;
+  font-size: min(0.98rem, 8.2cqi);
+  white-space: nowrap;
+}
+
+.tile-value {
+  margin: 0.35rem 0 0.35rem;
+  font-family: "Source Serif Pro", Georgia, serif;
+  font-size: min(2.5rem, 17cqi);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tile-column {
+  margin: 0;
+  color: var(--muted-light);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+}
+
+/* Source notes and metric (column) names: 10px, lighter than body gray. */
+.source-note {
+  margin: 0.5rem 0 0;
+  color: var(--muted-light);
+  font-size: 10px;
+}
+
+.tile .fine { margin: 0.25rem 0 0; }
+
+.tile .ignored { color: var(--refuse); }
+
+.tile details { margin-top: auto; padding-top: 0.7rem; }
+
+.tile summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.chart-wide { grid-column: 1 / -1; }
+
+.chart h2, .table-head h2 { margin: 0; font-size: 1.2rem; }
+
+.chart .fine { margin: 0.2rem 0 0; }
+
+.chart-body {
+  width: 100%;
+  min-height: 250px;
+  margin-top: 0.6rem;
+}
+
+.table-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  margin-top: 1.6rem;
+}
+
+.table-head .fine { margin: 0.2rem 0 0; }
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+tfoot td { font-weight: 600; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+  font-size: 0.95rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+th { font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+
+.diagram {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.diagram div {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+}
+
+.diagram strong { font-family: "Source Serif Pro", Georgia, serif; }
+
+code {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.86em;
+}
+
+.ask-layout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 22rem) 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.prompts { display: flex; flex-direction: column; gap: 0.45rem; }
+
+.prompts button, .ask-form button, .prompts .danger {
+  text-align: left;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.prompts button:hover, .ask-form button:hover { border-color: var(--ink); }
+
+.ask-form {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.ask-form input {
+  flex: 1;
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 10px;
+  padding: 0.7rem 0.8rem;
+  font: inherit;
+}
+
+.answer h2 { margin: 0.2rem 0 0.4rem; font-size: 1.7rem; }
+
+.metric-name {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  color: var(--accent);
+}
+
+.refuse { border-color: #d5c5c8; background: #f7f4f5; }
+.refuse h2 { color: var(--refuse); font-size: 1.45rem; }
+
+.filters { padding-left: 1.1rem; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.section-head,
+.section-title {
+  border-top: 1px solid var(--line);
+  padding-top: 1.15rem;
+}
+
+.section-head { margin-top: 0.4rem; }
+
+.dash { margin-top: 1.4rem; }
+
+.dash .chart { margin-top: 1rem; }
+
+.breakdowns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+  margin-top: 1rem;
+}
+
+.dash .breakdowns .chart { margin-top: 0; }
+
+.section-title { margin: 2.2rem 0 0; }
+
+.content-performance { margin-top: 1rem; }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 14rem;
+}
+
+.control select {
+  appearance: none;
+  padding-right: 2.4rem;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%231c2430' stroke-width='1.5' d='M1 1.5 L6 6.5 L11 1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 0.65rem;
+}
+
+.control label {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dash .content-performance .chart { margin-top: 0; }
+
+.content-table .table-wrap { overflow-x: auto; }
+
+/* The title column gets room to wrap. Dates stay on one line. */
+.content-table th, .content-table td { padding: 0.45rem 0.35rem; }
+.content-table td:first-child { min-width: 10rem; }
+.content-table .nowrap { white-space: nowrap; }
+
+.breakdown .table-wrap { margin-top: 0.6rem; }
+
+.breakdown th, .breakdown td { padding: 0.45rem 0.5rem; }
+
+.col-name {
+  display: block;
+  color: var(--muted-light);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.breakdown-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+  min-height: 2rem;
+}
+
+.breakdown-controls { display: flex; gap: 0.4rem; }
+
+.button-small { padding: 0.3rem 0.7rem; font-size: 0.85rem; }
+
+.button:disabled { opacity: 0.45; cursor: default; }
+
+.button:disabled:hover { border-color: var(--line); }
+
+
+.chart-tall { min-height: 0; }
+
+#chart-source { margin-top: 0; }
+
+.peek { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
+
+.peek summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.peek .table-wrap { max-height: 22rem; overflow: auto; }
+
+.sql {
+  margin: 0.5rem 0 0;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  background: #1b2838;
+  color: #eef2f6;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 960px) {
+  .filter-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kpis { grid-template-columns: repeat(2, 1fr); }
+  .breakdowns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 800px) {
+  .header-inner, .diagram, .ask-layout, .charts, .table-head { display: block; }
+  .breakdowns { grid-template-columns: 1fr; }
+  .header-inner { padding-bottom: 1rem; }
+  .nav { justify-content: flex-start; margin-top: 0.8rem; }
+  .card, .diagram div, .chart { margin-top: 0.8rem; }
+  .ask-form { display: block; }
+  .ask-form button { margin-top: 0.5rem; }
+  .filter-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .table-head .button { margin-top: 0.6rem; }
+}
+
+@media (max-width: 520px) {
+  .kpis, .filter-bar { grid-template-columns: 1fr; }
+}

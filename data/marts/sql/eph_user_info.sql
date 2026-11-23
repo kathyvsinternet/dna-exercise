@@ -1,0 +1,16 @@
+-- One row per user with an active, non-test subscription (see int_user_info).
+--
+-- The mart_user_share_* tables are built from this model. It is not published itself. They have no .sql files.
+-- pipeline/user_share.py lists them in USER_SHARE_CUTS as (name, column, header, title),
+-- and python pipeline/build.py writes each one as mart_user_share_<name> using:
+--
+--   SELECT <column>,
+--          COUNT(DISTINCT user_id) AS n_users,
+--          ROUND(COUNT(DISTINCT user_id) / SUM(COUNT(DISTINCT user_id)) OVER (), 4) AS n_share
+--   FROM eph_user_info
+--   GROUP BY <column>
+--   ORDER BY n_users DESC, <column>
+--
+-- <column> is any column of this model. To add a table, add a line to USER_SHARE_CUTS.
+-- The CSV lands in data/marts/, the JSON in site/data/marts/, and the dashboard shows it.
+SELECT * FROM int_user_info

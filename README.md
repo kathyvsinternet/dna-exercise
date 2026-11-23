@@ -9,6 +9,7 @@ Using the provided [dataset](https://drive.google.com/drive/folders/1OPNrVKYAg39
 Ensure data quality and trust. Profile the data, identify the issues, and implement a documented, defensible treatment for each. Explain how your pipeline would catch these issues going forward.
 
 Build the model. Show your modeling approach, including the grain, joins, and structure of the tables, and explain why you made those choices. Be explicit about how the model supports both technical and non-technical use.
+
 Ground the interface. Show how the LLM interface would draw on governed metric definitions rather than guessing. Include how you’d test and monitor its answers against known results.
 
 Protect access. Explain how you’d handle sensitive fields, user-level data, and access controls in the model and in the AI interface.

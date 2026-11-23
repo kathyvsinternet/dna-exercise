@@ -1,0 +1,6 @@
+user_prim_device,n_users,n_share
+web_mobile,101,0.2596
+Android_app,94,0.2416
+web_desktop,94,0.2416
+iOS_app,84,0.2159
+unknown,16,0.0411
