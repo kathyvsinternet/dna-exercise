@@ -33,6 +33,7 @@ for a refused query.
 """
 
 import json
+import re
 from collections import OrderedDict
 from datetime import date
 from pathlib import Path
@@ -221,13 +222,20 @@ class Executor:
 
 
 def _filter_value(item, column):
+    """Normalize a filter value. Some models send a list as a JSON string, so that is accepted too."""
     kind = column["type"]
+    raw = item["value"]
     if item["op"] == "in":
-        if not isinstance(item["value"], list) or not item["value"]:
+        if isinstance(raw, str):
+            try:
+                raw = json.loads(raw)
+            except ValueError:
+                raw = None
+        if not isinstance(raw, list) or not raw:
             raise QueryRefused("bad_value", f"in needs a non-empty list for {item['column']}.")
-        values = item["value"]
+        values = raw
     else:
-        values = [item["value"]]
+        values = [raw]
     coerced = []
     for value in values:
         try:
@@ -243,6 +251,8 @@ def _check_value(value, kind):
             raise TypeError
         return value
     if kind == "integer":
+        if isinstance(value, str) and re.fullmatch(r"-?\d+", value.strip()):
+            return int(value)
         if isinstance(value, bool) or not isinstance(value, int):
             raise TypeError
         return value

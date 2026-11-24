@@ -31,6 +31,7 @@ if str(PIPELINE) not in sys.path:
 
 from catalog import load_catalog  # noqa: E402
 from executor import Executor, QueryRefused  # noqa: E402
+from model_gemini import gemini_from_env  # noqa: E402
 
 MAX_TOOL_CALLS = 3
 MAX_QUESTION_CHARS = 500
@@ -318,9 +319,9 @@ def handle_request(body, origin, allowed_origins, model):
         return 502, {"error": "model_error", "message": "The chat could not finish this question."}
 
 
-# Provider adapters register here when one is chosen. Until then no provider is configured,
-# and the endpoint answers 503.
-PROVIDERS = {}
+# Provider adapters register here. A factory returns a model, or None when its key is missing.
+# An unregistered or unset CHAT_PROVIDER means no model, and the endpoint answers 503.
+PROVIDERS = {"gemini": gemini_from_env}
 
 
 def model_from_env():
