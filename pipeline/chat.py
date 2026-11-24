@@ -134,6 +134,8 @@ def build_system_prompt(catalog):
             "- Call query_mart for every number. Do not estimate, recall, or calculate a number yourself.",
             "- Use only the marts, columns, and operators listed below.",
             "- If a call returns an error, read the message. Fix the query, or say the data is not available.",
+            "- If the question asks for a total, a sum, or how many in all, call query_mart with no group_by. The mart then returns one total row. Answer with that total, not with a breakdown.",
+            "- If the question asks for one value of a column, such as one device or one country, filter to that value. Do not group by a column the question does not name.",
             "- Never give a person's name or email address, or list individual users.",
             "- Quote numbers exactly as returned. Name the mart you used.",
             "- Include the notes that apply to a measure, such as a caveat that a figure is not revenue.",
@@ -258,6 +260,9 @@ def _source_numbers(shown):
     for payload in shown:
         numbers.append(float(payload["row_count"]))
         numbers.append(float(len(payload["rows"])))
+        # Notes are catalog text the model is shown with the rows, so a figure quoted from them is sourced.
+        for note in payload.get("notes") or []:
+            numbers.extend(_numbers_in(note))
         for row in payload["rows"]:
             for value in row.values():
                 if isinstance(value, bool):

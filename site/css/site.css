@@ -333,6 +333,24 @@ code {
 
 .answer h2 { margin: 0.2rem 0 0.4rem; font-size: 1.7rem; }
 
+.ask-form input:disabled, .ask-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-answer { margin-top: 0.5rem; }
+.chat-answer p { margin: 0.4rem 0; }
+.chat-answer .table-wrap { margin: 0.6rem 0; overflow-x: auto; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .metric-name {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   color: var(--accent);

@@ -111,6 +111,11 @@ class ChatTurnTests(unittest.TestCase):
         payload = chat.answer("Which title has the most engagement?", model)
         self.assertEqual(payload["status"], "answered")
 
+    def test_figure_quoted_from_a_catalog_note_is_sourced(self):
+        shown = [{"row_count": 5, "rows": [], "notes": ["The shares of all rows add up to 1, so a total is meaningful."]}]
+        self.assertEqual(chat._unverified_numbers("The shares add up to 1.", "q", shown), [])
+        self.assertEqual(chat._unverified_numbers("The shares add up to 2.", "q", shown), [2.0])
+
     def test_list_positions_are_not_treated_as_figures(self):
         nothing_shown = [{"row_count": 0, "rows": []}]
         self.assertEqual(chat._unverified_numbers("1. Alpha\n2. Beta\n3. Gamma", "q", nothing_shown), [])
@@ -164,6 +169,13 @@ class ChatTurnTests(unittest.TestCase):
         catalog = load_catalog()
         tool = chat.tool_definition(catalog)
         self.assertEqual(tool["input_schema"]["properties"]["mart"]["enum"], sorted(catalog["marts"]))
+
+
+class PromptTests(unittest.TestCase):
+    def test_prompt_tells_the_model_to_query_totals_without_grouping(self):
+        prompt = chat.build_system_prompt(chat.load_catalog())
+        self.assertIn("call query_mart with no group_by", prompt)
+        self.assertIn("filter to that value", prompt)
 
 
 class HttpContractTests(unittest.TestCase):
