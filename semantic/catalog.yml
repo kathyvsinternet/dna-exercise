@@ -1,0 +1,188 @@
+# Governed catalog for the chat interface.
+#
+# The interface can query only the marts and columns listed here. A mart or column
+# missing from this file is not reachable, even if it is published. Columns marked
+# access: restricted in data/model/schema.yml must not appear here. The build fails
+# if they do.
+#
+# Roles
+#   dimension  can be grouped by and filtered on. Returned when grouped.
+#   measure    can be returned. aggregation says how its values combine.
+#
+# Aggregation
+#   sum   additive. The groups add up to the total.
+#   none  not additive. Returned only when every group has exactly one row.
+#
+# people: true marks a distinct count of users. A returned group under 5 is refused,
+# unless the mart is listed in small_cell_exceptions.
+#
+# The mart_user_share_* tables are not written here. pipeline/user_share.py lists
+# them, and pipeline/catalog.py adds one entry per table.
+
+version: 1
+
+small_cell_exceptions:
+  - mart_user_share_subs_active
+  - mart_user_share_subs_paid
+
+not_answerable:
+  - Revenue, ARR, or annual recurring revenue. total_monthly_payment is a list-price total, not revenue.
+  - Churn rate, retention, conversion, or any rate that needs a population the marts do not hold.
+  - Names, email addresses, or any single person's record.
+  - Anything before 2021 or after the data ends.
+
+marts:
+  mart_user_info_counts:
+    label: Headline counts
+    description: Active, non-test users, their subscriptions, and their monthly payments.
+    grain: one row
+    notes:
+      - total_monthly_payment is the sum of list monthly prices on active subscriptions. It is not revenue and it is not annualized.
+    columns:
+      n_users_active:
+        role: measure
+        type: integer
+        aggregation: none
+        people: true
+        label: Active users
+        synonyms: [active users, active people, subscribers]
+      n_subs_active:
+        role: measure
+        type: integer
+        aggregation: none
+        label: Active subscriptions
+        synonyms: [active subscriptions, active plans]
+      n_subs_paid:
+        role: measure
+        type: integer
+        aggregation: none
+        label: Paid subscriptions
+        synonyms: [paid subscriptions, paid plans]
+      n_subs_free:
+        role: measure
+        type: integer
+        aggregation: none
+        label: Free subscriptions
+        synonyms: [free subscriptions, free plans]
+      n_subs_basic:
+        role: measure
+        type: integer
+        aggregation: none
+        label: Basic subscriptions
+        synonyms: [basic subscriptions, basic plans]
+      total_monthly_payment:
+        role: measure
+        type: number
+        aggregation: none
+        label: Total monthly payment (USD)
+        synonyms: [monthly payment total, total monthly payment, monthly spend]
+        caveat: Sum of list monthly prices on active subscriptions. Not revenue, not annualized. Invalid prices are left out.
+      avg_subs:
+        role: measure
+        type: number
+        aggregation: none
+        label: Active subscriptions per user
+      avg_subs_paid:
+        role: measure
+        type: number
+        aggregation: none
+        label: Paid subscriptions per user
+      avg_subs_free:
+        role: measure
+        type: number
+        aggregation: none
+        label: Free subscriptions per user
+      avg_monthly_payment:
+        role: measure
+        type: number
+        aggregation: none
+        label: Average monthly payment per user (USD)
+        synonyms: [average monthly payment, average spend, ARPU]
+        caveat: total_monthly_payment divided by active users. Not revenue per user.
+
+  mart_user_qtr_counts:
+    label: Subscriptions by quarter
+    description: Subscriptions started and canceled in each calendar quarter, non-test accounts.
+    grain: one row per quarter with activity
+    notes:
+      - Q3 2026 is a partial quarter.
+      - Quarters with no starts or cancellations are not listed.
+      - Counts are subscriptions, not people. A person with two subscriptions counts twice.
+    columns:
+      quarter:
+        role: dimension
+        type: date
+        label: Quarter
+        synonyms: [quarter, period]
+      user_subscriptions:
+        role: measure
+        type: integer
+        aggregation: sum
+        label: Subscriptions started
+        synonyms: [subscriptions started, new subscriptions, starts]
+        caveat: Counts by start date, in any status.
+      user_cancellations:
+        role: measure
+        type: integer
+        aggregation: sum
+        label: Subscriptions canceled
+        synonyms: [cancellations, cancels, canceled subscriptions]
+        caveat: Counts canceled subscriptions by end date.
+
+  mart_content_engagement:
+    label: Content engagement
+    description: Engagement counts for each content title, non-test accounts.
+    grain: one row per content title
+    notes:
+      - Counts cover content_complete, content_open, and download events only. Other event types are not included.
+      - Test-account events are excluded.
+    columns:
+      title:
+        role: dimension
+        type: text
+        label: Title
+        synonyms: [title, content, piece of content]
+      category:
+        role: dimension
+        type: text
+        label: Category
+      content_type:
+        role: dimension
+        type: text
+        label: Content type
+        synonyms: [format, type]
+      publish_date:
+        role: dimension
+        type: date
+        label: Published
+        synonyms: [publish date, published date]
+      duration_min:
+        role: measure
+        type: integer
+        aggregation: none
+        label: Duration (minutes)
+        caveat: Runtime as given. Blank when the source runtime was invalid.
+      n_content_complete:
+        role: measure
+        type: integer
+        aggregation: sum
+        label: Completes
+        synonyms: [completes, completions, complete events]
+      n_content_open:
+        role: measure
+        type: integer
+        aggregation: sum
+        label: Opens
+        synonyms: [opens, open events]
+      n_download:
+        role: measure
+        type: integer
+        aggregation: sum
+        label: Downloads
+        synonyms: [downloads]
+      n_engagement_events:
+        role: measure
+        type: integer
+        aggregation: sum
+        label: Total engagements
+        synonyms: [engagement, engagements, engagement events, most engaged]

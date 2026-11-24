@@ -234,7 +234,7 @@ marts:
       - {name: category, description: Category as given.}
       - {name: content_type, description: Governed content type.}
       - {name: publish_date, description: Date the item was published.}
-      - {name: duration_min, description: Governed runtime in minutes. Not shown on the dashboard.}
+      - {name: duration_min, description: Governed runtime in minutes, as an integer. Blank when the source runtime was invalid. Typed in mart_content_engagement.sql.}
       - {name: n_content_complete, description: content_complete events.}
       - {name: n_content_open, description: content_open events.}
       - {name: n_download, description: download events.}
