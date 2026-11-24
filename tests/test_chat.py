@@ -68,12 +68,13 @@ class ChatTurnTests(unittest.TestCase):
         self.assertEqual(payload["mart"], "mart_user_info_counts")
         self.assertEqual(payload["refusals"], [])
 
-    def test_number_not_in_the_rows_is_replaced_by_the_rows(self):
+    def test_number_not_in_the_rows_gets_a_cannot_answer_reply(self):
         model = script(ask(HEADLINE), say("There are 400 active users."))
         payload = chat.answer("How many active users are there?", model)
         self.assertEqual(payload["status"], "unverified")
-        self.assertIn("n_users_active: 389", payload["answer"])
+        self.assertEqual(payload["answer"], chat.CANNOT_VERIFY)
         self.assertNotIn("400", payload["answer"])
+        self.assertNotIn("389", payload["answer"])
 
     def test_number_in_the_question_is_allowed(self):
         query = {
@@ -110,6 +111,12 @@ class ChatTurnTests(unittest.TestCase):
         payload = chat.answer("Which title has the most engagement?", model)
         self.assertEqual(payload["status"], "answered")
 
+    def test_list_positions_are_not_treated_as_figures(self):
+        nothing_shown = [{"row_count": 0, "rows": []}]
+        self.assertEqual(chat._unverified_numbers("1. Alpha\n2. Beta\n3. Gamma", "q", nothing_shown), [])
+        self.assertEqual(chat._unverified_numbers("There are 7 of them.", "q", nothing_shown), [7.0])
+        self.assertEqual(chat._unverified_numbers("About 2.5 users", "q", nothing_shown), [2.5])
+
     def test_refusal_goes_back_to_the_model_and_it_recovers(self):
         bad = {"mart": "mart_user_share_country", "group_by": ["email"], "measures": ["n_users"]}
         model = script(ask(bad), say("I can't provide email addresses."))
@@ -123,7 +130,7 @@ class ChatTurnTests(unittest.TestCase):
         model = script(say("There are 5 email addresses on file."))
         payload = chat.answer("What is the email for USR_00001?", model)
         self.assertEqual(payload["status"], "unverified")
-        self.assertIn("could not verify", payload["answer"])
+        self.assertEqual(payload["answer"], chat.CANNOT_VERIFY)
 
     def test_text_without_numbers_and_without_data_is_declined(self):
         model = script(say("I can't answer that from the available data."))

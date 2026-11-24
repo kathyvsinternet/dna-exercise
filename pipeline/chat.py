@@ -6,8 +6,8 @@ The model never reads the marts, and it never supplies numbers it has not been g
 2. Each query_mart call goes through pipeline/executor.py. A refusal is returned to the
    model as a tool error, and it may try again, up to MAX_TOOL_CALLS calls in all.
 3. The final answer may use only numbers that appear in the question or in the rows the
-   model was shown. If it uses any other number, the answer is replaced by the rows
-   themselves, and the status is "unverified".
+   model was shown. If it uses any other number, the answer is replaced by a statement
+   that the chat cannot answer the question, and the status is "unverified".
 
 The model is any object with respond(system, messages, tools), which returns
 {"text": str or None, "tool_calls": [{"id", "name", "input"}]}. Messages use a neutral
@@ -33,6 +33,7 @@ from catalog import load_catalog  # noqa: E402
 from executor import Executor, QueryRefused  # noqa: E402
 from model_gemini import gemini_from_env  # noqa: E402
 
+CANNOT_VERIFY = "I can't answer that question from the numbers I can verify, so I'm not giving an answer."
 MAX_TOOL_CALLS = 3
 MAX_QUESTION_CHARS = 500
 ROW_PREVIEW = 25
@@ -40,6 +41,7 @@ FALLBACK_ROWS = 10
 
 NUMBER = re.compile(r"(?<!\w)-?\d[\d,]*(?:\.\d+)?")
 ISO_DATE = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})\b")
+LIST_MARKER = re.compile(r"^\s*\d+[.)](?=\s)", re.MULTILINE)
 
 
 class ChatError(Exception):
@@ -224,13 +226,7 @@ def _finish(question, text, successes, refusals, calls, gave_up=False):
 
     unknown = _unverified_numbers(text, question, shown)
     if unknown:
-        if last:
-            return {**base, "status": "unverified", "answer": _fallback(last)}
-        return {
-            **base,
-            "status": "unverified",
-            "answer": "I could not verify the numbers in that answer, so I am not giving it.",
-        }
+        return {**base, "status": "unverified", "answer": CANNOT_VERIFY}
 
     if successes:
         return {**base, "status": "answered", "answer": text.strip()}
@@ -241,7 +237,9 @@ def _finish(question, text, successes, refusals, calls, gave_up=False):
 def _unverified_numbers(text, question, shown):
     """Numbers in the answer that are not in the question or in the rows the model saw."""
     allowed = _candidates(_numbers_in(question) + _source_numbers(shown))
-    return [n for n in _numbers_in(text) if round(n, 4) not in allowed]
+    # "2." at the start of a list item is a position, not a figure from the data.
+    body = LIST_MARKER.sub(" ", text)
+    return [n for n in _numbers_in(body) if round(n, 4) not in allowed]
 
 
 def _numbers_in(text):

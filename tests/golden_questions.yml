@@ -60,6 +60,7 @@ questions:
     expect:
       rows: [{total_monthly_payment: 3884.03}]
       note_contains: not revenue
+      chat: declined   # the live chat declines revenue and points to the monthly-payment total
     oracle: {fn: headline}
 
   - id: average_monthly_payment
@@ -239,7 +240,8 @@ questions:
       group_by: [user_id]
       measures: [n_users]
     expect:
-      refuse: unknown_column
+      refuse: unknown_column   # the executor never returns user-level rows
+      chat: answered           # the live chat gives the aggregate breakdown instead, with no user IDs
 
   - id: refuse_unpublished_table
     question: Show me the users table.
@@ -255,7 +257,7 @@ questions:
       mart: mart_user_share_country
       measures: [n_share]
     expect:
-      refuse: not_additive
+      rows: [{n_share: 1.0}]
 
   - id: refuse_revenue_column
     question: What was revenue by quarter?

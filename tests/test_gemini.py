@@ -5,6 +5,7 @@ the key is sent only in the header. They do not prove the live API accepts every
 live golden run (tests/test_live.py) does that when a key is set.
 """
 
+import io
 import json
 import os
 import sys
@@ -122,6 +123,39 @@ class ReplyTests(unittest.TestCase):
         reply = model_gemini._reply(function_call("query_mart", {"mart": "mart_user_info_counts"}))
         self.assertIsNone(reply["text"])
         self.assertEqual(reply["tool_calls"], [{"id": "call-1", "name": "query_mart", "input": {"mart": "mart_user_info_counts"}}])
+
+    def test_thought_signature_is_kept_and_sent_back(self):
+        raw = {"candidates": [{"content": {"parts": [
+            {"functionCall": {"name": "query_mart", "args": {"mart": "mart_user_info_counts"}},
+             "thoughtSignature": "SIG-ABC"}]}}]}
+        reply = model_gemini._reply(raw)
+        self.assertEqual(reply["tool_calls"][0]["signature"], "SIG-ABC")
+
+        transport = FakeTransport(text_reply("389"))
+        GeminiModel(KEY, transport=transport).respond(
+            "s",
+            [
+                {"role": "user", "content": "q"},
+                {"role": "assistant", "content": "", "tool_calls": reply["tool_calls"]},
+                {"role": "tool", "tool_call_id": "call-1", "content": '{"status": "answered"}'},
+            ],
+            [],
+        )
+        model_turn = transport.calls[0]["body"]["contents"][1]
+        self.assertEqual(model_turn["parts"][0]["thoughtSignature"], "SIG-ABC")
+
+    def test_http_error_shows_google_message_but_not_the_key(self):
+        body = json.dumps({"error": {"message": f"API key not valid: {KEY}"}}).encode()
+
+        def fake_urlopen(request, timeout):
+            raise urllib.error.HTTPError(request.full_url, 400, "Bad Request", {}, io.BytesIO(body))
+
+        with mock.patch("model_gemini.urllib.request.urlopen", side_effect=fake_urlopen):
+            with self.assertRaises(GeminiError) as raised:
+                model_gemini._post(ENDPOINT.format(model="m"), KEY, {"contents": []})
+        self.assertIn("HTTP 400", str(raised.exception))
+        self.assertIn("API key not valid", str(raised.exception))
+        self.assertNotIn(KEY, str(raised.exception))
 
     def test_blocked_reply_raises_without_detail(self):
         with self.assertRaises(GeminiError) as raised:

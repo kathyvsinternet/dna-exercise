@@ -288,7 +288,8 @@ def _sum(values, kind):
         return 0
     if kind == "integer":
         return int(sum(present))
-    return round(sum(present), 2)
+    # Six places removes float noise and keeps shares such as 0.2159 exact.
+    return round(sum(present), 6)
 
 
 def _coerce(value, kind):

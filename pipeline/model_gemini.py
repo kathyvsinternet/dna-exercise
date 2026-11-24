@@ -75,7 +75,11 @@ def _contents(messages):
                 parts.append({"text": message["content"]})
             for call in message.get("tool_calls") or []:
                 names[call.get("id")] = call["name"]
-                parts.append({"functionCall": {"name": call["name"], "args": call.get("input") or {}}})
+                part = {"functionCall": {"name": call["name"], "args": call.get("input") or {}}}
+                # Gemini 3 models reject a replayed function call that lacks the signature they sent.
+                if call.get("signature"):
+                    part["thoughtSignature"] = call["signature"]
+                parts.append(part)
             contents.append({"role": "model", "parts": parts or [{"text": ""}]})
         elif role == "tool":
             part = {
@@ -147,13 +151,14 @@ def _reply(raw):
             texts.append(part["text"])
         if "functionCall" in part:
             call = part["functionCall"]
-            calls.append(
-                {
-                    "id": f"call-{len(calls) + 1}",
-                    "name": call.get("name", ""),
-                    "input": call.get("args") or {},
-                }
-            )
+            entry = {
+                "id": f"call-{len(calls) + 1}",
+                "name": call.get("name", ""),
+                "input": call.get("args") or {},
+            }
+            if part.get("thoughtSignature"):
+                entry["signature"] = part["thoughtSignature"]
+            calls.append(entry)
     text = "".join(texts).strip() or None
     return {"text": text, "tool_calls": calls}
 
@@ -171,7 +176,19 @@ def _post(url, api_key, body):
             return json.loads(response.read().decode())
     except urllib.error.HTTPError as error:
         status = error.code
+        detail = _google_message(error, api_key)
         error.close()
-        raise GeminiError(f"Gemini request failed with HTTP {status}.") from None
+        suffix = f" Google said: {detail}" if detail else ""
+        raise GeminiError(f"Gemini request failed with HTTP {status}.{suffix}") from None
     except (urllib.error.URLError, TimeoutError, ValueError):
         raise GeminiError("Gemini request failed before a reply arrived.") from None
+
+
+def _google_message(error, api_key):
+    """The short error text Google returns, with the key removed if it ever appears."""
+    try:
+        payload = json.loads(error.read().decode())
+        message = str((payload.get("error") or {}).get("message", ""))
+    except (OSError, ValueError, AttributeError):
+        return ""
+    return message.replace(api_key, "<key>")[:300]
