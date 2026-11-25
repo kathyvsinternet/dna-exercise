@@ -6,7 +6,7 @@ This file is a run-down of the structure of this project and key decisions that 
 
 After reviewing the prompt, recorded in the [README](README.md) of this project, I decided to build a reporting dashboard from scratch and deploy it into a microsite, so the whole project can live in one place. As I am nowhere near an expert in front-end web development, the bulk of this microsite and its functionality was built by the Cursor AI agent.
 
-The models that Cursor employed were largely Claude Sonnet 5.5 and Haiku 5.5. Sometimes the agent auto-balance would select the Grok 4.7 model. For the site build and underlying data manipulation, I would occassionally edit Python, HTML, YML, and CSS scripts. The bulk of my human-written code is found in [/data/marts/sql/](/data/marts/sql/), where I keep the SQL code for intermediate and mart models. The SQL powers the static mart CSVs that are written with each build.
+The models that Cursor employed were largely Claude Sonnet 5.5 and Haiku 5.5. Sometimes the agent auto-balance would select the Grok 4.7 model. For the site build and underlying data manipulation, I would occassionally edit Python, HTML, YML, and CSS scripts. The bulk of my **human-written** code is found in [/data/marts/sql/](/data/marts/sql/), where I keep the SQL code for intermediate and mart models. The SQL powers the static mart CSVs that are written with each build.
 
 ## Ensuring Data Quality
 
@@ -27,3 +27,7 @@ The [schema.yml](/data/model/schema.yml) file documents the schema of each of th
 The microsite dashboard only receives aggregate data and reads from the JSON files in [/site/data/marts/](/site/data/marts/). So the public stie does not have any access to deeper underlying models.
 
 We use `user_id` to do a distinct count of users but the values are never shown. Any distinct count of users below 5 is not meant for the publich page. The **two exceptions** here are "Users by Active Subscriptions" and "Users by Paid Subscriptions"
+
+## Publishing the Dashboard
+
+In order to create the microsite of the dashboard in production, I took advantage of [Github Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site), used Google AI Studio's free tier to create a Gemini API key, and opened a free Vercel account to host the AI chat backend.
