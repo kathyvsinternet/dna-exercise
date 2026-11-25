@@ -386,8 +386,8 @@ function renderGrowth(mart) {
 }
 
 function drawGrowth(mart) {
-  const netLabel = "Net subscriptions (left axis)";
-  const churnLabel = "Churn rate (right axis)";
+  const netLabel = "Net subscriptions";
+  const churnLabel = "Churn rate";
   const values = mart.rows.map((row) => ({
     quarter: quarterLabel(row.quarter),
     net: row[GROWTH_COLUMNS.net],
