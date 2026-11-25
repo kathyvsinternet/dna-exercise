@@ -23,7 +23,7 @@ MAX_BODY_BYTES = 4096
 
 class handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
-        self._send(204, None)
+        self._send(204, None, self.headers.get("Origin"))
 
     def do_POST(self):
         origin = self.headers.get("Origin")
