@@ -4,11 +4,16 @@
 # Governed columns are the ones a metric is allowed to use. Raw columns keep
 # the source value so a treatment can be audited.
 #
-# Marts are defined in data/marts/sql/*.sql and built from these tables.
-# They exclude test accounts. Fact tables keep those rows and flag them
-# with is_test_account. Metrics read the marts.
+# Marts are built by python pipeline/build.py from these tables. SQL marts are
+# defined in data/marts/sql/*.sql. The mart_user_share_* tables have no SQL
+# file and are generated from USER_SHARE_CUTS in pipeline/user_share.py.
+# Marts exclude test accounts. Fact tables keep those rows and flag them
+# with is_test_account.
 # user_name and email are restricted. They are not in any mart.
 # age_band is not restricted.
+#
+# Sections: tables (the model), views (unpublished intermediate models), and
+# marts (published as CSV in data/marts/ and as JSON in site/data/marts/).
 
 tables:
   - name: dim_business
@@ -125,104 +130,181 @@ tables:
       - {name: session_duration_is_invalid, description: true when session_duration_sec was nulled.}
       - {name: is_test_account, description: true when the user is a test account.}
 
-  - name: mart_subscription
-    grain: one row per non-test subscription_id
-    primary_key: subscription_id
-    rows: 804
-    defined_in: data/marts/sql/mart_subscription.sql
-    notes: subscribers_active counts distinct user_id here. The count is recomputed at each grain because a person can be active in more than one business.
+# Intermediate models. Built as views, not published. int_user_info and
+# eph_user_info carry user_id, so they stay out of site/.
+views:
+  - name: int_dates
+    grain: one row per calendar date
+    primary_key: date
+    defined_in: data/marts/sql/int_dates.sql
+    notes: Date spine from 2021-01-01 to 2026-10-12. The range is hardcoded because the source data is not live.
     columns:
-      - {name: subscription_id, description: Subscription key.}
-      - {name: user_id, description: Subscriber key. Used for distinct counts. Not a name or an email.}
-      - {name: business_id, description: Business being subscribed to.}
-      - {name: plan_tier, description: Free, Basic, Premium, or Premium_Plus_Deluxe_XL.}
-      - {name: billing_cycle, description: monthly, annual, lifetime_deal_fake, or not_applicable for Free.}
-      - {name: status, description: Governed status.}
-      - {name: start_date, description: Subscription start date.}
-      - {name: start_month, description: First seven characters of start_date.}
-      - {name: monthly_price_usd, description: Governed monthly price. Blank when the source price was invalid.}
-      - {name: monthly_price_is_invalid, description: true when monthly_price_usd was nulled.}
+      - {name: date, description: Calendar date.}
 
-  - name: mart_plans
-    grain: one row per business_id, plan_tier, billing_cycle, and status
-    rows: 118
-    defined_in: data/marts/sql/mart_plans.sql
-    notes: subscriptions is additive. plans_active and plans_paid_active sum it. There is no subscriber column, because a distinct count at this grain cannot be added up.
+  - name: int_daily_users
+    grain: one row per date with at least one subscription start or cancellation
+    primary_key: date
+    defined_in: data/marts/sql/int_daily_users.sql
+    notes: Non-test subscriptions only. Days with no activity are dropped. A cancellation is dated by end_date and counts only when status is canceled.
     columns:
-      - {name: business_id, description: Business key.}
-      - {name: plan_tier, description: Plan tier.}
-      - {name: billing_cycle, description: Governed billing cycle, including not_applicable and lifetime_deal_fake.}
-      - {name: status, description: Governed status.}
-      - {name: subscriptions, description: Non-test subscriptions in this group, including rows with an invalid price.}
-      - {name: invalid_price_subscriptions, description: Subscriptions in this group whose price was nulled.}
-      - {name: monthly_price_usd_sum, description: Sum of governed monthly price for this group.}
+      - {name: date, description: Calendar date.}
+      - {name: user_subscriptions, description: Distinct non-test subscriptions with this start_date.}
+      - {name: user_cancellations, description: Distinct canceled non-test subscriptions with this end_date.}
 
-  - name: mart_plan_starts
-    grain: one row per business_id, plan_tier, and start_date_month
-    rows: 397
-    defined_in: data/marts/sql/mart_plan_starts.sql
-    notes: plan_starts is additive across businesses, plan tiers, and months. The metric sums it for a month range. A later cancellation still counts as a start.
+  - name: int_user_info
+    grain: one row per user_id with at least one active non-test subscription
+    primary_key: user_id
+    defined_in: data/marts/sql/int_user_info.sql
+    notes: Joins subscription counts to the governed country, age band, acquisition channel, and device on dim_user. Person-level, so it is not published.
     columns:
-      - {name: business_id, description: Business key.}
-      - {name: plan_tier, description: Plan tier.}
-      - {name: start_date_month, description: Month the subscription began, YYYY-MM.}
-      - {name: plan_starts, description: Non-test subscriptions that began in this month.}
+      - {name: user_id, description: User key. Used for distinct counts. Not shown.}
+      - {name: n_subs_active, description: Active non-test subscriptions held by the user.}
+      - {name: n_subs_paid, description: Active subscriptions on a plan other than Free.}
+      - {name: n_subs_free, description: Active subscriptions on the Free plan.}
+      - {name: n_subs_basic, description: Active subscriptions on the Basic plan.}
+      - {name: n_biz_supported, description: Distinct businesses the user actively subscribes to.}
+      - {name: monthly_payment, description: Sum of governed monthly price on the user's active subscriptions. Invalid prices are omitted.}
+      - {name: user_geo_country, description: Governed country from dim_user.}
+      - {name: user_age_band, description: Governed age band from dim_user.}
+      - {name: user_acq_channel, description: Governed acquisition channel from dim_user.}
+      - {name: user_prim_device, description: Governed primary device from dim_user.}
 
-  - name: mart_active_subscribers
-    grain: one row per business_id
-    primary_key: business_id
-    rows: 3
-    defined_in: data/marts/sql/mart_active_subscribers.sql
-    notes: The per-business check for subscribers_active. Adding active_subscribers across businesses double-counts people. The all-business total is computed from mart_subscription, not from this table.
+  - name: eph_user_info
+    grain: one row per user_id with at least one active non-test subscription
+    primary_key: user_id
+    defined_in: data/marts/sql/eph_user_info.sql
+    notes: A pass-through of int_user_info. It is the source for every mart_user_share_* table. Not published.
     columns:
-      - {name: business_id, description: Business key.}
-      - {name: active_subscribers, description: Distinct non-test users with an active subscription to this business.}
-      - {name: active_subscriptions, description: Active non-test subscriptions. Matches plans_active for the business.}
+      - {name: user_id, description: Same columns as int_user_info.}
 
-  - name: mart_business
-    grain: one row per business_id
-    primary_key: business_id
-    rows: 3
-    defined_in: data/marts/sql/mart_business.sql
-    notes: House summary. subscribers includes every status, so it is not subscribers_active. Engagement counts are events whose content belongs to the business. Events with no content id are not included.
+  - name: int_content_event_counts
+    grain: one row per content_id and event_type
+    primary_key: [content_id, event_type]
+    defined_in: data/marts/sql/int_content_event_counts.sql
+    notes: Counts only content_complete, content_open, and download events, and excludes test accounts. A title with none of those events is dropped by the inner join. Today every title has at least one.
     columns:
-      - {name: business_id, description: Business key.}
-      - {name: business_name, description: Display name.}
-      - {name: business_line, description: Business line.}
-      - {name: content_items, description: Content items on the business, including unknown type.}
-      - {name: unknown_type_content_items, description: Items whose governed content type is unknown.}
-      - {name: creators, description: Creators whose business_id is this business.}
-      - {name: subscriptions, description: Non-test subscriptions.}
-      - {name: active_subscriptions, description: Non-test subscriptions with governed status active.}
-      - {name: canceled_subscriptions, description: Non-test subscriptions with governed status canceled.}
-      - {name: paused_subscriptions, description: Non-test subscriptions with governed status paused.}
-      - {name: trialing_subscriptions, description: Non-test subscriptions with governed status trialing.}
-      - {name: unknown_status_subscriptions, description: Non-test subscriptions whose status was TEST_STATUS_DO_NOT_USE.}
-      - {name: subscribers, description: Distinct non-test users with a subscription to this business, any status.}
-      - {name: active_monthly_price_usd, description: Sum of governed monthly price on active non-test subscriptions. Invalid prices are omitted. This is a monthly price total, not annualized revenue.}
-      - {name: engagement_events, description: Non-test events on this business's content.}
-      - {name: content_items_with_engagement, description: Content items that have at least one of those events.}
+      - {name: content_id, description: Content key.}
+      - {name: title, description: Title.}
+      - {name: category, description: Category as given.}
+      - {name: content_type, description: Governed content type.}
+      - {name: publish_date, description: Date the item was published.}
+      - {name: duration_min, description: Governed runtime in minutes, from dim_content.runtime_minutes.}
+      - {name: event_type, description: content_complete, content_open, or download.}
+      - {name: n_events, description: Distinct non-test events of this type on this title.}
 
-  - name: mart_content
+# Published marts. The dashboard reads only these.
+marts:
+  - name: mart_user_info_counts
+    grain: one row, the whole active non-test user base
+    rows: 1
+    defined_in: data/marts/sql/mart_user_info_counts.sql
+    notes: Feeds the dashboard score cards. Built from int_user_info. n_users_active is a distinct count of people. The subscription counts are sums over those people.
+    columns:
+      - {name: n_users_active, description: Distinct non-test users with an active subscription.}
+      - {name: n_subs_active, description: Active non-test subscriptions.}
+      - {name: n_subs_paid, description: Active subscriptions on a plan other than Free.}
+      - {name: n_subs_free, description: Active subscriptions on the Free plan.}
+      - {name: n_subs_basic, description: Active subscriptions on the Basic plan.}
+      - {name: total_monthly_payment, description: Sum of governed monthly price on active non-test subscriptions. Invalid prices are omitted. This is a monthly price total, not annualized revenue.}
+      - {name: avg_subs, description: n_subs_active divided by n_users_active.}
+      - {name: avg_subs_paid, description: n_subs_paid divided by n_users_active.}
+      - {name: avg_subs_free, description: n_subs_free divided by n_users_active.}
+      - {name: avg_monthly_payment, description: total_monthly_payment divided by n_users_active.}
+
+  - name: mart_user_qtr_counts
+    grain: one row per calendar quarter with at least one subscription start or cancellation
+    primary_key: quarter
+    rows: 21
+    defined_in: data/marts/sql/mart_user_qtr_counts.sql
+    notes: Feeds the line chart. Built from int_daily_users. Both measures are additive across quarters. The last quarter, Q3 2026, is partial. Quarters with no activity are not present.
+    columns:
+      - {name: quarter, description: First day of the quarter.}
+      - {name: user_subscriptions, description: Non-test subscriptions that started in the quarter.}
+      - {name: user_cancellations, description: Canceled non-test subscriptions that ended in the quarter.}
+
+  - name: mart_content_engagement
     grain: one row per content_id
     primary_key: content_id
     rows: 300
-    defined_in: data/marts/sql/mart_content.sql
-    notes: Event counts exclude test accounts. An item with no remaining events stays in the table with zeros. Opens and completes are not a governed metric.
+    defined_in: data/marts/sql/mart_content_engagement.sql
+    notes: Feeds the Content Performance table. Built from int_content_event_counts, so test-account events are excluded. Sorted by n_engagement_events descending, then content_id, so the build is repeatable when counts tie. n_engagement_events counts only the three event types shown here.
     columns:
-      - {name: content_id, description: Content key.}
-      - {name: business_id, description: Business that published the item.}
+      - {name: content_id, description: Content key. Used by the dashboard as the row key, not shown.}
       - {name: title, description: Title.}
-      - {name: category, description: Category.}
+      - {name: category, description: Category as given.}
       - {name: content_type, description: Governed content type.}
-      - {name: creator_id, description: Creator key, or blank when the content has no creator.}
-      - {name: events, description: Non-test events on this item.}
-      - {name: content_opens, description: content_open events.}
-      - {name: content_completes, description: content_complete events.}
-      - {name: likes, description: like events.}
-      - {name: shares, description: share events.}
-      - {name: comments, description: comment_post events.}
-      - {name: downloads, description: download events.}
-      - {name: other_events, description: Remaining events, including the unknown type that replaced glitch_in_the_matrix.}
-      - {name: events_with_valid_duration, description: Events whose governed duration is not null.}
-      - {name: session_duration_sec_sum, description: Sum of governed duration for those events.}
+      - {name: publish_date, description: Date the item was published.}
+      - {name: duration_min, description: Governed runtime in minutes, as an integer. Blank when the source runtime was invalid. Typed in mart_content_engagement.sql.}
+      - {name: n_content_complete, description: content_complete events.}
+      - {name: n_content_open, description: content_open events.}
+      - {name: n_download, description: download events.}
+      - {name: n_engagement_events, description: Sum of the three counts above.}
+
+  # The mart_user_share_* tables are generated, not written in SQL. Each one
+  # groups eph_user_info by one column and counts distinct users. To add one,
+  # add a line to USER_SHARE_CUTS in pipeline/user_share.py. The shared shape is:
+  #   <value column>, n_users (distinct user_id), n_share (n_users / sum of n_users, 4 places)
+  # n_users is a distinct count of people, so it is not additive across tables.
+  # Each table's n_users adds up to the 389 active non-test users.
+  - name: mart_user_share_country
+    grain: one row per user_geo_country
+    primary_key: user_geo_country
+    rows: 18
+    defined_in: pipeline/user_share.py
+    columns:
+      - {name: user_geo_country, description: Governed country.}
+      - {name: n_users, description: Distinct active non-test users.}
+      - {name: n_share, description: Share of the 389 active users.}
+
+  - name: mart_user_share_age
+    grain: one row per user_age_band
+    primary_key: user_age_band
+    rows: 8
+    defined_in: pipeline/user_share.py
+    notes: age_band is not restricted. Unknown is its own row.
+    columns:
+      - {name: user_age_band, description: Governed age band.}
+      - {name: n_users, description: Distinct active non-test users.}
+      - {name: n_share, description: Share of the 389 active users.}
+
+  - name: mart_user_share_device
+    grain: one row per user_prim_device
+    primary_key: user_prim_device
+    rows: 5
+    defined_in: pipeline/user_share.py
+    columns:
+      - {name: user_prim_device, description: Governed primary device. Unknown is its own row.}
+      - {name: n_users, description: Distinct active non-test users.}
+      - {name: n_share, description: Share of the 389 active users.}
+
+  - name: mart_user_share_channel
+    grain: one row per user_acq_channel
+    primary_key: user_acq_channel
+    rows: 5
+    defined_in: pipeline/user_share.py
+    columns:
+      - {name: user_acq_channel, description: Governed acquisition channel. Unknown is its own row.}
+      - {name: n_users, description: Distinct active non-test users.}
+      - {name: n_share, description: Share of the 389 active users.}
+
+  - name: mart_user_share_subs_active
+    grain: one row per n_subs_active
+    primary_key: n_subs_active
+    rows: 3
+    defined_in: pipeline/user_share.py
+    notes: Approved exception to the under-5 rule. Every group is shown, including a group of one.
+    columns:
+      - {name: n_subs_active, description: Number of active subscriptions a user holds.}
+      - {name: n_users, description: Distinct active non-test users with that many.}
+      - {name: n_share, description: Share of the 389 active users.}
+
+  - name: mart_user_share_subs_paid
+    grain: one row per n_subs_paid
+    primary_key: n_subs_paid
+    rows: 4
+    defined_in: pipeline/user_share.py
+    notes: Approved exception to the under-5 rule. Every group is shown, including a group of one.
+    columns:
+      - {name: n_subs_paid, description: Number of active paid subscriptions a user holds.}
+      - {name: n_users, description: Distinct active non-test users with that many.}
+      - {name: n_share, description: Share of the 389 active users.}

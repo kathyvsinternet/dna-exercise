@@ -1,0 +1,9 @@
+[project]
+name = "fankewl-chat"
+version = "0.1.0"
+requires-python = ">=3.12"
+# Only the chat endpoint's runtime needs. The build and tests use requirements.txt.
+dependencies = ["PyYAML>=6.0"]
+
+[tool.vercel]
+entrypoint = "api.chat:handler"

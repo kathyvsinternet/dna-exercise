@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/chat.py": {
+      "excludeFiles": "{.venv/**,data/**,tests/**,.github/**,site/**/*.csv,site/js/**,site/css/**,documentation.md,README.md}"
+    }
+  }
+}

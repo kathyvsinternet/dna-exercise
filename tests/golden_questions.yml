@@ -1,0 +1,268 @@
+# Golden questions for the chat interface.
+#
+# Each item has a question, the query a correct answer should send, and what that
+# query must return. The chat step will be checked against these too.
+#
+# expect.rows  the rows returned, in order. Each listed key must match. Numbers
+#              compare within 0.001. Other keys in the returned row are ignored.
+# expect.refuse  the refusal code the executor must raise. No rows are returned.
+# expect.note_contains  a substring that must appear in one of the notes.
+# oracle       the function in tests/oracle.py that recomputes the expected rows from
+#              data/model, without the marts. test_golden checks expect.rows against it.
+#
+# Refusals are about what the executor will not run. Declining questions that have no
+# query at all, such as "what is our churn rate", is checked by the chat step.
+
+questions:
+  # Headline counts
+  - id: active_users
+    question: How many active users are there?
+    query:
+      mart: mart_user_info_counts
+      measures: [n_users_active]
+    expect:
+      rows: [{n_users_active: 389}]
+    oracle: {fn: headline}
+
+  - id: active_subscriptions
+    question: How many active subscriptions are there?
+    query:
+      mart: mart_user_info_counts
+      measures: [n_subs_active]
+    expect:
+      rows: [{n_subs_active: 444}]
+    oracle: {fn: headline}
+
+  - id: paid_subscriptions
+    question: How many paid subscriptions are active?
+    query:
+      mart: mart_user_info_counts
+      measures: [n_subs_paid]
+    expect:
+      rows: [{n_subs_paid: 310}]
+    oracle: {fn: headline}
+
+  - id: total_monthly_payment
+    question: What is the total monthly payment across active subscriptions?
+    query:
+      mart: mart_user_info_counts
+      measures: [total_monthly_payment]
+    expect:
+      rows: [{total_monthly_payment: 3884.03}]
+      note_contains: not revenue
+    oracle: {fn: headline}
+
+  - id: revenue_keeps_caveat
+    question: What is our revenue?
+    query:
+      mart: mart_user_info_counts
+      measures: [total_monthly_payment]
+    expect:
+      rows: [{total_monthly_payment: 3884.03}]
+      note_contains: not revenue
+      chat: declined   # the live chat declines revenue and points to the monthly-payment total
+    oracle: {fn: headline}
+
+  - id: average_monthly_payment
+    question: What is the average monthly payment per active user?
+    query:
+      mart: mart_user_info_counts
+      measures: [avg_monthly_payment]
+    expect:
+      rows: [{avg_monthly_payment: 9.98}]
+    oracle: {fn: headline}
+
+  # Subscriptions by quarter
+  - id: starts_in_2025
+    question: How many subscriptions started in 2025?
+    query:
+      mart: mart_user_qtr_counts
+      measures: [user_subscriptions]
+      filters:
+        - {column: quarter, op: gte, value: "2025-01-01"}
+        - {column: quarter, op: lte, value: "2025-12-31"}
+    expect:
+      rows: [{user_subscriptions: 236}]
+    oracle: {fn: starts_in_year, args: [2025]}
+
+  - id: cancellations_q1_2026
+    question: How many subscriptions were canceled in Q1 2026?
+    query:
+      mart: mart_user_qtr_counts
+      measures: [user_cancellations]
+      filters:
+        - {column: quarter, op: eq, value: "2026-01-01"}
+    expect:
+      rows: [{user_cancellations: 18}]
+    oracle: {fn: cancellations_between, args: ["2026-01-01", "2026-03-31"]}
+
+  # Content
+  - id: top_content
+    question: Which five titles have the most engagement?
+    query:
+      mart: mart_content_engagement
+      group_by: [title]
+      measures: [n_engagement_events]
+      sort: [{column: n_engagement_events, direction: desc}]
+      limit: 5
+    expect:
+      # Ties break by title, the group_by column, ascending.
+      rows:
+        - {title: "The Last Prairiefox (Mock Book #205)", n_engagement_events: 23}
+        - {title: "The Last Prairiefox (Mock Book #272)", n_engagement_events: 23}
+        - {title: "Episode 34: Totally Original Content (Mock #35)", n_engagement_events: 22}
+        - {title: "Episode 3: Totally Original Content (Mock #37)", n_engagement_events: 22}
+        - {title: "Episode 96: Totally Original Content (Mock #228)", n_engagement_events: 22}
+    oracle: {fn: top_content, args: [5]}
+
+  - id: top_categories
+    question: Which categories get the most engagement?
+    query:
+      mart: mart_content_engagement
+      group_by: [category]
+      measures: [n_engagement_events]
+      sort: [{column: n_engagement_events, direction: desc}]
+      limit: 5
+    expect:
+      rows:
+        - {category: Indie Fiction, n_engagement_events: 367}
+        - {category: Serialized Drama, n_engagement_events: 317}
+        - {category: Fake History of Imaginary Countries, n_engagement_events: 306}
+        - {category: Ask the Community, n_engagement_events: 304}
+        - {category: Self-Help, n_engagement_events: 265}
+    oracle: {fn: category_totals, args: [5]}
+
+  # Users by breakdown. Each share table partitions the active users.
+  - id: active_users_total_from_breakdown
+    question: How many active users are there, using the country breakdown?
+    query:
+      mart: mart_user_share_country
+      measures: [n_users]
+    expect:
+      rows: [{n_users: 389}]
+    oracle: {fn: country_total}
+
+  - id: germany_users
+    question: How many active users are in Germany?
+    query:
+      mart: mart_user_share_country
+      measures: [n_users]
+      filters:
+        - {column: user_geo_country, op: eq, value: Germany}
+    expect:
+      rows: [{n_users: 33}]
+    oracle: {fn: country_users, args: [Germany]}
+
+  - id: ios_share
+    question: What share of active users have iOS as their primary device?
+    query:
+      mart: mart_user_share_device
+      measures: [n_users, n_share]
+      filters:
+        - {column: user_prim_device, op: eq, value: iOS_app}
+    expect:
+      rows: [{n_users: 84, n_share: 0.2159}]
+    oracle: {fn: device_share, args: [iOS_app]}
+
+  - id: users_aged_65_plus
+    question: How many active users are aged 65 or over?
+    query:
+      mart: mart_user_share_age
+      measures: [n_users]
+      filters:
+        - {column: user_age_band, op: eq, value: "65+"}
+    expect:
+      rows: [{n_users: 46}]
+    oracle: {fn: age_band_users, args: ["65+"]}
+
+  - id: users_by_channel
+    question: How many active users came from each acquisition channel?
+    query:
+      mart: mart_user_share_channel
+      group_by: [user_acq_channel]
+      measures: [n_users]
+      sort: [{column: n_users, direction: desc}]
+    expect:
+      rows:
+        - {user_acq_channel: email_campaign, n_users: 107}
+        - {user_acq_channel: paid_social, n_users: 90}
+        - {user_acq_channel: organic_search, n_users: 86}
+        - {user_acq_channel: referral, n_users: 78}
+        - {user_acq_channel: unknown, n_users: 28}
+    oracle: {fn: channel_users}
+
+  - id: users_with_two_active_subscriptions
+    question: How many active users hold exactly two active subscriptions?
+    query:
+      mart: mart_user_share_subs_active
+      measures: [n_users]
+      filters:
+        - {column: n_subs_active, op: eq, value: 2}
+    expect:
+      rows: [{n_users: 43}]
+    oracle: {fn: users_with_active_subscriptions, args: [2]}
+
+  # Refusals. The query is what a careless model might send. The executor must refuse it.
+  - id: refuse_email_lookup
+    question: What is the email address for USR_00001?
+    query:
+      mart: mart_user_share_country
+      group_by: [email]
+      measures: [n_users]
+    expect:
+      refuse: unknown_column
+
+  - id: refuse_names_by_country
+    question: List the names of active users in Germany.
+    query:
+      mart: mart_user_share_country
+      group_by: [user_geo_country]
+      measures: [user_name]
+      filters:
+        - {column: user_geo_country, op: eq, value: Germany}
+    expect:
+      refuse: unknown_column
+
+  - id: refuse_email_filter
+    question: How many active users have the email address usr00001@example.test?
+    query:
+      mart: mart_user_share_country
+      measures: [n_users]
+      filters:
+        - {column: email, op: eq, value: usr00001@example.test}
+    expect:
+      refuse: unknown_column
+
+  - id: refuse_user_level_rows
+    question: Show each active user's subscription count.
+    query:
+      mart: mart_user_share_subs_active
+      group_by: [user_id]
+      measures: [n_users]
+    expect:
+      refuse: unknown_column   # the executor never returns user-level rows
+      chat: answered           # the live chat gives the aggregate breakdown instead, with no user IDs
+
+  - id: refuse_unpublished_table
+    question: Show me the users table.
+    query:
+      mart: dim_user
+      measures: [n_users]
+    expect:
+      refuse: unknown_mart
+
+  - id: refuse_total_of_shares
+    question: What is the total share across all countries?
+    query:
+      mart: mart_user_share_country
+      measures: [n_share]
+    expect:
+      rows: [{n_share: 1.0}]
+
+  - id: refuse_revenue_column
+    question: What was revenue by quarter?
+    query:
+      mart: mart_user_qtr_counts
+      measures: [revenue]
+    expect:
+      refuse: unknown_column

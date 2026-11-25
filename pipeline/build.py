@@ -21,6 +21,7 @@ PIPELINE_DIR = Path(__file__).resolve().parent
 if str(PIPELINE_DIR) not in sys.path:
     sys.path.insert(0, str(PIPELINE_DIR))
 
+from catalog import CatalogError, load_catalog, validate_catalog
 from checks import check, check_dashboard_marts
 from marts import ModelError, build_marts
 from transform import BuildError, transform
@@ -137,6 +138,16 @@ def main():
     except (BuildError, ModelError) as error:
         print(f"Build failed: {error}", file=sys.stderr)
         print("data/marts and site/data/marts may be partial.", file=sys.stderr)
+        return 1
+    try:
+        problems = validate_catalog(load_catalog())
+    except CatalogError as error:
+        print(f"Build failed: {error}", file=sys.stderr)
+        return 1
+    if problems:
+        for problem in problems:
+            print(f"Catalog: {problem}", file=sys.stderr)
+        print("Build failed: semantic/catalog.yml does not match the published marts.", file=sys.stderr)
         return 1
     print("Checks passed.")
     print(f"Wrote {QUALITY_DIR.relative_to(ROOT) / 'profile.json'}")
