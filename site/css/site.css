@@ -8,10 +8,6 @@
   --header: #1b2838;
   --header-text: #eef2f6;
   --accent: #2c6aa0;
-  --refuse: #8a4d56;
-  --pagegarden: #2c6aa0;
-  --gathersquare: #5b7c99;
-  --makerharbor: #243e66;
   --shadow: 0 1px 0 rgba(28, 36, 48, 0.06);
   font-family: Roboto, "Avenir Next", "Segoe UI", sans-serif;
   font-weight: 300;
@@ -63,7 +59,7 @@ a { color: inherit; }
 .brand strong {
   display: block;
   font-family: Fraunces, Georgia, serif;
-  font-size: 1.45rem;
+  font-size: 2.5rem;
   font-weight: 600;
 }
 
@@ -102,18 +98,7 @@ main { padding: 2.2rem 0 3rem; }
 
 .lede-wide { max-width: 75%; }
 
-.muted { color: var(--muted); }
-
-.kicker {
-  margin: 0 0 0.4rem;
-  color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.card, .answer, .refuse, .tile, .chart, .filter-bar {
+.tile, .chart {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -126,29 +111,9 @@ main { padding: 2.2rem 0 3rem; }
   font-size: 0.88rem;
 }
 
-.issue, .table-wrap { margin-top: 1rem; }
+.table-wrap { margin-top: 1rem; }
 
-.filter-bar {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
-  gap: 0.75rem;
-  align-items: end;
-  margin-top: 1.4rem;
-  padding: 0.9rem 1rem;
-}
-
-.filter-bar label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  color: var(--muted);
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.filter-bar select, .control select, .button {
+.control select, .button {
   border: 1px solid var(--line);
   background: white;
   border-radius: 9px;
@@ -167,8 +132,6 @@ main { padding: 2.2rem 0 3rem; }
 }
 
 .button:hover { border-color: var(--ink); }
-
-.scope { margin: 0.6rem 0 0; }
 
 .kpis {
   display: grid;
@@ -217,8 +180,6 @@ main { padding: 2.2rem 0 3rem; }
 
 .tile .fine { margin: 0.25rem 0 0; }
 
-.tile .ignored { color: var(--refuse); }
-
 .tile details { margin-top: auto; padding-top: 0.7rem; }
 
 .tile summary {
@@ -234,9 +195,7 @@ main { padding: 2.2rem 0 3rem; }
   margin-top: 1rem;
 }
 
-.chart-wide { grid-column: 1 / -1; }
-
-.chart h2, .table-head h2 { margin: 0; font-size: 1.2rem; }
+.chart h2 { margin: 0; font-size: 1.2rem; }
 
 .chart .fine { margin: 0.2rem 0 0; }
 
@@ -245,16 +204,6 @@ main { padding: 2.2rem 0 3rem; }
   min-height: 250px;
   margin-top: 0.6rem;
 }
-
-.table-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: end;
-  margin-top: 1.6rem;
-}
-
-.table-head .fine { margin: 0.2rem 0 0; }
 
 .num {
   text-align: right;
@@ -279,37 +228,12 @@ th, td {
 
 th { font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 
-.diagram {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-
-.diagram div {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 0.9rem 1rem;
-}
-
-.diagram strong { font-family: "Source Serif Pro", Georgia, serif; }
-
 code {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-size: 0.86em;
 }
 
-.ask-layout {
-  display: grid;
-  grid-template-columns: minmax(16rem, 22rem) 1fr;
-  gap: 1rem;
-  align-items: start;
-}
-
-.prompts { display: flex; flex-direction: column; gap: 0.45rem; }
-
-.prompts button, .ask-form button, .prompts .danger {
+.ask-form button {
   text-align: left;
   border: 1px solid var(--line);
   background: var(--card);
@@ -319,24 +243,24 @@ code {
   cursor: pointer;
 }
 
-.prompts button:hover, .ask-form button:hover { border-color: var(--ink); }
+.ask-form button:hover { border-color: var(--ink); }
 
 .ask-form {
   display: flex;
   gap: 0.5rem;
-  margin: 1rem 0;
+  padding: 0.7rem;
+  border-top: 1px solid var(--line);
 }
 
 .ask-form input {
   flex: 1;
+  min-width: 0;
   border: 1px solid var(--line);
   background: white;
   border-radius: 10px;
   padding: 0.7rem 0.8rem;
   font: inherit;
 }
-
-.answer h2 { margin: 0.2rem 0 0.4rem; font-size: 1.7rem; }
 
 .ask-form input:disabled, .ask-form button:disabled {
   opacity: 0.5;
@@ -347,6 +271,83 @@ code {
 .chat-answer p { margin: 0.4rem 0; }
 .chat-answer .table-wrap { margin: 0.6rem 0; overflow-x: auto; }
 
+/* The chat sits in the lower right corner. It is a button when minimized and a panel when open.
+   The page gets extra room at the bottom so the button never covers the last content. */
+body { padding-bottom: 4.5rem; }
+
+.chat-widget {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  z-index: 50;
+  font-size: 0.9rem;
+}
+
+.chat-launcher {
+  border: 0;
+  border-radius: 999px;
+  background: var(--header);
+  color: var(--header-text);
+  padding: 0.7rem 1.2rem;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(28, 36, 48, 0.3);
+}
+
+.chat-launcher:hover { background: var(--accent); }
+
+.chat-launcher[hidden] { display: none; }
+
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  width: 24rem;
+  max-width: calc(100vw - 2.4rem);
+  height: 32rem;
+  max-height: calc(100vh - 2.4rem);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 0 8px 28px rgba(28, 36, 48, 0.28);
+  overflow: hidden;
+}
+
+.chat-panel[hidden] { display: none; }
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.6rem 0.6rem 1rem;
+  background: var(--header);
+  color: var(--header-text);
+}
+
+.chat-minimize {
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chat-minimize:hover { background: rgba(255, 255, 255, 0.15); }
+
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8rem 1rem;
+}
+
+.chat-body .fine { margin: 0; font-size: 0.8rem; }
+
+.chat-panel .ask-form { background: var(--card); }
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -355,16 +356,6 @@ code {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
-
-.metric-name {
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  color: var(--accent);
-}
-
-.refuse { border-color: #d5c5c8; background: #f7f4f5; }
-.refuse h2 { color: var(--refuse); font-size: 1.45rem; }
-
-.filters { padding-left: 1.1rem; }
 
 .visually-hidden {
   position: absolute;
@@ -398,6 +389,18 @@ code {
 }
 
 .dash .breakdowns .chart { margin-top: 0; }
+
+/* The two line charts sit side by side. minmax(0, 1fr) lets the charts shrink with their column. */
+.dash .charts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.dash .charts .chart { margin-top: 0; }
+
+@media (max-width: 800px) {
+  .dash .charts .chart + .chart { margin-top: 0.8rem; }
+}
 
 .section-title { margin: 2.2rem 0 0; }
 
@@ -478,7 +481,23 @@ code {
 
 .chart-tall { min-height: 0; }
 
-#chart-source { margin-top: 0; }
+#chart-source, #growth-source { margin-top: 0; }
+
+/* A short explanation between the scorecards and the line charts. */
+.dash .callout {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: var(--card);
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.dash .callout p { margin: 0; }
+
+.dash .callout p + p { margin-top: 0.4rem; }
 
 .peek { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
 
@@ -502,23 +521,18 @@ code {
 }
 
 @media (max-width: 960px) {
-  .filter-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpis { grid-template-columns: repeat(2, 1fr); }
   .breakdowns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 800px) {
-  .header-inner, .diagram, .ask-layout, .charts, .table-head { display: block; }
+  .header-inner, .charts { display: block; }
   .breakdowns { grid-template-columns: 1fr; }
   .header-inner { padding-bottom: 1rem; }
   .nav { justify-content: flex-start; margin-top: 0.8rem; }
-  .card, .diagram div, .chart { margin-top: 0.8rem; }
-  .ask-form { display: block; }
-  .ask-form button { margin-top: 0.5rem; }
-  .filter-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .table-head .button { margin-top: 0.6rem; }
+  .chart { margin-top: 0.8rem; }
 }
 
 @media (max-width: 520px) {
-  .kpis, .filter-bar { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: 1fr; }
 }

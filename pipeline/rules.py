@@ -126,16 +126,6 @@ EVENTS_WITH_CONTENT = {
     "download",
 }
 
-# Named event counts on the content mart. Anything else, including unknown, is other_events.
-CONTENT_EVENT_COLUMNS = {
-    "content_open": "content_opens",
-    "content_complete": "content_completes",
-    "like": "likes",
-    "share": "shares",
-    "comment_post": "comments",
-    "download": "downloads",
-}
-
 
 def runtime_is_invalid(value):
     number = float(value)

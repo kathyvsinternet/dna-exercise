@@ -78,6 +78,30 @@ def cancellations_between(start, end):
     return [{"user_cancellations": count}]
 
 
+def net_subscriptions_at(day):
+    """Non-test subscriptions started on or before day and not canceled by then, in any other status."""
+    count = sum(
+        1
+        for sub in _live_subscriptions()
+        if sub["start_date"] <= day and not (sub["status"] == "canceled" and sub["end_date"] <= day)
+    )
+    return [{"running_net_subscriptions": count}]
+
+
+def churn_in_quarter(start, end):
+    """Cancellations in the quarter over the subscriptions in place when it began. None when none were."""
+    subs = _live_subscriptions()
+    opening = sum(
+        1
+        for sub in subs
+        if sub["start_date"] < start and not (sub["status"] == "canceled" and sub["end_date"] < start)
+    )
+    canceled = sum(
+        1 for sub in subs if sub["status"] == "canceled" and start <= sub["end_date"] <= end
+    )
+    return [{"quarterly_churn_rate": round(canceled / opening, 4) if opening else None}]
+
+
 def _content_event_counts():
     counts = Counter()
     for event in _read("fct_engagement_event"):

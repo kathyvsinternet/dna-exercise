@@ -139,7 +139,7 @@ class ChatTurnTests(unittest.TestCase):
 
     def test_text_without_numbers_and_without_data_is_declined(self):
         model = script(say("I can't answer that from the available data."))
-        payload = chat.answer("What is our churn rate?", model)
+        payload = chat.answer("What is our retention rate?", model)
         self.assertEqual(payload["status"], "declined")
         self.assertEqual(payload["rows"], [])
 
@@ -176,6 +176,19 @@ class PromptTests(unittest.TestCase):
         prompt = chat.build_system_prompt(chat.load_catalog())
         self.assertIn("call query_mart with no group_by", prompt)
         self.assertIn("filter to that value", prompt)
+
+    def test_prompt_says_how_to_ask_for_a_rate_and_what_may_be_sorted(self):
+        prompt = chat.build_system_prompt(chat.load_catalog())
+        self.assertIn("cannot be added up", prompt)
+        self.assertIn("group by the time column, sort it newest first", prompt)
+        self.assertIn("Sort only by a column that is in group_by or measures", prompt)
+        self.assertIn("still wants a total when it mentions a breakdown", prompt)
+        self.assertIn("Group by a column only when the question asks to see the values", prompt)
+
+    def test_prompt_keeps_quarter_names_free_of_dates_the_rows_do_not_show(self):
+        prompt = chat.build_system_prompt(chat.load_catalog())
+        self.assertIn("Name a quarter by its label", prompt)
+        self.assertIn("Do not add calendar dates or day numbers that are not in the rows", prompt)
 
 
 class HttpContractTests(unittest.TestCase):

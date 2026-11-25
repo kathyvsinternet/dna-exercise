@@ -33,7 +33,12 @@ class CatalogFileTests(unittest.TestCase):
 
     def test_published_catalog_covers_every_published_mart_it_claims(self):
         catalog = load_catalog()
-        for name in ("mart_user_info_counts", "mart_user_qtr_counts", "mart_content_engagement"):
+        for name in (
+            "mart_user_info_counts",
+            "mart_user_qtr_counts",
+            "mart_growth_qtr_counts",
+            "mart_content_engagement",
+        ):
             self.assertIn(name, catalog["marts"])
         self.assertIn("mart_user_share_country", catalog["marts"])
 
