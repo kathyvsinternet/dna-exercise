@@ -268,7 +268,7 @@ code {
 }
 
 .chat-answer { margin-top: 0.5rem; }
-.chat-answer p { margin: 0.4rem 0; }
+.chat-answer p { margin: 0.4rem 0; white-space: pre-line; }
 .chat-answer .table-wrap { margin: 0.6rem 0; overflow-x: auto; }
 
 /* The chat sits in the lower right corner. It is a button when minimized and a panel when open.
