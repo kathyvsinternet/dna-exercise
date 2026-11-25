@@ -13,7 +13,8 @@
   --gathersquare: #5b7c99;
   --makerharbor: #243e66;
   --shadow: 0 1px 0 rgba(28, 36, 48, 0.06);
-  font-family: "Open Sans", "Avenir Next", "Segoe UI", sans-serif;
+  font-family: Roboto, "Avenir Next", "Segoe UI", sans-serif;
+  font-weight: 300;
   color: var(--ink);
   background: var(--paper);
 }
@@ -29,6 +30,10 @@ h1, h2, h3 {
   font-family: "Source Serif Pro", Georgia, serif;
   font-weight: 600;
   letter-spacing: -0.02em;
+}
+
+h1 {
+  font-family: Fraunces, Georgia, serif;
 }
 
 a { color: inherit; }
@@ -57,7 +62,7 @@ a { color: inherit; }
 
 .brand strong {
   display: block;
-  font-family: "Source Serif Pro", Georgia, serif;
+  font-family: Fraunces, Georgia, serif;
   font-size: 1.45rem;
   font-weight: 600;
 }
