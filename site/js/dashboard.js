@@ -22,7 +22,7 @@ const SERIES_COLORS = {
 const FALLBACK_COLORS = ["#3d7ab5", "#5b8fbf", "#8aa4b8"];
 // The growth chart has two axes, so each axis takes its series color.
 const GROWTH_COLUMNS = { net: "running_net_subscriptions", churn: "quarterly_churn_rate" };
-const NET_COLOR = "#2c6aa0";
+const NET_COLOR = "#2e7d4f";
 const CHURN_COLOR = "#c9772b";
 
 Promise.all([loadMart(COUNTS), loadMart(MART), loadMart(GROWTH), loadBreakdowns(), loadMart(CONTENT)])
@@ -425,8 +425,8 @@ function drawGrowth(mart) {
           y: {
             field: "net",
             type: "quantitative",
-            title: "Net subscriptions",
-            axis: { format: ",d", titleColor: NET_COLOR, labelColor: NET_COLOR },
+            title: "Net Subscriptions",
+            axis: { format: ",d", titlePadding: 10, titleColor: NET_COLOR, labelColor: NET_COLOR },
           },
           color: color(netLabel, { title: null }),
           tooltip: [quarter, { field: "net", title: "Net subscriptions", format: ",d" }],
@@ -438,8 +438,8 @@ function drawGrowth(mart) {
           y: {
             field: "churn",
             type: "quantitative",
-            title: "Quarterly churn rate",
-            axis: { format: ".0%", orient: "right", grid: false, titleColor: CHURN_COLOR, labelColor: CHURN_COLOR },
+            title: "Churn Rate",
+            axis: { format: ".0%", orient: "right", grid: false, titlePadding: 10, titleColor: CHURN_COLOR, labelColor: CHURN_COLOR },
           },
           color: color(churnLabel, null),
           tooltip: [quarter, { field: "churn", title: "Churn rate", format: ".1%" }],
