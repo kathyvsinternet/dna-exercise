@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Roboto:wght@300;400;500;600;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css?v=41">
+  <link rel="stylesheet" href="css/site.css?v=42">
 </head>
 <body>
   <header class="site-header">
@@ -26,13 +26,13 @@
     <section class="dash" id="dash" aria-live="polite">
       <section class="kpis" id="scorecards" aria-label="Current totals">Loading totals…</section>
       <p class="source-note" id="scorecards-source"></p>
-      <div class="callout" id="scorecards-callout">
+      <div class="callout">
         <p>The scorecards above exclude paused, trialing, and unknown subscriptions. They count only subscriptions marked "active".</p>
         <p>The line charts below do not limit by whether a subscription is "active", so their numbers do not line up with the scorecards. The dataset provided does not include events of when a plan is paused nor the timing of the trial and there is limited context into what an "unknown" status means. Therefore, clearer cuts of the data are not possible to chart as a time series.</p>
       </div>
       <div class="charts">
       <article class="chart">
-        <h2 id="chart-title">Quarterly Subscriptions and Cancellations</h2>
+        <h2>Quarterly Subscriptions and Cancellations</h2>
         <p class="fine" id="chart-note">Q3 2026 is a partial quarter.</p>
         <div class="chart-body chart-tall" id="chart-quarterly"></div>
         <p class="source-note" id="chart-source"></p>
@@ -54,7 +54,7 @@
         </details>
       </article>
       <article class="chart">
-        <h2 id="growth-title">Quarterly Net Subscriptions and Churn Rate</h2>
+        <h2>Quarterly Net Subscriptions and Churn Rate</h2>
         <p class="fine" id="growth-note">Churn rate is calculated by comparisons to the prior quarter's net subscriptions.</p>
         <div class="chart-body chart-tall" id="chart-growth"></div>
         <p class="source-note" id="growth-source"></p>

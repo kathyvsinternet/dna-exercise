@@ -8,10 +8,6 @@
   --header: #1b2838;
   --header-text: #eef2f6;
   --accent: #2c6aa0;
-  --refuse: #8a4d56;
-  --pagegarden: #2c6aa0;
-  --gathersquare: #5b7c99;
-  --makerharbor: #243e66;
   --shadow: 0 1px 0 rgba(28, 36, 48, 0.06);
   font-family: Roboto, "Avenir Next", "Segoe UI", sans-serif;
   font-weight: 300;
@@ -102,18 +98,7 @@ main { padding: 2.2rem 0 3rem; }
 
 .lede-wide { max-width: 75%; }
 
-.muted { color: var(--muted); }
-
-.kicker {
-  margin: 0 0 0.4rem;
-  color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.card, .answer, .refuse, .tile, .chart, .filter-bar {
+.tile, .chart {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -126,29 +111,9 @@ main { padding: 2.2rem 0 3rem; }
   font-size: 0.88rem;
 }
 
-.issue, .table-wrap { margin-top: 1rem; }
+.table-wrap { margin-top: 1rem; }
 
-.filter-bar {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
-  gap: 0.75rem;
-  align-items: end;
-  margin-top: 1.4rem;
-  padding: 0.9rem 1rem;
-}
-
-.filter-bar label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  color: var(--muted);
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.filter-bar select, .control select, .button {
+.control select, .button {
   border: 1px solid var(--line);
   background: white;
   border-radius: 9px;
@@ -167,8 +132,6 @@ main { padding: 2.2rem 0 3rem; }
 }
 
 .button:hover { border-color: var(--ink); }
-
-.scope { margin: 0.6rem 0 0; }
 
 .kpis {
   display: grid;
@@ -217,8 +180,6 @@ main { padding: 2.2rem 0 3rem; }
 
 .tile .fine { margin: 0.25rem 0 0; }
 
-.tile .ignored { color: var(--refuse); }
-
 .tile details { margin-top: auto; padding-top: 0.7rem; }
 
 .tile summary {
@@ -234,7 +195,7 @@ main { padding: 2.2rem 0 3rem; }
   margin-top: 1rem;
 }
 
-.chart h2, .table-head h2 { margin: 0; font-size: 1.2rem; }
+.chart h2 { margin: 0; font-size: 1.2rem; }
 
 .chart .fine { margin: 0.2rem 0 0; }
 
@@ -243,16 +204,6 @@ main { padding: 2.2rem 0 3rem; }
   min-height: 250px;
   margin-top: 0.6rem;
 }
-
-.table-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: end;
-  margin-top: 1.6rem;
-}
-
-.table-head .fine { margin: 0.2rem 0 0; }
 
 .num {
   text-align: right;
@@ -277,37 +228,12 @@ th, td {
 
 th { font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 
-.diagram {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-
-.diagram div {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 0.9rem 1rem;
-}
-
-.diagram strong { font-family: "Source Serif Pro", Georgia, serif; }
-
 code {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-size: 0.86em;
 }
 
-.ask-layout {
-  display: grid;
-  grid-template-columns: minmax(16rem, 22rem) 1fr;
-  gap: 1rem;
-  align-items: start;
-}
-
-.prompts { display: flex; flex-direction: column; gap: 0.45rem; }
-
-.prompts button, .ask-form button, .prompts .danger {
+.ask-form button {
   text-align: left;
   border: 1px solid var(--line);
   background: var(--card);
@@ -317,7 +243,7 @@ code {
   cursor: pointer;
 }
 
-.prompts button:hover, .ask-form button:hover { border-color: var(--ink); }
+.ask-form button:hover { border-color: var(--ink); }
 
 .ask-form {
   display: flex;
@@ -335,8 +261,6 @@ code {
   padding: 0.7rem 0.8rem;
   font: inherit;
 }
-
-.answer h2 { margin: 0.2rem 0 0.4rem; font-size: 1.7rem; }
 
 .ask-form input:disabled, .ask-form button:disabled {
   opacity: 0.5;
@@ -432,16 +356,6 @@ body { padding-bottom: 4.5rem; }
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
-
-.metric-name {
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  color: var(--accent);
-}
-
-.refuse { border-color: #d5c5c8; background: #f7f4f5; }
-.refuse h2 { color: var(--refuse); font-size: 1.45rem; }
-
-.filters { padding-left: 1.1rem; }
 
 .visually-hidden {
   position: absolute;
@@ -607,21 +521,18 @@ body { padding-bottom: 4.5rem; }
 }
 
 @media (max-width: 960px) {
-  .filter-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpis { grid-template-columns: repeat(2, 1fr); }
   .breakdowns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 800px) {
-  .header-inner, .diagram, .ask-layout, .charts, .table-head { display: block; }
+  .header-inner, .charts { display: block; }
   .breakdowns { grid-template-columns: 1fr; }
   .header-inner { padding-bottom: 1rem; }
   .nav { justify-content: flex-start; margin-top: 0.8rem; }
-  .card, .diagram div, .chart { margin-top: 0.8rem; }
-  .filter-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .table-head .button { margin-top: 0.6rem; }
+  .chart { margin-top: 0.8rem; }
 }
 
 @media (max-width: 520px) {
-  .kpis, .filter-bar { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: 1fr; }
 }
