@@ -1,0 +1,178 @@
+{
+ "name": "mart_growth_qtr_counts",
+ "sql": "-- Here we calculate churn rate by looking at the previous quarter end's net subscriptions\n-- then we take the current quarter's cancellations and divide\n\nSELECT\n  quarter,\n  user_subscriptions,\n  user_cancellations,\n  SUM(user_subscriptions - user_cancellations) OVER thru_curr AS running_net_subscriptions,\n  ROUND(user_cancellations / NULLIF(SUM(user_subscriptions - user_cancellations) OVER pre_curr, 0), 4) AS quarterly_churn_rate\nFROM int_user_qtr_counts\nWINDOW\n  thru_curr AS (ORDER BY quarter), -- goes through existing row's quarter\n  pre_curr AS (ORDER BY quarter ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) -- ends at previous row's quarter\nORDER BY quarter",
+ "depends_on": [
+  "int_user_qtr_counts"
+ ],
+ "columns": [
+  {
+   "name": "quarter",
+   "type": "DATE"
+  },
+  {
+   "name": "user_subscriptions",
+   "type": "HUGEINT"
+  },
+  {
+   "name": "user_cancellations",
+   "type": "HUGEINT"
+  },
+  {
+   "name": "running_net_subscriptions",
+   "type": "HUGEINT"
+  },
+  {
+   "name": "quarterly_churn_rate",
+   "type": "DOUBLE"
+  }
+ ],
+ "rows": [
+  {
+   "quarter": "2021-07-01",
+   "user_subscriptions": 1,
+   "user_cancellations": 0,
+   "running_net_subscriptions": 1,
+   "quarterly_churn_rate": null
+  },
+  {
+   "quarter": "2021-10-01",
+   "user_subscriptions": 5,
+   "user_cancellations": 0,
+   "running_net_subscriptions": 6,
+   "quarterly_churn_rate": 0.0
+  },
+  {
+   "quarter": "2022-01-01",
+   "user_subscriptions": 7,
+   "user_cancellations": 0,
+   "running_net_subscriptions": 13,
+   "quarterly_churn_rate": 0.0
+  },
+  {
+   "quarter": "2022-04-01",
+   "user_subscriptions": 16,
+   "user_cancellations": 0,
+   "running_net_subscriptions": 29,
+   "quarterly_churn_rate": 0.0
+  },
+  {
+   "quarter": "2022-07-01",
+   "user_subscriptions": 7,
+   "user_cancellations": 1,
+   "running_net_subscriptions": 35,
+   "quarterly_churn_rate": 0.0345
+  },
+  {
+   "quarter": "2022-10-01",
+   "user_subscriptions": 9,
+   "user_cancellations": 0,
+   "running_net_subscriptions": 44,
+   "quarterly_churn_rate": 0.0
+  },
+  {
+   "quarter": "2023-01-01",
+   "user_subscriptions": 16,
+   "user_cancellations": 0,
+   "running_net_subscriptions": 60,
+   "quarterly_churn_rate": 0.0
+  },
+  {
+   "quarter": "2023-04-01",
+   "user_subscriptions": 15,
+   "user_cancellations": 0,
+   "running_net_subscriptions": 75,
+   "quarterly_churn_rate": 0.0
+  },
+  {
+   "quarter": "2023-07-01",
+   "user_subscriptions": 23,
+   "user_cancellations": 1,
+   "running_net_subscriptions": 97,
+   "quarterly_churn_rate": 0.0133
+  },
+  {
+   "quarter": "2023-10-01",
+   "user_subscriptions": 30,
+   "user_cancellations": 0,
+   "running_net_subscriptions": 127,
+   "quarterly_churn_rate": 0.0
+  },
+  {
+   "quarter": "2024-01-01",
+   "user_subscriptions": 22,
+   "user_cancellations": 6,
+   "running_net_subscriptions": 143,
+   "quarterly_churn_rate": 0.0472
+  },
+  {
+   "quarter": "2024-04-01",
+   "user_subscriptions": 26,
+   "user_cancellations": 1,
+   "running_net_subscriptions": 168,
+   "quarterly_churn_rate": 0.007
+  },
+  {
+   "quarter": "2024-07-01",
+   "user_subscriptions": 35,
+   "user_cancellations": 3,
+   "running_net_subscriptions": 200,
+   "quarterly_churn_rate": 0.0179
+  },
+  {
+   "quarter": "2024-10-01",
+   "user_subscriptions": 45,
+   "user_cancellations": 4,
+   "running_net_subscriptions": 241,
+   "quarterly_churn_rate": 0.02
+  },
+  {
+   "quarter": "2025-01-01",
+   "user_subscriptions": 48,
+   "user_cancellations": 13,
+   "running_net_subscriptions": 276,
+   "quarterly_churn_rate": 0.0539
+  },
+  {
+   "quarter": "2025-04-01",
+   "user_subscriptions": 58,
+   "user_cancellations": 17,
+   "running_net_subscriptions": 317,
+   "quarterly_churn_rate": 0.0616
+  },
+  {
+   "quarter": "2025-07-01",
+   "user_subscriptions": 54,
+   "user_cancellations": 9,
+   "running_net_subscriptions": 362,
+   "quarterly_churn_rate": 0.0284
+  },
+  {
+   "quarter": "2025-10-01",
+   "user_subscriptions": 76,
+   "user_cancellations": 15,
+   "running_net_subscriptions": 423,
+   "quarterly_churn_rate": 0.0414
+  },
+  {
+   "quarter": "2026-01-01",
+   "user_subscriptions": 81,
+   "user_cancellations": 18,
+   "running_net_subscriptions": 486,
+   "quarterly_churn_rate": 0.0426
+  },
+  {
+   "quarter": "2026-04-01",
+   "user_subscriptions": 103,
+   "user_cancellations": 51,
+   "running_net_subscriptions": 538,
+   "quarterly_churn_rate": 0.1049
+  },
+  {
+   "quarter": "2026-07-01",
+   "user_subscriptions": 127,
+   "user_cancellations": 73,
+   "running_net_subscriptions": 592,
+   "quarterly_churn_rate": 0.1357
+  }
+ ]
+}

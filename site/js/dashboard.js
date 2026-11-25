@@ -1,4 +1,5 @@
 const MART = "data/marts/mart_user_qtr_counts.json";
+const GROWTH = "data/marts/mart_growth_qtr_counts.json";
 const COUNTS = "data/marts/mart_user_info_counts.json";
 const CONTENT = "data/marts/mart_content_engagement.json";
 // The share tables come from site/data/user_share.json, which pipeline/user_share.py writes.
@@ -19,18 +20,24 @@ const SERIES_COLORS = {
   user_cancellations: "#c23b3b",
 };
 const FALLBACK_COLORS = ["#3d7ab5", "#5b8fbf", "#8aa4b8"];
+// The growth chart has two axes, so each axis takes its series color.
+const GROWTH_COLUMNS = { net: "running_net_subscriptions", churn: "quarterly_churn_rate" };
+const NET_COLOR = "#2c6aa0";
+const CHURN_COLOR = "#c9772b";
 
-Promise.all([loadMart(COUNTS), loadMart(MART), loadBreakdowns(), loadMart(CONTENT)])
-  .then(([counts, mart, breakdowns, content]) => {
+Promise.all([loadMart(COUNTS), loadMart(MART), loadMart(GROWTH), loadBreakdowns(), loadMart(CONTENT)])
+  .then(([counts, mart, growth, breakdowns, content]) => {
     renderScorecards(counts);
     renderBreakdowns(breakdowns);
     render(mart);
+    renderGrowth(growth);
     renderContentPerformance(content);
   })
   .catch((error) => {
     document.querySelector("#scorecards").textContent = error.message;
     document.querySelector("#breakdowns").textContent = error.message;
     document.querySelector("#chart-note").textContent = error.message;
+    document.querySelector("#growth-note").textContent = error.message;
     document.querySelector("#content-performance").textContent = error.message;
   });
 
@@ -327,60 +334,148 @@ function drawLine(mart, timeColumn, seriesColumns) {
         { field: "count", title: "Count", format: ",d" },
       ],
     },
-    config: {
-      font: "Roboto",
-      view: { stroke: null },
-      axis: {
-        labelColor: "#5a6570",
-        titleColor: "#5a6570",
-        gridColor: "#e4eaf0",
-        domainColor: "#d3dbe3",
-        tickColor: "#d3dbe3",
-      },
-      legend: {
-        labelColor: "#1c2430",
-        orient: "top",
-        symbolType: "stroke",
-        symbolStrokeWidth: 3,
-        symbolSize: 280,
-        columnPadding: 28,
-        labelOffset: 8,
-        labelFontSize: 13,
-      },
-    },
+    config: CHART_CONFIG,
   };
+  embedChart("#chart-quarterly", spec);
+}
+
+// Styling shared by both line charts.
+const CHART_CONFIG = {
+  font: "Roboto",
+  view: { stroke: null },
+  axis: {
+    labelColor: "#5a6570",
+    titleColor: "#5a6570",
+    gridColor: "#e4eaf0",
+    domainColor: "#d3dbe3",
+    tickColor: "#d3dbe3",
+  },
+  legend: {
+    labelColor: "#1c2430",
+    orient: "top",
+    symbolType: "stroke",
+    symbolStrokeWidth: 3,
+    symbolSize: 280,
+    columnPadding: 28,
+    labelOffset: 8,
+    labelFontSize: 13,
+  },
+};
+
+function embedChart(selector, spec) {
   if (typeof vegaEmbed === "undefined") {
-    document.querySelector("#chart-quarterly").textContent =
+    document.querySelector(selector).textContent =
       "The chart needs the Vega libraries from cdn.jsdelivr.net.";
     return;
   }
-  vegaEmbed("#chart-quarterly", spec, { actions: false, renderer: "svg" }).catch((error) => {
-    document.querySelector("#chart-quarterly").textContent = error.message;
+  vegaEmbed(selector, spec, { actions: false, renderer: "svg" }).catch((error) => {
+    document.querySelector(selector).textContent = error.message;
   });
 }
 
-function showQuery(mart) {
-  document.querySelector("#query-sql").textContent = mart.sql;
-  document.querySelector("#query-reads").textContent = mart.depends_on.length
+// Net subscriptions at the end of each quarter on the left axis, and the quarter's churn
+// rate on the right. The two axes have different units, so the lines are not meant to be
+// read against each other. Each axis takes the color of its line. A quarter with no rate
+// (the first one) has no point on the churn line.
+function renderGrowth(mart) {
+  document.querySelector("#growth-source").textContent =
+    `Source: ${mart.name} · ${mart.rows.length} quarters`;
+  drawGrowth(mart);
+  showQuery(mart, "growth-");
+  showData(mart, "growth-");
+}
+
+function drawGrowth(mart) {
+  const netLabel = "Net subscriptions (left axis)";
+  const churnLabel = "Churn rate (right axis)";
+  const values = mart.rows.map((row) => ({
+    quarter: quarterLabel(row.quarter),
+    net: row[GROWTH_COLUMNS.net],
+    churn: row[GROWTH_COLUMNS.churn],
+  }));
+  const color = (label, legend) => ({
+    datum: label,
+    type: "nominal",
+    scale: { domain: [netLabel, churnLabel], range: [NET_COLOR, CHURN_COLOR] },
+    legend,
+  });
+  const line = { type: "line", point: { filled: true, size: 55 }, strokeWidth: 2.4 };
+  const quarter = { field: "quarter", title: "Quarter" };
+  const spec = {
+    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+    width: "container",
+    height: 289,
+    autosize: { type: "fit", contains: "padding" },
+    background: "transparent",
+    data: { values },
+    encoding: {
+      x: {
+        field: "quarter",
+        type: "ordinal",
+        sort: null,
+        title: null,
+        scale: { type: "point", padding: 0.4 },
+        axis: { labelAngle: -45 },
+      },
+    },
+    layer: [
+      {
+        mark: line,
+        encoding: {
+          y: {
+            field: "net",
+            type: "quantitative",
+            title: "Net subscriptions",
+            axis: { format: ",d", titleColor: NET_COLOR, labelColor: NET_COLOR },
+          },
+          color: color(netLabel, { title: null }),
+          tooltip: [quarter, { field: "net", title: "Net subscriptions", format: ",d" }],
+        },
+      },
+      {
+        mark: line,
+        encoding: {
+          y: {
+            field: "churn",
+            type: "quantitative",
+            title: "Quarterly churn rate",
+            axis: { format: ".0%", orient: "right", grid: false, titleColor: CHURN_COLOR, labelColor: CHURN_COLOR },
+          },
+          color: color(churnLabel, null),
+          tooltip: [quarter, { field: "churn", title: "Churn rate", format: ".1%" }],
+        },
+      },
+    ],
+    resolve: { scale: { y: "independent" } },
+    config: CHART_CONFIG,
+  };
+  embedChart("#chart-growth", spec);
+}
+
+// prefix picks the panel's element ids, so each chart has its own query and data panels.
+function showQuery(mart, prefix = "") {
+  document.querySelector(`#${prefix}query-sql`).textContent = mart.sql;
+  document.querySelector(`#${prefix}query-reads`).textContent = mart.depends_on.length
     ? `Reads ${mart.depends_on.join(", ")}.`
     : "Reads the model tables directly.";
 }
 
-function showData(mart) {
+function showData(mart, prefix = "") {
   const names = mart.columns.map((column) => column.name);
-  const head = document.querySelector("#data-head");
-  const body = document.querySelector("#data-body");
+  const head = document.querySelector(`#${prefix}data-head`);
+  const body = document.querySelector(`#${prefix}data-body`);
   head.replaceChildren(
     element("tr", {}, ...names.map((name, index) => element("th", index ? { className: "num" } : {}, name))),
   );
+  // Up to 4 decimals, so a rate such as 0.1049 shows as the mart holds it. An empty value is a dash.
+  const cell = (value) =>
+    typeof value === "number" ? value.toLocaleString("en-US", { maximumFractionDigits: 4 }) : cellText(value);
   body.replaceChildren(
     ...mart.rows.map((row) =>
       element(
         "tr",
         {},
-        ...names.map((name, index) =>
-          element("td", index ? { className: "num" } : {}, typeof row[name] === "number" ? row[name].toLocaleString("en-US") : String(row[name])),
-        ),
+        ...names.map((name, index) => element("td", index ? { className: "num" } : {}, cell(row[name]))),
       ),
     ),
   );

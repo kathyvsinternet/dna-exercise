@@ -47,8 +47,11 @@ def check(raw, model):
 
 def check_dashboard_marts(model, marts):
     """Each mart the dashboard publishes must reconcile to the fact tables."""
-    if "mart_user_qtr_counts" in marts:
-        _check_quarterly_users(model, marts["mart_user_qtr_counts"])
+    for name in ("mart_user_qtr_counts", "mart_growth_qtr_counts"):
+        if name in marts:
+            _check_quarterly_users(model, marts[name], name)
+    if "mart_growth_qtr_counts" in marts:
+        _check_quarterly_growth(model, marts["mart_growth_qtr_counts"])
     _check_user_breakdowns(model, marts)
 
 
@@ -77,10 +80,10 @@ def _check_user_breakdowns(model, marts):
             raise BuildError(f"{name} shares add up to {share:.4f}, not 1. See {ISSUE_SENTINELS}.")
 
 
-def _check_quarterly_users(model, rows):
+def _check_quarterly_users(model, rows, name):
     quarters = [row["quarter"] for row in rows]
     if len(quarters) != len(set(quarters)):
-        raise BuildError(f"mart_user_qtr_counts has a repeated quarter. See {ISSUE_DUPLICATES}.")
+        raise BuildError(f"{name} has a repeated quarter. See {ISSUE_DUPLICATES}.")
     real_users = [row for row in model["dim_user"] if row["is_test_account"] == "false"]
     real_subs = [row for row in model["fct_subscription"] if row["is_test_account"] == "false"]
     expected = {
@@ -91,8 +94,37 @@ def _check_quarterly_users(model, rows):
         got = sum(int(row[column]) for row in rows)
         if got != want:
             raise BuildError(
-                f"mart_user_qtr_counts adds up to {got} {column}, but the fact tables have {want} "
+                f"{name} adds up to {got} {column}, but the fact tables have {want} "
                 f"for non-test accounts. See {ISSUE_SENTINELS}."
+            )
+
+
+def _check_quarterly_growth(model, rows):
+    """The running total ends at the facts' net total, and each rate is the cancellations over the opening base."""
+    real_subs = [row for row in model["fct_subscription"] if row["is_test_account"] == "false"]
+    canceled = sum(1 for row in real_subs if row["status"] == "canceled" and not blank(row["end_date"]))
+    want = len(real_subs) - canceled
+    got = int(rows[-1]["running_net_subscriptions"])
+    if got != want:
+        raise BuildError(
+            f"mart_growth_qtr_counts ends at {got} net subscriptions, but the fact tables have {want} "
+            f"for non-test accounts. See {ISSUE_SENTINELS}."
+        )
+    opening = 0
+    for row in rows:
+        starts, cancels = int(row["user_subscriptions"]), int(row["user_cancellations"])
+        rate = row["quarterly_churn_rate"]
+        expected = round(cancels / opening, 4) if opening else None
+        if (rate is None) != (expected is None) or (rate is not None and abs(float(rate) - expected) > 0.00005):
+            raise BuildError(
+                f"mart_growth_qtr_counts has churn rate {rate} for {row['quarter']}, but "
+                f"{cancels} cancellations over {opening} subscriptions at the start gives {expected}."
+            )
+        opening += starts - cancels
+        if int(row["running_net_subscriptions"]) != opening:
+            raise BuildError(
+                f"mart_growth_qtr_counts has {row['running_net_subscriptions']} net subscriptions for "
+                f"{row['quarter']}, but starts minus cancellations to date is {opening}."
             )
 
 

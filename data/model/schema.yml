@@ -151,6 +151,16 @@ views:
       - {name: user_subscriptions, description: Distinct non-test subscriptions with this start_date.}
       - {name: user_cancellations, description: Distinct canceled non-test subscriptions with this end_date.}
 
+  - name: int_user_qtr_counts
+    grain: one row per calendar quarter with at least one subscription start or cancellation
+    primary_key: quarter
+    defined_in: data/marts/sql/int_user_qtr_counts.sql
+    notes: Rolls int_daily_users up to the quarter. Both measures are additive across quarters. It feeds mart_user_qtr_counts and mart_growth_qtr_counts.
+    columns:
+      - {name: quarter, description: First day of the quarter.}
+      - {name: user_subscriptions, description: Non-test subscriptions that started in the quarter.}
+      - {name: user_cancellations, description: Canceled non-test subscriptions that ended in the quarter.}
+
   - name: int_user_info
     grain: one row per user_id with at least one active non-test subscription
     primary_key: user_id
@@ -216,11 +226,24 @@ marts:
     primary_key: quarter
     rows: 21
     defined_in: data/marts/sql/mart_user_qtr_counts.sql
-    notes: Feeds the line chart. Built from int_daily_users. Both measures are additive across quarters. The last quarter, Q3 2026, is partial. Quarters with no activity are not present.
+    notes: Feeds the first line chart. Built from int_user_qtr_counts. Both measures are additive across quarters. The last quarter, Q3 2026, is partial. Quarters with no activity are not present.
     columns:
       - {name: quarter, description: First day of the quarter.}
       - {name: user_subscriptions, description: Non-test subscriptions that started in the quarter.}
       - {name: user_cancellations, description: Canceled non-test subscriptions that ended in the quarter.}
+
+  - name: mart_growth_qtr_counts
+    grain: one row per calendar quarter with at least one subscription start or cancellation
+    primary_key: quarter
+    rows: 21
+    defined_in: data/marts/sql/mart_growth_qtr_counts.sql
+    notes: Feeds the second line chart. Built from int_user_qtr_counts. running_net_subscriptions and quarterly_churn_rate are not additive across quarters. Churn counts subscriptions, not people. The first quarter has no subscriptions at its start, so its churn rate is empty. The last quarter, Q3 2026, is partial, so its churn rate covers part of the quarter.
+    columns:
+      - {name: quarter, description: First day of the quarter.}
+      - {name: user_subscriptions, description: Non-test subscriptions that started in the quarter.}
+      - {name: user_cancellations, description: Canceled non-test subscriptions that ended in the quarter.}
+      - {name: running_net_subscriptions, description: All starts minus all cancellations through the end of the quarter. The subscriptions still active at quarter end.}
+      - {name: quarterly_churn_rate, description: user_cancellations divided by the running net subscriptions at the end of the previous quarter, as a fraction rounded to 4 places. Empty when nothing was active at the start of the quarter.}
 
   - name: mart_content_engagement
     grain: one row per content_id

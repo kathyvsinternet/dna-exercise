@@ -27,7 +27,7 @@ small_cell_exceptions:
 
 not_answerable:
   - Revenue, ARR, or annual recurring revenue. total_monthly_payment is a list-price total, not revenue.
-  - Churn rate, retention, conversion, or any rate that needs a population the marts do not hold.
+  - Retention, conversion, or any rate that needs a population the marts do not hold. Quarterly churn rate is answerable from mart_growth_qtr_counts, and only as a rate of subscriptions, not people.
   - Names, email addresses, or any single person's record.
   - Anything before 2021 or after the data ends.
 
@@ -128,6 +128,36 @@ marts:
         label: Subscriptions canceled
         synonyms: [cancellations, cancels, canceled subscriptions]
         caveat: Counts canceled subscriptions by end date.
+
+  mart_growth_qtr_counts:
+    label: Net subscriptions and churn rate by quarter
+    description: Subscriptions still in place at the end of each calendar quarter, and the share of the opening subscriptions that were canceled during the quarter. Non-test accounts.
+    grain: one row per quarter with activity
+    notes:
+      - Q3 2026 is a partial quarter, so its churn rate covers part of the quarter.
+      - Churn counts subscriptions, not people.
+      - The first quarter, Q3 2021, has no subscriptions at its start, so it has no churn rate.
+      - Starts and cancellations by quarter are in mart_user_qtr_counts.
+    columns:
+      quarter:
+        role: dimension
+        type: date
+        label: Quarter
+        synonyms: [quarter, period]
+      running_net_subscriptions:
+        role: measure
+        type: integer
+        aggregation: none
+        label: Net subscriptions at quarter end
+        synonyms: [net subscriptions, running net subscriptions, subscriptions at quarter end]
+        caveat: Every start minus every cancellation through the end of the quarter. It includes paused, trialing, and unknown-status subscriptions, so it is larger than the active subscriptions in mart_user_info_counts. Not additive across quarters.
+      quarterly_churn_rate:
+        role: measure
+        type: number
+        aggregation: none
+        label: Quarterly churn rate
+        synonyms: [churn rate, churn, quarterly churn, cancellation rate]
+        caveat: A fraction, so 0.1049 is 10.49 percent. Subscriptions canceled in the quarter divided by the net subscriptions at the end of the previous quarter. Subscriptions, not people. Empty for the first quarter. Not additive across quarters.
 
   mart_content_engagement:
     label: Content engagement

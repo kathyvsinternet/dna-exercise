@@ -48,6 +48,28 @@
           </div>
         </details>
       </article>
+      <article class="chart chart-wide">
+        <h2 id="growth-title">Net Subscriptions and Churn Rate</h2>
+        <p class="fine" id="growth-note">Net subscriptions are every start minus every cancellation through the end of the quarter, so they include paused and trialing plans. Churn rate is a quarter's cancellations divided by the net subscriptions at the end of the previous quarter. It counts subscriptions, not people. The first quarter has no rate, and Q3 2026 is a partial quarter.</p>
+        <div class="chart-body chart-tall" id="chart-growth"></div>
+        <p class="source-note" id="growth-source"></p>
+
+        <details class="peek">
+          <summary>Show the query</summary>
+          <p class="source-note" id="growth-query-reads"></p>
+          <pre class="sql"><code id="growth-query-sql"></code></pre>
+        </details>
+
+        <details class="peek">
+          <summary>Show the data</summary>
+          <div class="table-wrap">
+            <table>
+              <thead id="growth-data-head"></thead>
+              <tbody id="growth-data-body"></tbody>
+            </table>
+          </div>
+        </details>
+      </article>
       <section class="breakdowns" id="breakdowns" aria-label="Active users by segment">Loading tables…</section>
 
       <h1 class="section-title">Content Performance</h1>
@@ -70,7 +92,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-  <script src="js/dashboard.js?v=28"></script>
+  <script src="js/dashboard.js?v=29"></script>
   <script src="js/chat.js?v=1"></script>
 </body>
 </html>

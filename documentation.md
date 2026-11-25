@@ -12,7 +12,7 @@ How this product keeps the numbers trustworthy, keeps person-level data off the 
 - **Invalid measures.** Sentinel numbers (a runtime of `-1` or `99999`, a price of `999.99`, a session of exactly 7 days) are nulled, the source number is kept, and an invalid flag is set. The row still counts. It does not add to a sum.
 - **Blank subscription fields.** A Free plan with a blank billing cycle becomes `not_applicable`. A canceled plan with no end date fails the build.
 
-The dashboard reads only the published marts, and each chart names the mart it came from. The build checks those marts against the facts: quarterly subscriptions and cancellations add up to the non-test fact rows, and each share table adds up to the 389 active non-test users, with shares adding up to about 1.
+The dashboard reads only the published marts, and each chart names the mart it came from. The build checks those marts against the facts: quarterly subscriptions and cancellations add up to the non-test fact rows, the net subscriptions and churn rate recompute from those counts, and each share table adds up to the 389 active non-test users, with shares adding up to about 1.
 
 ## Access
 
@@ -41,7 +41,8 @@ Marts are SQL files in `data/marts/sql/`. A file named `mart_*` is published as 
 
 - `eph_user_info` is one row per person with an active, non-test subscription, with their country, age band, acquisition channel, device, and subscription counts.
 - `mart_user_info_counts` is the score cards.
-- `mart_user_qtr_counts` is subscriptions and cancellations by quarter.
+- `mart_user_qtr_counts` is subscriptions and cancellations by quarter. It reads `int_user_qtr_counts`, the quarterly roll-up of the daily counts.
+- `mart_growth_qtr_counts` adds the net subscriptions still in place at the end of each quarter and the quarterly churn rate. Churn rate is a quarter's cancellations divided by the net subscriptions at the end of the previous quarter. It counts subscriptions, not people, and it counts paused, trialing, and unknown-status subscriptions as in place, so the net total is larger than the Active Subscriptions score card. The first quarter has no rate, and the last quarter is partial.
 - `mart_user_share_*` is one row per value of a column, with a distinct-user count and its share. Adding a table is one line in `USER_SHARE_CUTS` in `pipeline/user_share.py`. There is no SQL file per table.
 - `mart_content_engagement` is one row per title, with completes, opens, downloads, and total engagements. Test-account events are excluded.
 

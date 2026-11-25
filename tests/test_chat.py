@@ -139,7 +139,7 @@ class ChatTurnTests(unittest.TestCase):
 
     def test_text_without_numbers_and_without_data_is_declined(self):
         model = script(say("I can't answer that from the available data."))
-        payload = chat.answer("What is our churn rate?", model)
+        payload = chat.answer("What is our retention rate?", model)
         self.assertEqual(payload["status"], "declined")
         self.assertEqual(payload["rows"], [])
 
