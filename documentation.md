@@ -26,7 +26,11 @@ The [schema.yml](/data/model/schema.yml) file documents the schema of each of th
 
 The microsite dashboard only receives aggregate data and reads from the JSON files in [/site/data/marts/](/site/data/marts/). So the public stie does not have any access to deeper underlying models.
 
-We use `user_id` to do a distinct count of users but the values are never shown. Any distinct count of users below 5 is not meant for the publich page. The **two exceptions** here are "Users by Active Subscriptions" and "Users by Paid Subscriptions"
+We use `user_id` to do a distinct count of users but the values are never shown. Any distinct count of users below 5 is not meant for the publich page. The **two exceptions** here are "Users by Active Subscriptions" and "Users by Paid Subscriptions".
+
+## Guarding Against Agentic Hallucinations
+
+Instead of letting the AI chat bot go wild, the [chat.py](/pipeline/chat.py) and [executor.py](/pipeline/executor.py) scripts guard responses heavily. The chat will only provide answers from a fixed set of published marts through its query tool. Any numerical reply must match an approved value or the chat will tell end users that they cannot provide a verified answer to the question.
 
 ## Publishing the Dashboard
 
