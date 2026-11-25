@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Roboto:wght@300;400;500;600;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css?v=40">
+  <link rel="stylesheet" href="css/site.css?v=41">
 </head>
 <body>
   <header class="site-header">
@@ -83,22 +83,31 @@
       <section class="content-performance" id="content-performance">Loading content…</section>
     </section>
 
-    <h1 class="section-title">Ask the Data</h1>
-    <p class="lede lede-wide">Ask a question about users, subscriptions, or content. Answers come only from the published marts, and each one names the mart it used. The chat never shows names or email addresses.</p>
-    <section class="ask" id="ask" data-endpoint="" aria-label="Ask the data">
+  </main>
+
+  <section class="chat-widget" id="ask" data-endpoint="" aria-label="Ask the data">
+    <button type="button" class="chat-launcher" id="chat-launcher" aria-expanded="false" aria-controls="chat-panel">Ask the Data</button>
+    <div class="chat-panel" id="chat-panel" role="dialog" aria-label="Ask the Data" hidden>
+      <div class="chat-head">
+        <strong>Ask the Data</strong>
+        <button type="button" class="chat-minimize" id="chat-minimize" aria-label="Minimize the chat">&minus;</button>
+      </div>
+      <div class="chat-body">
+        <p class="fine">Ask a question about users, subscriptions, or content. Answers come only from the published marts, and each one names the mart it used. The chat never shows names or email addresses.</p>
+        <p class="source-note" id="ask-status" aria-live="polite"></p>
+        <div class="chat-answer" id="ask-answer"></div>
+      </div>
       <form class="ask-form" id="ask-form">
         <label class="visually-hidden" for="ask-question">Your question</label>
         <input id="ask-question" name="question" type="text" maxlength="500" autocomplete="off" placeholder="For example: How many active users came from paid social?">
         <button type="submit" id="ask-submit">Ask</button>
       </form>
-      <p class="source-note" id="ask-status" aria-live="polite"></p>
-      <div class="chat-answer" id="ask-answer"></div>
-    </section>
-  </main>
+    </div>
+  </section>
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
   <script src="js/dashboard.js?v=32"></script>
-  <script src="js/chat.js?v=1"></script>
+  <script src="js/chat.js?v=2"></script>
 </body>
 </html>

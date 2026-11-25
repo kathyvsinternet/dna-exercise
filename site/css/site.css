@@ -322,11 +322,13 @@ code {
 .ask-form {
   display: flex;
   gap: 0.5rem;
-  margin: 1rem 0;
+  padding: 0.7rem;
+  border-top: 1px solid var(--line);
 }
 
 .ask-form input {
   flex: 1;
+  min-width: 0;
   border: 1px solid var(--line);
   background: white;
   border-radius: 10px;
@@ -344,6 +346,83 @@ code {
 .chat-answer { margin-top: 0.5rem; }
 .chat-answer p { margin: 0.4rem 0; }
 .chat-answer .table-wrap { margin: 0.6rem 0; overflow-x: auto; }
+
+/* The chat sits in the lower right corner. It is a button when minimized and a panel when open.
+   The page gets extra room at the bottom so the button never covers the last content. */
+body { padding-bottom: 4.5rem; }
+
+.chat-widget {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  z-index: 50;
+  font-size: 0.9rem;
+}
+
+.chat-launcher {
+  border: 0;
+  border-radius: 999px;
+  background: var(--header);
+  color: var(--header-text);
+  padding: 0.7rem 1.2rem;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(28, 36, 48, 0.3);
+}
+
+.chat-launcher:hover { background: var(--accent); }
+
+.chat-launcher[hidden] { display: none; }
+
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  width: 24rem;
+  max-width: calc(100vw - 2.4rem);
+  height: 32rem;
+  max-height: calc(100vh - 2.4rem);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 0 8px 28px rgba(28, 36, 48, 0.28);
+  overflow: hidden;
+}
+
+.chat-panel[hidden] { display: none; }
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.6rem 0.6rem 1rem;
+  background: var(--header);
+  color: var(--header-text);
+}
+
+.chat-minimize {
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chat-minimize:hover { background: rgba(255, 255, 255, 0.15); }
+
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8rem 1rem;
+}
+
+.chat-body .fine { margin: 0; font-size: 0.8rem; }
+
+.chat-panel .ask-form { background: var(--card); }
 
 .visually-hidden {
   position: absolute;
@@ -539,8 +618,6 @@ code {
   .header-inner { padding-bottom: 1rem; }
   .nav { justify-content: flex-start; margin-top: 0.8rem; }
   .card, .diagram div, .chart { margin-top: 0.8rem; }
-  .ask-form { display: block; }
-  .ask-form button { margin-top: 0.5rem; }
   .filter-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .table-head .button { margin-top: 0.6rem; }
 }

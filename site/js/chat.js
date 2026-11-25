@@ -1,7 +1,8 @@
-// The "Ask the Data" panel. It sends one question to the chat endpoint and shows the answer.
+// The "Ask the Data" chat window in the lower right corner. It sends one question to the chat
+// endpoint and shows the answer.
 //
 // The endpoint URL is set on the <section id="ask"> element as data-endpoint. Until it is set,
-// the panel says it is not connected and the form stays disabled. The browser never holds a
+// the window says it is not connected and the form stays disabled. The browser never holds a
 // model key. Everything from the server is written with textContent, never as HTML.
 
 (function () {
@@ -82,6 +83,28 @@
       answerBox.appendChild(list);
     }
   }
+
+  // The chat starts minimized as a button in the lower right corner. The button opens the
+  // panel, the minus button or the Escape key minimizes it. This works even when the chat
+  // is not connected, so a visitor can still see why it is unavailable.
+  const launcher = document.getElementById("chat-launcher");
+  const chatPanel = document.getElementById("chat-panel");
+  const minimize = document.getElementById("chat-minimize");
+
+  function setOpen(open) {
+    chatPanel.hidden = !open;
+    launcher.hidden = open;
+    launcher.setAttribute("aria-expanded", String(open));
+    if (open && !input.disabled) input.focus();
+    if (open && input.disabled) minimize.focus();
+    if (!open) launcher.focus();
+  }
+
+  launcher.addEventListener("click", () => setOpen(true));
+  minimize.addEventListener("click", () => setOpen(false));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !chatPanel.hidden) setOpen(false);
+  });
 
   if (!endpoint) {
     statusLine.textContent = "The chat is not connected yet.";
