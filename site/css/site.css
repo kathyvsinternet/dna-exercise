@@ -234,8 +234,6 @@ main { padding: 2.2rem 0 3rem; }
   margin-top: 1rem;
 }
 
-.chart-wide { grid-column: 1 / -1; }
-
 .chart h2, .table-head h2 { margin: 0; font-size: 1.2rem; }
 
 .chart .fine { margin: 0.2rem 0 0; }
@@ -490,7 +488,23 @@ code {
 
 .chart-tall { min-height: 0; }
 
-#chart-source { margin-top: 0; }
+#chart-source, #growth-source { margin-top: 0; }
+
+/* A short explanation between the scorecards and the line charts. */
+.dash .callout {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: var(--card);
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.dash .callout p { margin: 0; }
+
+.dash .callout p + p { margin-top: 0.4rem; }
 
 .peek { margin-top: 0.9rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
 

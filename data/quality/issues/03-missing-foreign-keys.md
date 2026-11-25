@@ -26,7 +26,7 @@ Keep the row. Store a null `creator_id` or `content_id`.
 
 PageGarden and GatherSquare content stays unattributed. The three PageGarden creators stay on `dim_creator` with no content attached. Search, page-view, and subscription events stay on `fct_engagement_event` without a content id, because those events are not about one title.
 
-`mart_business` counts engagement through the content item's business. Events with no content id are left out of that count. A user can subscribe to more than one business, and those events have no business id, so assigning them to a business would be a guess. They remain on the fact table: 304 of them belong to non-test accounts.
+`mart_content_engagement` counts engagement through the content item, so events with no content id are left out of it. A user can subscribe to more than one business, and subscription events have no business id, so assigning them to a business would be a guess. Events with no content id remain on the fact table: 304 of them belong to non-test accounts.
 
 ## Check to enforce
 
