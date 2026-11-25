@@ -182,7 +182,8 @@ class PromptTests(unittest.TestCase):
         self.assertIn("cannot be added up", prompt)
         self.assertIn("group by the time column, sort it newest first", prompt)
         self.assertIn("Sort only by a column that is in group_by or measures", prompt)
-        self.assertIn("needs no group_by when the question asks for a total", prompt)
+        self.assertIn("still wants a total when it mentions a breakdown", prompt)
+        self.assertIn("Group by a column only when the question asks to see the values", prompt)
 
     def test_prompt_keeps_quarter_names_free_of_dates_the_rows_do_not_show(self):
         prompt = chat.build_system_prompt(chat.load_catalog())
